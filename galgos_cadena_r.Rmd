@@ -1,0 +1,8 @@
+---
+title: "GALGOS Cadena en R"
+output: html_notebook
+---
+
+INPUT: datasets preparados
+OUTPUT: análisis, datasets elaborados y modelos
+
