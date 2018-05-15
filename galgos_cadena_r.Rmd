@@ -6,3 +6,29 @@ output: html_notebook
 INPUT: datasets preparados
 OUTPUT: análisis, datasets elaborados y modelos
 
+
+
+
+Analisis de datasets en proyecto GALGOS.
+
+Importando datos desde MySQL:
+
+```{r}
+library(RMySQL)
+library(DBI)
+mydb = dbConnect(MySQL(), user='root', password='datos1986', dbname='datos_desa', host='localhost')
+on.exit(dbDisconnect(mydb))
+# dbListTables(mydb)
+
+pasado_f = dbSendQuery(mydb, "SELECT * FROM datos_desa.tb_ds_pasado_train_features_TOTAL LIMIT 8")
+pasado_t = dbSendQuery(mydb, "SELECT * FROM datos_desa.tb_ds_pasado_train_targets_TOTAL LIMIT 8")
+
+```
+
+Interpretando datos:
+
+```{r}
+
+```
+
+

@@ -174,9 +174,38 @@ $(document).ready(function () {
 
 <!-- rnb-text-begin -->
 <p>INPUT: datasets preparados OUTPUT: análisis, datasets elaborados y modelos</p>
+<p>Analisis de datasets en proyecto GALGOS.</p>
+<p>Importando datos desde MySQL:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShSTXlTUUwpXG5saWJyYXJ5KERCSSlcbm15ZGIgPSBkYkNvbm5lY3QoTXlTUUwoKSwgdXNlcj0ncm9vdCcsIHBhc3N3b3JkPSdkYXRvczE5ODYnLCBkYm5hbWU9J2RhdG9zX2Rlc2EnLCBob3N0PSdsb2NhbGhvc3QnKVxub24uZXhpdChkYkRpc2Nvbm5lY3QobXlkYikpXG4jIGRiTGlzdFRhYmxlcyhteWRiKVxucGFzYWRvX2YgPSBkYlNlbmRRdWVyeShteWRiLCBcIlNFTEVDVCAqIEZST00gZGF0b3NfZGVzYS50Yl9kc19wYXNhZG9fdHJhaW5fZmVhdHVyZXNfVE9UQUwgTElNSVQgOFwiKVxuYGBgIn0= -->
+<pre class="r"><code>library(RMySQL)
+library(DBI)
+mydb = dbConnect(MySQL(), user='root', password='datos1986', dbname='datos_desa', host='localhost')
+on.exit(dbDisconnect(mydb))
+# dbListTables(mydb)
+pasado_f = dbSendQuery(mydb, &quot;SELECT * FROM datos_desa.tb_ds_pasado_train_features_TOTAL LIMIT 8&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiRGVjaW1hbCBNeVNRTCBjb2x1bW4gMCBpbXBvcnRlZCBhcyBudW1lcmljRGVjaW1hbCBNeVNRTCBjb2x1bW4gMSBpbXBvcnRlZCBhcyBudW1lcmljRGVjaW1hbCBNeVNRTCBjb2x1bW4gMiBpbXBvcnRlZCBhcyBudW1lcmljRGVjaW1hbCBNeVNRTCBjb2x1bW4gMyBpbXBvcnRlZCBhcyBudW1lcmljRGVjaW1hbCBNeVNRTCBjb2x1bW4gNCBpbXBvcnRlZCBhcyBudW1lcmljRGVjaW1hbCBNeVNRTCBjb2x1bW4gNiBpbXBvcnRlZCBhcyBudW1lcmljRGVjaW1hbCBNeVNRTCBjb2x1bW4gOCBpbXBvcnRlZCBhcyBudW1lcmljRGVjaW1hbCBNeVNRTCBjb2x1bW4gOSBpbXBvcnRlZCBhcyBudW1lcmljRGVjaW1hbCBNeVNRTCBjb2x1bW4gMTAgaW1wb3J0ZWQgYXMgbnVtZXJpY0RlY2ltYWwgTXlTUUwgY29sdW1uIDExIGltcG9ydGVkIGFzIG51bWVyaWNEZWNpbWFsIE15U1FMIGNvbHVtbiAxMiBpbXBvcnRlZCBhcyBudW1lcmljRGVjaW1hbCBNeVNRTCBjb2x1bW4gMTMgaW1wb3J0ZWQgYXMgbnVtZXJpY0RlY2ltYWwgTXlTUUwgY29sdW1uIDE0IGltcG9ydGVkIGFzIG51bWVyaWNEZWNpbWFsIE15U1FMIGNvbHVtbiAxNSBpbXBvcnRlZCBhcyBudW1lcmljRGVjaW1hbCBNeVNRTCBjb2x1bW4gMTYgaW1wb3J0ZWQgYXMgbnVtZXJpY0RlY2ltYWwgTXlTUUwgY29sdW1uIDE3IGltcG9ydGVkIGFzIG51bWVyaWNEZWNpbWFsIE15U1FMIGNvbHVtbiAxOCBpbXBvcnRlZCBhcyBudW1lcmljRGVjaW1hbCBNeVNRTCBjb2x1bW4gMTkgaW1wb3J0ZWQgYXMgbnVtZXJpY0RlY2ltYWwgTXlTUUwgY29sdW1uIDIwIGltcG9ydGVkIGFzIG51bWVyaWNEZWNpbWFsIE15U1FMIGNvbHVtbiAyMSBpbXBvcnRlZCBhcyBudW1lcmljRGVjaW1hbCBNeVNRTCBjb2x1bW4gMjIgaW1wb3J0ZWQgYXMgbnVtZXJpY0RlY2ltYWwgTXlTUUwgY29sdW1uIDIzIGltcG9ydGVkIGFzIG51bWVyaWNEZWNpbWFsIE15U1FMIGNvbHVtbiAyNCBpbXBvcnRlZCBhcyBudW1lcmljRGVjaW1hbCBNeVNRTCBjb2x1bW4gMjUgaW1wb3J0ZWQgYXMgbnVtZXJpY0RlY2ltYWwgTXlTUUwgY29sdW1uIDI2IGltcG9ydGVkIGFzIG51bWVyaWNEZWNpbWFsIE15U1FMIGNvbHVtbiAyNyBpbXBvcnRlZCBhcyBudW1lcmljRGVjaW1hbCBNeVNRTCBjb2x1bW4gMjggaW1wb3J0ZWQgYXMgbnVtZXJpY0RlY2ltYWwgTXlTUUwgY29sdW1uIDI5IGltcG9ydGVkIGFzIG51bWVyaWNEZWNpbWFsIE15U1FMIGNvbHVtbiAzMCBpbXBvcnRlZCBhcyBudW1lcmljRGVjaW1hbCBNeVNRTCBjb2x1bW4gMzEgaW1wb3J0ZWQgYXMgbnVtZXJpY1xuIn0= -->
+<pre><code>Decimal MySQL column 0 imported as numericDecimal MySQL column 1 imported as numericDecimal MySQL column 2 imported as numericDecimal MySQL column 3 imported as numericDecimal MySQL column 4 imported as numericDecimal MySQL column 6 imported as numericDecimal MySQL column 8 imported as numericDecimal MySQL column 9 imported as numericDecimal MySQL column 10 imported as numericDecimal MySQL column 11 imported as numericDecimal MySQL column 12 imported as numericDecimal MySQL column 13 imported as numericDecimal MySQL column 14 imported as numericDecimal MySQL column 15 imported as numericDecimal MySQL column 16 imported as numericDecimal MySQL column 17 imported as numericDecimal MySQL column 18 imported as numericDecimal MySQL column 19 imported as numericDecimal MySQL column 20 imported as numericDecimal MySQL column 21 imported as numericDecimal MySQL column 22 imported as numericDecimal MySQL column 23 imported as numericDecimal MySQL column 24 imported as numericDecimal MySQL column 25 imported as numericDecimal MySQL column 26 imported as numericDecimal MySQL column 27 imported as numericDecimal MySQL column 28 imported as numericDecimal MySQL column 29 imported as numericDecimal MySQL column 30 imported as numericDecimal MySQL column 31 imported as numeric</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFzYWRvX3QgPSBkYlNlbmRRdWVyeShteWRiLCBcIlNFTEVDVCAqIEZST00gZGF0b3NfZGVzYS50Yl9kc19wYXNhZG9fdHJhaW5fdGFyZ2V0c19UT1RBTCBMSU1JVCA4XCIpXG5gYGAifQ== -->
+<pre class="r"><code>pasado_t = dbSendQuery(mydb, &quot;SELECT * FROM datos_desa.tb_ds_pasado_train_targets_TOTAL LIMIT 8&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gLmxvY2FsKGNvbm4sIHN0YXRlbWVudCwgLi4uKSA6IFxuICBjb25uZWN0aW9uIHdpdGggcGVuZGluZyByb3dzLCBjbG9zZSByZXN1bHRTZXQgYmVmb3JlIGNvbnRpbnVpbmdcbiJ9 -->
+<pre><code>Error in .local(conn, statement, ...) : 
+  connection with pending rows, close resultSet before continuing</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Interpretando datos:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiR0FMR09TIENhZGVuYSBlbiBSIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgpJTlBVVDogZGF0YXNldHMgcHJlcGFyYWRvcwpPVVRQVVQ6IGFuw6FsaXNpcywgZGF0YXNldHMgZWxhYm9yYWRvcyB5IG1vZGVsb3MKCg==</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiR0FMR09TIENhZGVuYSBlbiBSIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgpJTlBVVDogZGF0YXNldHMgcHJlcGFyYWRvcwpPVVRQVVQ6IGFuw6FsaXNpcywgZGF0YXNldHMgZWxhYm9yYWRvcyB5IG1vZGVsb3MKCgoKCkFuYWxpc2lzIGRlIGRhdGFzZXRzIGVuIHByb3llY3RvIEdBTEdPUy4KCkltcG9ydGFuZG8gZGF0b3MgZGVzZGUgTXlTUUw6CgpgYGB7cn0KbGlicmFyeShSTXlTUUwpCmxpYnJhcnkoREJJKQpteWRiID0gZGJDb25uZWN0KE15U1FMKCksIHVzZXI9J3Jvb3QnLCBwYXNzd29yZD0nZGF0b3MxOTg2JywgZGJuYW1lPSdkYXRvc19kZXNhJywgaG9zdD0nbG9jYWxob3N0JykKb24uZXhpdChkYkRpc2Nvbm5lY3QobXlkYikpCiMgZGJMaXN0VGFibGVzKG15ZGIpCgpwYXNhZG9fZiA9IGRiU2VuZFF1ZXJ5KG15ZGIsICJTRUxFQ1QgKiBGUk9NIGRhdG9zX2Rlc2EudGJfZHNfcGFzYWRvX3RyYWluX2ZlYXR1cmVzX1RPVEFMIExJTUlUIDgiKQpwYXNhZG9fdCA9IGRiU2VuZFF1ZXJ5KG15ZGIsICJTRUxFQ1QgKiBGUk9NIGRhdG9zX2Rlc2EudGJfZHNfcGFzYWRvX3RyYWluX3RhcmdldHNfVE9UQUwgTElNSVQgOCIpCgpgYGAKCkludGVycHJldGFuZG8gZGF0b3M6CgpgYGB7cn0KCmBgYAoKCg==</div>
 
 
 

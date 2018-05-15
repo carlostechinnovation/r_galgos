@@ -1,0 +1,302 @@
+---
+title: "MI ESTUDIO SOBRE R"
+output: html_notebook
+---
+### Valores NA (missing values) y cómo rellenarlos
+Partimos de uno de los datasets de pruebas que hay en RStudio.
+```{r}
+#library(help="datasets") #lista completa (cogeremos el dataset llamado attenu, por ejemplo)
+data(attenu)
+attach(attenu)
+help(attenu)
+boxplot(attenu, cex.axis=0.5) 
+```
+Vemos que la variable dist es asimetrica y tiene outliers.
+Vamos que las variables mag y accel son leptocúrticas (apretadas en torno a la media)
+
+```{r}
+summary(attenu)
+```
+
+### Matriz de parejas de features (CORRELACIONES)
+Hacemos una análisis exploratorio de las correlaciones.
+Matriz de correlaciones (entre variables) y funcion de densidad de probabilidad (univariable):
+```{r}
+library(car)
+scatterplotMatrix(x=attenu)
+```
+O también construirla usando una función personalizada por nosotros:
+```{r}
+pairs(attenu, gap=0, lower.panel = panel.smooth, upper.panel = function(x,y){
+  panel.smooth(x,y)
+  par(usr=c(0,1,0,1))
+  correlacion <- cor(x,y,use="complete.obs")
+  text(0.6,0.7,col="blue", cex=1.2, round(correlacion, digits=2))
+}  )
+```
+Es importante ver si hay alguna correlación fácilmente visible (lineal...).
+
+IDs de los elementos que tienen valores NA en cualquiera de sus features (columnas):
+```{r}
+which(is.na(attenu$event))
+which(is.na(attenu$mag))
+which(is.na(attenu$station))
+which(is.na(attenu$dist))
+which(is.na(attenu$accel))
+```
+Vemos que sólo la variable station tiene valores NA.
+También se pueden coger sólo las filas en las que todas las features están rellenas (sin ningún valor NA):
+```{r}
+attenu[complete.cases(attenu),]
+```
+Si queremos ELIMINAR aquellas filas (margin=1 significa ROWS) que tengan más de un valor NA:
+1. Aplicar la función SUM sobre filas, contando el número de elementos NA.
+2. Si hay uno o más, saco sus índices (which)
+3. Creo un vector con esos índices y se lo resto al dataset attenu.
+
+```{r}
+filas_con_na <- apply(attenu, MARGIN = 1, FUN = function(x){ sum(is.na(x)) >=1})
+indices_de_filas_con_na <- which(filas_con_na)
+datos_sinhuecos=attenu[ -c( indices_de_filas_con_na ) , ]
+```
+
+Comprobamos que ya no hay HUECOS (con algún valor NA):
+```{r}
+attenu[!complete.cases(datos_sinhuecos),]
+```
+### ANALISIS DE COMPONENTES PRINCIPALES (PCA)
+Si tenemos muchas features, conviene reducirlas para que el análisis de correlaciones sea más sencillo.
+Es MUY importante indicar que trabajamos con la matriz de correlaciones (en vez de la de covarianzas): cor=TRUE
+Además, PC sólo trabaja con features que sean NUMERICAS, así que debemos comprobar que todas las columnas (features) son numericas
+```{r}
+drops <- c("station")
+datos_para_pca <- attenu[ , !(names(attenu) %in% drops)]
+datos_sin_na <- na.omit(datos_para_pca) # limpiar los NA
+sapply(datos_sin_na, class) #clase/modo de cada feature
+sapply(datos_sin_na, typeof) #tipo de cada feature
+pca_attenu <- princomp(datos_sin_na, cor=TRUE)  
+pca_attenu
+plot(pca_attenu)
+summary(pca_attenu)
+biplot(pca_attenu) #PC2 vs PC1
+
+#Los pesos de cada individuo (fila) proyectado en las componentes (PC1, PC2...)
+pca_pesos <- pca_attenu$scores
+pca_pesos_pc1pc2 <- pca_pesos[, 1:2] #Pesos sólo en las componentes que más influyen en la varianza total
+plot(pca_pesos_pc1pc2[,1], pca_pesos_pc1pc2[,2]) #misma gráfica que veiamos en el biplot
+```
+Vemos que la componente 1 tiene un peso del 54.41% sobre las varianzas; la 2 tiene 26.9%; etc.
+Cogemos la PC1 y PC2, que suman un 80% de la influencia en la varianza total.
+Vemos también los pesos que tienen las variables de entrada (features) dentro de las componentes compuestas (PC1, PC2...)., mirando el plot de *flechas*:
+- PC1 (eje horizontal) está afectada por las variables: event, dist, mag y accel. (es decir, por todas las features de entrada, pero en proporción diferente).
+- PC2 (eje vertical): 
+
+
+### CLUSTERING (habiendo hecho PCA antes)
+Vamos a mostrar un subtipo de "clustering jerárquico" llamado *Agglomerative Nesting (AGNES)*.
+Hay tres tipos de métodos de unión en clustering:
+- Single linkage: según la MINIMA distancia entre dos elementos de clusters diferentes.
+- Complete linkage: según la MAXIMA distancia entre dos elementos de clusters diferentes.
+- Average linkage: según la distancia MEDIA entre dos elementos de clusters diferentes.
+```{r}
+library(cluster)
+agnes_single <- agnes(x = datos_sin_na, method = "single")
+plot(agnes_single) # Cuando veamos espacios entre las muestras, es la separacion entre clusters. Es DIFICIL de ver.
+```
+Con Single, vemos que hay 2 (ó incluso 3) clusters, fijándose en los huecos que hay en el gráfico "banner", que separan a los clusters.
+```{r}
+library(cluster)
+agnes_complete <- agnes(x = datos_sin_na, method = "complete")
+plot(agnes_complete) # Cuando veamos espacios entre las muestras, es la separacion entre clusters. Es DIFICIL de ver.
+```
+Con Complete, se ven claramente 3 clusters.
+```{r}
+library(cluster)
+agnes_average <- agnes(x = datos_sin_na, method = "average")
+plot(agnes_average) # Cuando veamos espacios entre las muestras, es la separacion entre clusters. Es DIFICIL de ver.
+```
+Con Average, se ven 2 ó 3 clusters.
+Donde más claro lo vemos es con el método "complete", así que creamos los *clusters* vistos con *COLORES*.
+Esos colores los pintamos sobre los pesos que ya habiamos calculado para PCA (de las componentes PC1 y PC2).
+```{r}
+complete_3_clusters=cutree(agnes_complete,3)
+plot(pca_pesos,col=complete_3_clusters)
+```
+
+
+
+### REGRESIÓN LINEAL SIMPLE
+Link: <http://rpubs.com/joser/RegresionSimple>
+Datos entrada:
+```{r}
+grasas_tabla <- read.table('http://verso.mat.uam.es/~joser.berrendero/datos/EdadPesoGrasas.txt', header = TRUE)
+names(grasas_tabla)
+pairs(grasas_tabla)
+cor(grasas_tabla)
+```
+Vemos correlación (0.83) entre las variables edad y grasas, como era de esperar a simple vista. El gráfico muestra también la relación lineal (a ojo).
+
+Recta de mínimos cuadrados:
+Usamos un MODELO LINEAL (lm) para calcular una regresión lineal muy sencilla, de grasas respecto de la edad: $y =102.575+5.321*x$
+
+O mejor aun:  $y = 102.575 (+/-29.6376) + 5.321(+/-0.7243) * x$
+
+```{r}
+regresion <- lm(grasas ~ edad, data = grasas_tabla) #grasas dependiente de la edad
+summary(regresion)
+
+plot(grasas_tabla$edad, grasas_tabla$grasas, xlab='Edad', ylab='Grasas')
+abline(regresion)
+```
+Vemos que el R^2^ es 0.7012 --> Bondad de la recta de ajuste.
+
+#### PREDICCION PARA NUEVAS ENTRADAS:
+Usar la recta:
+```{r}
+nuevas.edades <- data.frame(edad = seq(30, 50))
+prediccion_nueva<-predict(regresion, nuevas.edades)
+prediccion_nueva
+```
+
+#### Explicación del modelo de regresión simple:
+- La columna t-value es el estadístico t --> Cociente entre cada estimador y su error típico. Permite realizar los contrastes de hipótesis nula (que sean 0) --> H~0~:β~0~=0 y H~0~:β~1~=0 
+- Los  p-valores aparecen en la columna Pr(>|t|) --> Probabilidad de superar el umbral --> Como son muy pequeños (menores que 0.01 ó 0.05, utilizados normalmente) ==> Se rechazan ambas hipótesis nulas.
+- El estimador de la desviación típica (σ) de los errores aparece como Residual standard error y su valor en el ejemplo es 43.5
+- Los intervalos de confianza para los parámetros se obtienen con el comando confint. El parámetro level permite elegir el nivel de confianza (por defecto es 0.95):
+```{r}
+confint(regresion)
+confint(regresion, level = 0.90)
+```
+
+Los "intervalos de confianza para la respuesta media" y los "intervalos de predicción para la respuesta" se pueden obtener usando el comando predict. 
+Por ejemplo, el siguiente código calcula y representa los dos tipos de intervalos para el rango de edades que va de 20 a 60 años (los de predicción en rojo):
+
+```{r}
+nuevas.edades <- data.frame(edad = seq(20, 60))
+# Grafico de dispersion y recta
+plot(grasas_tabla$edad, grasas_tabla$grasas, xlab='Edad', ylab='Grasas')
+abline(regresion)
+
+# Intervalos de confianza de la respuesta media:
+# ic es una matriz con tres columnas: la primera es la prediccion, las otras dos son los extremos del intervalo
+ic <- predict(regresion, nuevas.edades, interval = 'confidence')
+lines(nuevas.edades$edad, ic[, 2], lty = 2)
+lines(nuevas.edades$edad, ic[, 3], lty = 2)
+
+# Intervalos de prediccion
+ic <- predict(regresion, nuevas.edades, interval = 'prediction')
+lines(nuevas.edades$edad, ic[, 2], lty = 2, col = 'red')
+lines(nuevas.edades$edad, ic[, 3], lty = 2, col = 'red')
+```
+#### Análisis de la varianza:
+```{r}
+anova(regresion)
+```
+
+Diagnóstico del modelo:
+```{r}
+residuos <- rstandard(regresion)
+valores.ajustados <- fitted(regresion)
+plot(valores.ajustados, residuos)
+
+#Prueba de normalidad (sencilla) para saber si la muestra tiene una distribucion NORMAL
+qqnorm(residuos)
+qqline(residuos)
+```
+Como tiene pocas muestras, podríamos haber pintado una t-Student encima, para poder comparar.
+
+Otras pruebas de normalidad --> Kolmogorov-Smirnov  y Shapiro-Wilk.
+
+#### Ejemplo interesante: 
+
+```{r}
+x <- rnorm(50);  y <- rnorm(50);  plot(x,y); ls(); rm(x,y)
+
+x <- 1:20
+w <- 1 + sqrt(x)/2 #desviaciones estandar (pesos)
+dummy <-- data.frame(x=x, y= x + w*rnorm(x))
+dummy
+
+fm <- lm(y~x, data=dummy) #simple linear regression
+summary(fm)
+
+fm1 <- lm(y~x, data=dummy, weight=1/w^2) #weighted regression
+summary(fm1)
+
+attach(dummy) #hacemos visibles las columnas del dataframe 
+lrf <-lowess(x,y, f = 2/3, iter = 3, delta = 0.01 * diff(range(x))) #Funcion de regresion local no parametrica: LOWESS smoother (locally-weighted polynomial regression)
+summary(lrf)
+plot(x,y)
+lines(x, lrf$y) #pintamos la linea de la regresi?n lineal
+
+abline(0,1, lty=3) #linea de regresion verdadera (intercept 0, slope=1) (linea de puntos)
+abline(coef(fm)) #linea de regresion sin pesos
+abline(coef(fm1), col="red") #linea de regresion con pesos
+
+detach()
+
+plot( fitted(fm), resid(fm), xlab="Fitted values", ylab="Residuals", main="Residuals vs Fitted" ) #Analisis de heterodicidad
+qqnorm( resid(fm), main="Residuals Rankit Plot" ) #Analisis de skewness, kurtosis y outliers (no muy util en este caso)
+rm( fm, fm1, lrf, x, dummy) #limpieza de variables
+```
+
+## CRAN-INTRO.ap.8.2.
+Lo básico:
+```{r}
+attach(faithful)
+
+summary(eruptions)
+fivenum(eruptions) #Pinta un "dibujo" hecho con numeros, que parece un histograma
+stem(eruptions)
+```
+Dibujos:
+```{r}
+hist(eruptions,seq(from=1.6, to=5.2, by=0.2), probability = TRUE)
+lines(density(eruptions, bw=0.1))
+rug(eruptions)
+```
+La función de densidad (CDF) es:
+```{r}
+plot(ecdf(eruptions), do.points=FALSE, verticals = TRUE)
+```
+Si cogemos sólo aquellos con X>3:
+```{r}
+erupciones_largas<-eruptions[eruptions>3]
+hist(erupciones_largas)
+plot(ecdf(erupciones_largas), do.points=FALSE, verticals = TRUE)
+x<-seq(3, 5.4, 0.01)
+
+#Usando la distribucion NORMAL (norm)
+lines(x, pnorm(x, mean = mean(erupciones_largas), sd=sqrt(var(erupciones_largas))), lty=3)  #linea de puntos(lty=3)
+```
+
+### PRUEBAS DE NORMALIDAD:
+
+1. Q-Q (Quantile-Quantile)
+```{r}
+par(pty="s") #pinta la caja cuadrada (en vez de que sea rectangular por defecto)
+qqnorm(erupciones_largas)
+qqline(erupciones_largas)
+
+#La COMPARAMOS con una t-Student de 5 grados de libertad:
+puntos_t_student <- rt(250, df = 5)
+qqnorm(puntos_t_student)
+qqline(puntos_t_student)
+
+#Pintamos el qqplot
+qqplot(qt( ppoints(250), df=5 ), puntos_t_student, xlab = "QQplot para la densidad t-Student")
+qqline(puntos_t_student)
+```
+
+2. Test Shapiro-Wilk:
+```{r}
+shapiro.test(erupciones_largas)
+```
+
+3. Test Kolmogorov-Smirnov:
+```{r}
+ks.test(erupciones_largas, "pnorm", mean=mean(erupciones_largas), sd=sqrt(var(erupciones_largas)))
+```
+
+
+

@@ -173,10 +173,399 @@ $(document).ready(function () {
 
 
 <!-- rnb-text-begin -->
-<p>Apunto todo lo que voy aprendiendo en R.</p>
+<div id="valores-na-missing-values-y-como-rellenarlos" class="section level3">
+<h3>Valores NA (missing values) y cómo rellenarlos</h3>
+<p>Partimos de uno de los datasets de pruebas que hay en RStudio.</p>
 <!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2xpYnJhcnkoaGVscD1cImRhdGFzZXRzXCIpICNsaXN0YSBjb21wbGV0YSAoY29nZXJlbW9zIGVsIGRhdGFzZXQgbGxhbWFkbyBhdHRlbnUsIHBvciBlamVtcGxvKVxuZGF0YShhdHRlbnUpXG5hdHRhY2goYXR0ZW51KVxuaGVscChhdHRlbnUpXG5ib3hwbG90KGF0dGVudSwgY2V4LmF4aXM9MC41KSBcbmBgYCJ9 -->
+<pre class="r"><code>#library(help=&quot;datasets&quot;) #lista completa (cogeremos el dataset llamado attenu, por ejemplo)
+data(attenu)
+attach(attenu)
+help(attenu)
+boxplot(attenu, cex.axis=0.5) </code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Vemos que la variable dist es asimetrica y tiene outliers. Vamos que las variables mag y accel son leptocúrticas (apretadas en torno a la media)</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3VtbWFyeShhdHRlbnUpXG5gYGAifQ== -->
+<pre class="r"><code>summary(attenu)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="matriz-de-parejas-de-features-correlaciones" class="section level3">
+<h3>Matriz de parejas de features (CORRELACIONES)</h3>
+<p>Hacemos una análisis exploratorio de las correlaciones. Matriz de correlaciones (entre variables) y funcion de densidad de probabilidad (univariable):</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShjYXIpXG5zY2F0dGVycGxvdE1hdHJpeCh4PWF0dGVudSlcbmBgYCJ9 -->
+<pre class="r"><code>library(car)
+scatterplotMatrix(x=attenu)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>O también construirla usando una función personalizada por nosotros:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFpcnMoYXR0ZW51LCBnYXA9MCwgbG93ZXIucGFuZWwgPSBwYW5lbC5zbW9vdGgsIHVwcGVyLnBhbmVsID0gZnVuY3Rpb24oeCx5KXtcbiAgcGFuZWwuc21vb3RoKHgseSlcbiAgcGFyKHVzcj1jKDAsMSwwLDEpKVxuICBjb3JyZWxhY2lvbiA8LSBjb3IoeCx5LHVzZT1cImNvbXBsZXRlLm9ic1wiKVxuICB0ZXh0KDAuNiwwLjcsY29sPVwiYmx1ZVwiLCBjZXg9MS4yLCByb3VuZChjb3JyZWxhY2lvbiwgZGlnaXRzPTIpKVxufSAgKVxuYGBgIn0= -->
+<pre class="r"><code>pairs(attenu, gap=0, lower.panel = panel.smooth, upper.panel = function(x,y){
+  panel.smooth(x,y)
+  par(usr=c(0,1,0,1))
+  correlacion &lt;- cor(x,y,use=&quot;complete.obs&quot;)
+  text(0.6,0.7,col=&quot;blue&quot;, cex=1.2, round(correlacion, digits=2))
+}  )</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Es importante ver si hay alguna correlación fácilmente visible (lineal…).</p>
+<p>IDs de los elementos que tienen valores NA en cualquiera de sus features (columnas):</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxud2hpY2goaXMubmEoYXR0ZW51JGV2ZW50KSlcbndoaWNoKGlzLm5hKGF0dGVudSRtYWcpKVxud2hpY2goaXMubmEoYXR0ZW51JHN0YXRpb24pKVxud2hpY2goaXMubmEoYXR0ZW51JGRpc3QpKVxud2hpY2goaXMubmEoYXR0ZW51JGFjY2VsKSlcbmBgYCJ9 -->
+<pre class="r"><code>which(is.na(attenu$event))
+which(is.na(attenu$mag))
+which(is.na(attenu$station))
+which(is.na(attenu$dist))
+which(is.na(attenu$accel))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Vemos que sólo la variable station tiene valores NA. También se pueden coger sólo las filas en las que todas las features están rellenas (sin ningún valor NA):</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYXR0ZW51W2NvbXBsZXRlLmNhc2VzKGF0dGVudSksXVxuYGBgIn0= -->
+<pre class="r"><code>attenu[complete.cases(attenu),]</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Si queremos ELIMINAR aquellas filas (margin=1 significa ROWS) que tengan más de un valor NA: 1. Aplicar la función SUM sobre filas, contando el número de elementos NA. 2. Si hay uno o más, saco sus índices (which) 3. Creo un vector con esos índices y se lo resto al dataset attenu.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZmlsYXNfY29uX25hIDwtIGFwcGx5KGF0dGVudSwgTUFSR0lOID0gMSwgRlVOID0gZnVuY3Rpb24oeCl7IHN1bShpcy5uYSh4KSkgPj0xfSlcbmluZGljZXNfZGVfZmlsYXNfY29uX25hIDwtIHdoaWNoKGZpbGFzX2Nvbl9uYSlcbmRhdG9zX3Npbmh1ZWNvcz1hdHRlbnVbIC1jKCBpbmRpY2VzX2RlX2ZpbGFzX2Nvbl9uYSApICwgXVxuYGBgIn0= -->
+<pre class="r"><code>filas_con_na &lt;- apply(attenu, MARGIN = 1, FUN = function(x){ sum(is.na(x)) &gt;=1})
+indices_de_filas_con_na &lt;- which(filas_con_na)
+datos_sinhuecos=attenu[ -c( indices_de_filas_con_na ) , ]</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Comprobamos que ya no hay HUECOS (con algún valor NA):</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYXR0ZW51WyFjb21wbGV0ZS5jYXNlcyhkYXRvc19zaW5odWVjb3MpLF1cbmBgYCJ9 -->
+<pre class="r"><code>attenu[!complete.cases(datos_sinhuecos),]</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="analisis-de-componentes-principales-pca" class="section level3">
+<h3>ANALISIS DE COMPONENTES PRINCIPALES (PCA)</h3>
+<p>Si tenemos muchas features, conviene reducirlas para que el análisis de correlaciones sea más sencillo. Es MUY importante indicar que trabajamos con la matriz de correlaciones (en vez de la de covarianzas): cor=TRUE Además, PC sólo trabaja con features que sean NUMERICAS, así que debemos comprobar que todas las columnas (features) son numericas</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZHJvcHMgPC0gYyhcInN0YXRpb25cIilcbmRhdG9zX3BhcmFfcGNhIDwtIGF0dGVudVsgLCAhKG5hbWVzKGF0dGVudSkgJWluJSBkcm9wcyldXG5kYXRvc19zaW5fbmEgPC0gbmEub21pdChkYXRvc19wYXJhX3BjYSkgIyBsaW1waWFyIGxvcyBOQVxuc2FwcGx5KGRhdG9zX3Npbl9uYSwgY2xhc3MpICNjbGFzZS9tb2RvIGRlIGNhZGEgZmVhdHVyZVxuc2FwcGx5KGRhdG9zX3Npbl9uYSwgdHlwZW9mKSAjdGlwbyBkZSBjYWRhIGZlYXR1cmVcbnBjYV9hdHRlbnUgPC0gcHJpbmNvbXAoZGF0b3Nfc2luX25hLCBjb3I9VFJVRSkgIFxucGNhX2F0dGVudVxucGxvdChwY2FfYXR0ZW51KVxuc3VtbWFyeShwY2FfYXR0ZW51KVxuYmlwbG90KHBjYV9hdHRlbnUpICNQQzIgdnMgUEMxXG5cbiNMb3MgcGVzb3MgZGUgY2FkYSBpbmRpdmlkdW8gKGZpbGEpIHByb3llY3RhZG8gZW4gbGFzIGNvbXBvbmVudGVzIChQQzEsIFBDMi4uLilcbnBjYV9wZXNvcyA8LSBwY2FfYXR0ZW51JHNjb3Jlc1xucGNhX3Blc29zX3BjMXBjMiA8LSBwY2FfcGVzb3NbLCAxOjJdICNQZXNvcyBzw7NsbyBlbiBsYXMgY29tcG9uZW50ZXMgcXVlIG3DoXMgaW5mbHV5ZW4gZW4gbGEgdmFyaWFuemEgdG90YWxcbnBsb3QocGNhX3Blc29zX3BjMXBjMlssMV0sIHBjYV9wZXNvc19wYzFwYzJbLDJdKSAjbWlzbWEgZ3LDoWZpY2EgcXVlIHZlaWFtb3MgZW4gZWwgYmlwbG90XG5gYGAifQ== -->
+<pre class="r"><code>drops &lt;- c(&quot;station&quot;)
+datos_para_pca &lt;- attenu[ , !(names(attenu) %in% drops)]
+datos_sin_na &lt;- na.omit(datos_para_pca) # limpiar los NA
+sapply(datos_sin_na, class) #clase/modo de cada feature
+sapply(datos_sin_na, typeof) #tipo de cada feature
+pca_attenu &lt;- princomp(datos_sin_na, cor=TRUE)  
+pca_attenu
+plot(pca_attenu)
+summary(pca_attenu)
+biplot(pca_attenu) #PC2 vs PC1
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiTUkgRVNUVURJTyBTT0JSRSBSIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgpBcHVudG8gdG9kbyBsbyBxdWUgdm95IGFwcmVuZGllbmRvIGVuIFIuCgo=</div>
+#Los pesos de cada individuo (fila) proyectado en las componentes (PC1, PC2...)
+pca_pesos &lt;- pca_attenu$scores
+pca_pesos_pc1pc2 &lt;- pca_pesos[, 1:2] #Pesos sólo en las componentes que más influyen en la varianza total
+plot(pca_pesos_pc1pc2[,1], pca_pesos_pc1pc2[,2]) #misma gráfica que veiamos en el biplot</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Vemos que la componente 1 tiene un peso del 54.41% sobre las varianzas; la 2 tiene 26.9%; etc. Cogemos la PC1 y PC2, que suman un 80% de la influencia en la varianza total. Vemos también los pesos que tienen las variables de entrada (features) dentro de las componentes compuestas (PC1, PC2…)., mirando el plot de <em>flechas</em>: - PC1 (eje horizontal) está afectada por las variables: event, dist, mag y accel. (es decir, por todas las features de entrada, pero en proporción diferente). - PC2 (eje vertical):</p>
+</div>
+<div id="clustering-habiendo-hecho-pca-antes" class="section level3">
+<h3>CLUSTERING (habiendo hecho PCA antes)</h3>
+<p>Vamos a mostrar un subtipo de “clustering jerárquico” llamado <em>Agglomerative Nesting (AGNES)</em>. Hay tres tipos de métodos de unión en clustering: - Single linkage: según la MINIMA distancia entre dos elementos de clusters diferentes. - Complete linkage: según la MAXIMA distancia entre dos elementos de clusters diferentes. - Average linkage: según la distancia MEDIA entre dos elementos de clusters diferentes.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShjbHVzdGVyKVxuYWduZXNfc2luZ2xlIDwtIGFnbmVzKHggPSBkYXRvc19zaW5fbmEsIG1ldGhvZCA9IFwic2luZ2xlXCIpXG5wbG90KGFnbmVzX3NpbmdsZSkgIyBDdWFuZG8gdmVhbW9zIGVzcGFjaW9zIGVudHJlIGxhcyBtdWVzdHJhcywgZXMgbGEgc2VwYXJhY2lvbiBlbnRyZSBjbHVzdGVycy4gRXMgRElGSUNJTCBkZSB2ZXIuXG5gYGAifQ== -->
+<pre class="r"><code>library(cluster)
+agnes_single &lt;- agnes(x = datos_sin_na, method = &quot;single&quot;)
+plot(agnes_single) # Cuando veamos espacios entre las muestras, es la separacion entre clusters. Es DIFICIL de ver.</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Con Single, vemos que hay 2 (ó incluso 3) clusters, fijándose en los huecos que hay en el gráfico “banner”, que separan a los clusters.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShjbHVzdGVyKVxuYWduZXNfY29tcGxldGUgPC0gYWduZXMoeCA9IGRhdG9zX3Npbl9uYSwgbWV0aG9kID0gXCJjb21wbGV0ZVwiKVxucGxvdChhZ25lc19jb21wbGV0ZSkgIyBDdWFuZG8gdmVhbW9zIGVzcGFjaW9zIGVudHJlIGxhcyBtdWVzdHJhcywgZXMgbGEgc2VwYXJhY2lvbiBlbnRyZSBjbHVzdGVycy4gRXMgRElGSUNJTCBkZSB2ZXIuXG5gYGAifQ== -->
+<pre class="r"><code>library(cluster)
+agnes_complete &lt;- agnes(x = datos_sin_na, method = &quot;complete&quot;)
+plot(agnes_complete) # Cuando veamos espacios entre las muestras, es la separacion entre clusters. Es DIFICIL de ver.</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Con Complete, se ven claramente 3 clusters.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShjbHVzdGVyKVxuYWduZXNfYXZlcmFnZSA8LSBhZ25lcyh4ID0gZGF0b3Nfc2luX25hLCBtZXRob2QgPSBcImF2ZXJhZ2VcIilcbnBsb3QoYWduZXNfYXZlcmFnZSkgIyBDdWFuZG8gdmVhbW9zIGVzcGFjaW9zIGVudHJlIGxhcyBtdWVzdHJhcywgZXMgbGEgc2VwYXJhY2lvbiBlbnRyZSBjbHVzdGVycy4gRXMgRElGSUNJTCBkZSB2ZXIuXG5gYGAifQ== -->
+<pre class="r"><code>library(cluster)
+agnes_average &lt;- agnes(x = datos_sin_na, method = &quot;average&quot;)
+plot(agnes_average) # Cuando veamos espacios entre las muestras, es la separacion entre clusters. Es DIFICIL de ver.</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Con Average, se ven 2 ó 3 clusters. Donde más claro lo vemos es con el método “complete”, así que creamos los <em>clusters</em> vistos con <em>COLORES</em>. Esos colores los pintamos sobre los pesos que ya habiamos calculado para PCA (de las componentes PC1 y PC2).</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29tcGxldGVfM19jbHVzdGVycz1jdXRyZWUoYWduZXNfY29tcGxldGUsMylcbnBsb3QocGNhX3Blc29zLGNvbD1jb21wbGV0ZV8zX2NsdXN0ZXJzKVxuYGBgIn0= -->
+<pre class="r"><code>complete_3_clusters=cutree(agnes_complete,3)
+plot(pca_pesos,col=complete_3_clusters)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="regresion-lineal-simple" class="section level3">
+<h3>REGRESIÓN LINEAL SIMPLE</h3>
+<p>Link: <a href="http://rpubs.com/joser/RegresionSimple" class="uri">http://rpubs.com/joser/RegresionSimple</a> Datos entrada:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ3Jhc2FzX3RhYmxhIDwtIHJlYWQudGFibGUoJ2h0dHA6Ly92ZXJzby5tYXQudWFtLmVzL35qb3Nlci5iZXJyZW5kZXJvL2RhdG9zL0VkYWRQZXNvR3Jhc2FzLnR4dCcsIGhlYWRlciA9IFRSVUUpXG5uYW1lcyhncmFzYXNfdGFibGEpXG5wYWlycyhncmFzYXNfdGFibGEpXG5jb3IoZ3Jhc2FzX3RhYmxhKVxuYGBgIn0= -->
+<pre class="r"><code>grasas_tabla &lt;- read.table('http://verso.mat.uam.es/~joser.berrendero/datos/EdadPesoGrasas.txt', header = TRUE)
+names(grasas_tabla)
+pairs(grasas_tabla)
+cor(grasas_tabla)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Vemos correlación (0.83) entre las variables edad y grasas, como era de esperar a simple vista. El gráfico muestra también la relación lineal (a ojo).</p>
+<p>Recta de mínimos cuadrados: Usamos un MODELO LINEAL (lm) para calcular una regresión lineal muy sencilla, de grasas respecto de la edad: <span class="math inline">\(y =102.575+5.321*x\)</span></p>
+<p>O mejor aun: <span class="math inline">\(y = 102.575 (+/-29.6376) + 5.321(+/-0.7243) * x\)</span></p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVncmVzaW9uIDwtIGxtKGdyYXNhcyB+IGVkYWQsIGRhdGEgPSBncmFzYXNfdGFibGEpICNncmFzYXMgZGVwZW5kaWVudGUgZGUgbGEgZWRhZFxuc3VtbWFyeShyZWdyZXNpb24pXG5cbnBsb3QoZ3Jhc2FzX3RhYmxhJGVkYWQsIGdyYXNhc190YWJsYSRncmFzYXMsIHhsYWI9J0VkYWQnLCB5bGFiPSdHcmFzYXMnKVxuYWJsaW5lKHJlZ3Jlc2lvbilcbmBgYCJ9 -->
+<pre class="r"><code>regresion &lt;- lm(grasas ~ edad, data = grasas_tabla) #grasas dependiente de la edad
+summary(regresion)
+
+plot(grasas_tabla$edad, grasas_tabla$grasas, xlab='Edad', ylab='Grasas')
+abline(regresion)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Vemos que el R<sup>2</sup> es 0.7012 –&gt; Bondad de la recta de ajuste.</p>
+<div id="prediccion-para-nuevas-entradas" class="section level4">
+<h4>PREDICCION PARA NUEVAS ENTRADAS:</h4>
+<p>Usar la recta:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubnVldmFzLmVkYWRlcyA8LSBkYXRhLmZyYW1lKGVkYWQgPSBzZXEoMzAsIDUwKSlcbnByZWRpY2Npb25fbnVldmE8LXByZWRpY3QocmVncmVzaW9uLCBudWV2YXMuZWRhZGVzKVxucHJlZGljY2lvbl9udWV2YVxuYGBgIn0= -->
+<pre class="r"><code>nuevas.edades &lt;- data.frame(edad = seq(30, 50))
+prediccion_nueva&lt;-predict(regresion, nuevas.edades)
+prediccion_nueva</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="explicacion-del-modelo-de-regresion-simple" class="section level4">
+<h4>Explicación del modelo de regresión simple:</h4>
+<ul>
+<li>La columna t-value es el estadístico t –&gt; Cociente entre cada estimador y su error típico. Permite realizar los contrastes de hipótesis nula (que sean 0) –&gt; H<sub>0</sub>:β<sub>0</sub>=0 y H<sub>0</sub>:β<sub>1</sub>=0</li>
+<li>Los p-valores aparecen en la columna Pr(&gt;|t|) –&gt; Probabilidad de superar el umbral –&gt; Como son muy pequeños (menores que 0.01 ó 0.05, utilizados normalmente) ==&gt; Se rechazan ambas hipótesis nulas.</li>
+<li>El estimador de la desviación típica (σ) de los errores aparece como Residual standard error y su valor en el ejemplo es 43.5</li>
+<li>Los intervalos de confianza para los parámetros se obtienen con el comando confint. El parámetro level permite elegir el nivel de confianza (por defecto es 0.95):</li>
+</ul>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29uZmludChyZWdyZXNpb24pXG5jb25maW50KHJlZ3Jlc2lvbiwgbGV2ZWwgPSAwLjkwKVxuYGBgIn0= -->
+<pre class="r"><code>confint(regresion)
+confint(regresion, level = 0.90)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Los “intervalos de confianza para la respuesta media” y los “intervalos de predicción para la respuesta” se pueden obtener usando el comando predict. Por ejemplo, el siguiente código calcula y representa los dos tipos de intervalos para el rango de edades que va de 20 a 60 años (los de predicción en rojo):</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubnVldmFzLmVkYWRlcyA8LSBkYXRhLmZyYW1lKGVkYWQgPSBzZXEoMjAsIDYwKSlcbiMgR3JhZmljbyBkZSBkaXNwZXJzaW9uIHkgcmVjdGFcbnBsb3QoZ3Jhc2FzX3RhYmxhJGVkYWQsIGdyYXNhc190YWJsYSRncmFzYXMsIHhsYWI9J0VkYWQnLCB5bGFiPSdHcmFzYXMnKVxuYWJsaW5lKHJlZ3Jlc2lvbilcblxuIyBJbnRlcnZhbG9zIGRlIGNvbmZpYW56YSBkZSBsYSByZXNwdWVzdGEgbWVkaWE6XG4jIGljIGVzIHVuYSBtYXRyaXogY29uIHRyZXMgY29sdW1uYXM6IGxhIHByaW1lcmEgZXMgbGEgcHJlZGljY2lvbiwgbGFzIG90cmFzIGRvcyBzb24gbG9zIGV4dHJlbW9zIGRlbCBpbnRlcnZhbG9cbmljIDwtIHByZWRpY3QocmVncmVzaW9uLCBudWV2YXMuZWRhZGVzLCBpbnRlcnZhbCA9ICdjb25maWRlbmNlJylcbmxpbmVzKG51ZXZhcy5lZGFkZXMkZWRhZCwgaWNbLCAyXSwgbHR5ID0gMilcbmxpbmVzKG51ZXZhcy5lZGFkZXMkZWRhZCwgaWNbLCAzXSwgbHR5ID0gMilcblxuIyBJbnRlcnZhbG9zIGRlIHByZWRpY2Npb25cbmljIDwtIHByZWRpY3QocmVncmVzaW9uLCBudWV2YXMuZWRhZGVzLCBpbnRlcnZhbCA9ICdwcmVkaWN0aW9uJylcbmxpbmVzKG51ZXZhcy5lZGFkZXMkZWRhZCwgaWNbLCAyXSwgbHR5ID0gMiwgY29sID0gJ3JlZCcpXG5saW5lcyhudWV2YXMuZWRhZGVzJGVkYWQsIGljWywgM10sIGx0eSA9IDIsIGNvbCA9ICdyZWQnKVxuYGBgIn0= -->
+<pre class="r"><code>nuevas.edades &lt;- data.frame(edad = seq(20, 60))
+# Grafico de dispersion y recta
+plot(grasas_tabla$edad, grasas_tabla$grasas, xlab='Edad', ylab='Grasas')
+abline(regresion)
+
+# Intervalos de confianza de la respuesta media:
+# ic es una matriz con tres columnas: la primera es la prediccion, las otras dos son los extremos del intervalo
+ic &lt;- predict(regresion, nuevas.edades, interval = 'confidence')
+lines(nuevas.edades$edad, ic[, 2], lty = 2)
+lines(nuevas.edades$edad, ic[, 3], lty = 2)
+
+# Intervalos de prediccion
+ic &lt;- predict(regresion, nuevas.edades, interval = 'prediction')
+lines(nuevas.edades$edad, ic[, 2], lty = 2, col = 'red')
+lines(nuevas.edades$edad, ic[, 3], lty = 2, col = 'red')</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="analisis-de-la-varianza" class="section level4">
+<h4>Análisis de la varianza:</h4>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYW5vdmEocmVncmVzaW9uKVxuYGBgIn0= -->
+<pre class="r"><code>anova(regresion)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Diagnóstico del modelo:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVzaWR1b3MgPC0gcnN0YW5kYXJkKHJlZ3Jlc2lvbilcbnZhbG9yZXMuYWp1c3RhZG9zIDwtIGZpdHRlZChyZWdyZXNpb24pXG5wbG90KHZhbG9yZXMuYWp1c3RhZG9zLCByZXNpZHVvcylcblxuI1BydWViYSBkZSBub3JtYWxpZGFkIChzZW5jaWxsYSkgcGFyYSBzYWJlciBzaSBsYSBtdWVzdHJhIHRpZW5lIHVuYSBkaXN0cmlidWNpb24gTk9STUFMXG5xcW5vcm0ocmVzaWR1b3MpXG5xcWxpbmUocmVzaWR1b3MpXG5gYGAifQ== -->
+<pre class="r"><code>residuos &lt;- rstandard(regresion)
+valores.ajustados &lt;- fitted(regresion)
+plot(valores.ajustados, residuos)
+
+#Prueba de normalidad (sencilla) para saber si la muestra tiene una distribucion NORMAL
+qqnorm(residuos)
+qqline(residuos)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Como tiene pocas muestras, podríamos haber pintado una t-Student encima, para poder comparar.</p>
+<p>Otras pruebas de normalidad –&gt; Kolmogorov-Smirnov y Shapiro-Wilk.</p>
+</div>
+<div id="ejemplo-interesante" class="section level4">
+<h4>Ejemplo interesante:</h4>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxueCA8LSBybm9ybSg1MCk7ICB5IDwtIHJub3JtKDUwKTsgIHBsb3QoeCx5KTsgbHMoKTsgcm0oeCx5KVxuXG54IDwtIDE6MjBcbncgPC0gMSArIHNxcnQoeCkvMiAjZGVzdmlhY2lvbmVzIGVzdGFuZGFyIChwZXNvcylcbmR1bW15IDwtLSBkYXRhLmZyYW1lKHg9eCwgeT0geCArIHcqcm5vcm0oeCkpXG5kdW1teVxuXG5mbSA8LSBsbSh5fngsIGRhdGE9ZHVtbXkpICNzaW1wbGUgbGluZWFyIHJlZ3Jlc3Npb25cbnN1bW1hcnkoZm0pXG5cbmZtMSA8LSBsbSh5fngsIGRhdGE9ZHVtbXksIHdlaWdodD0xL3deMikgI3dlaWdodGVkIHJlZ3Jlc3Npb25cbnN1bW1hcnkoZm0xKVxuXG5hdHRhY2goZHVtbXkpICNoYWNlbW9zIHZpc2libGVzIGxhcyBjb2x1bW5hcyBkZWwgZGF0YWZyYW1lIFxubHJmIDwtbG93ZXNzKHgseSwgZiA9IDIvMywgaXRlciA9IDMsIGRlbHRhID0gMC4wMSAqIGRpZmYocmFuZ2UoeCkpKSAjRnVuY2lvbiBkZSByZWdyZXNpb24gbG9jYWwgbm8gcGFyYW1ldHJpY2E6IExPV0VTUyBzbW9vdGhlciAobG9jYWxseS13ZWlnaHRlZCBwb2x5bm9taWFsIHJlZ3Jlc3Npb24pXG5zdW1tYXJ5KGxyZilcbnBsb3QoeCx5KVxubGluZXMoeCwgbHJmJHkpICNwaW50YW1vcyBsYSBsaW5lYSBkZSBsYSByZWdyZXNpP24gbGluZWFsXG5cbmFibGluZSgwLDEsIGx0eT0zKSAjbGluZWEgZGUgcmVncmVzaW9uIHZlcmRhZGVyYSAoaW50ZXJjZXB0IDAsIHNsb3BlPTEpIChsaW5lYSBkZSBwdW50b3MpXG5hYmxpbmUoY29lZihmbSkpICNsaW5lYSBkZSByZWdyZXNpb24gc2luIHBlc29zXG5hYmxpbmUoY29lZihmbTEpLCBjb2w9XCJyZWRcIikgI2xpbmVhIGRlIHJlZ3Jlc2lvbiBjb24gcGVzb3NcblxuZGV0YWNoKClcblxucGxvdCggZml0dGVkKGZtKSwgcmVzaWQoZm0pLCB4bGFiPVwiRml0dGVkIHZhbHVlc1wiLCB5bGFiPVwiUmVzaWR1YWxzXCIsIG1haW49XCJSZXNpZHVhbHMgdnMgRml0dGVkXCIgKSAjQW5hbGlzaXMgZGUgaGV0ZXJvZGljaWRhZFxucXFub3JtKCByZXNpZChmbSksIG1haW49XCJSZXNpZHVhbHMgUmFua2l0IFBsb3RcIiApICNBbmFsaXNpcyBkZSBza2V3bmVzcywga3VydG9zaXMgeSBvdXRsaWVycyAobm8gbXV5IHV0aWwgZW4gZXN0ZSBjYXNvKVxucm0oIGZtLCBmbTEsIGxyZiwgeCwgZHVtbXkpICNsaW1waWV6YSBkZSB2YXJpYWJsZXNcbmBgYCJ9 -->
+<pre class="r"><code>x &lt;- rnorm(50);  y &lt;- rnorm(50);  plot(x,y); ls(); rm(x,y)
+
+x &lt;- 1:20
+w &lt;- 1 + sqrt(x)/2 #desviaciones estandar (pesos)
+dummy &lt;-- data.frame(x=x, y= x + w*rnorm(x))
+dummy
+
+fm &lt;- lm(y~x, data=dummy) #simple linear regression
+summary(fm)
+
+fm1 &lt;- lm(y~x, data=dummy, weight=1/w^2) #weighted regression
+summary(fm1)
+
+attach(dummy) #hacemos visibles las columnas del dataframe 
+lrf &lt;-lowess(x,y, f = 2/3, iter = 3, delta = 0.01 * diff(range(x))) #Funcion de regresion local no parametrica: LOWESS smoother (locally-weighted polynomial regression)
+summary(lrf)
+plot(x,y)
+lines(x, lrf$y) #pintamos la linea de la regresi?n lineal
+
+abline(0,1, lty=3) #linea de regresion verdadera (intercept 0, slope=1) (linea de puntos)
+abline(coef(fm)) #linea de regresion sin pesos
+abline(coef(fm1), col=&quot;red&quot;) #linea de regresion con pesos
+
+detach()
+
+plot( fitted(fm), resid(fm), xlab=&quot;Fitted values&quot;, ylab=&quot;Residuals&quot;, main=&quot;Residuals vs Fitted&quot; ) #Analisis de heterodicidad
+qqnorm( resid(fm), main=&quot;Residuals Rankit Plot&quot; ) #Analisis de skewness, kurtosis y outliers (no muy util en este caso)
+rm( fm, fm1, lrf, x, dummy) #limpieza de variables</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+</div>
+<div id="cran-intro.ap.8.2." class="section level2">
+<h2>CRAN-INTRO.ap.8.2.</h2>
+<p>Lo básico:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYXR0YWNoKGZhaXRoZnVsKVxuXG5zdW1tYXJ5KGVydXB0aW9ucylcbmZpdmVudW0oZXJ1cHRpb25zKSAjUGludGEgdW4gXCJkaWJ1am9cIiBoZWNobyBjb24gbnVtZXJvcywgcXVlIHBhcmVjZSB1biBoaXN0b2dyYW1hXG5zdGVtKGVydXB0aW9ucylcbmBgYCJ9 -->
+<pre class="r"><code>attach(faithful)
+
+summary(eruptions)
+fivenum(eruptions) #Pinta un &quot;dibujo&quot; hecho con numeros, que parece un histograma
+stem(eruptions)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Dibujos:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaGlzdChlcnVwdGlvbnMsc2VxKGZyb209MS42LCB0bz01LjIsIGJ5PTAuMiksIHByb2JhYmlsaXR5ID0gVFJVRSlcbmxpbmVzKGRlbnNpdHkoZXJ1cHRpb25zLCBidz0wLjEpKVxucnVnKGVydXB0aW9ucylcbmBgYCJ9 -->
+<pre class="r"><code>hist(eruptions,seq(from=1.6, to=5.2, by=0.2), probability = TRUE)
+lines(density(eruptions, bw=0.1))
+rug(eruptions)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>La función de densidad (CDF) es:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGxvdChlY2RmKGVydXB0aW9ucyksIGRvLnBvaW50cz1GQUxTRSwgdmVydGljYWxzID0gVFJVRSlcbmBgYCJ9 -->
+<pre class="r"><code>plot(ecdf(eruptions), do.points=FALSE, verticals = TRUE)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Si cogemos sólo aquellos con X&gt;3:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZXJ1cGNpb25lc19sYXJnYXM8LWVydXB0aW9uc1tlcnVwdGlvbnM+M11cbmhpc3QoZXJ1cGNpb25lc19sYXJnYXMpXG5wbG90KGVjZGYoZXJ1cGNpb25lc19sYXJnYXMpLCBkby5wb2ludHM9RkFMU0UsIHZlcnRpY2FscyA9IFRSVUUpXG54PC1zZXEoMywgNS40LCAwLjAxKVxuXG4jVXNhbmRvIGxhIGRpc3RyaWJ1Y2lvbiBOT1JNQUwgKG5vcm0pXG5saW5lcyh4LCBwbm9ybSh4LCBtZWFuID0gbWVhbihlcnVwY2lvbmVzX2xhcmdhcyksIHNkPXNxcnQodmFyKGVydXBjaW9uZXNfbGFyZ2FzKSkpLCBsdHk9MykgICNsaW5lYSBkZSBwdW50b3MobHR5PTMpXG5gYGAifQ== -->
+<pre class="r"><code>erupciones_largas&lt;-eruptions[eruptions&gt;3]
+hist(erupciones_largas)
+plot(ecdf(erupciones_largas), do.points=FALSE, verticals = TRUE)
+x&lt;-seq(3, 5.4, 0.01)
+
+#Usando la distribucion NORMAL (norm)
+lines(x, pnorm(x, mean = mean(erupciones_largas), sd=sqrt(var(erupciones_largas))), lty=3)  #linea de puntos(lty=3)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<div id="pruebas-de-normalidad" class="section level3">
+<h3>PRUEBAS DE NORMALIDAD:</h3>
+<ol style="list-style-type: decimal">
+<li>Q-Q (Quantile-Quantile)</li>
+</ol>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFyKHB0eT1cInNcIikgI3BpbnRhIGxhIGNhamEgY3VhZHJhZGEgKGVuIHZleiBkZSBxdWUgc2VhIHJlY3Rhbmd1bGFyIHBvciBkZWZlY3RvKVxucXFub3JtKGVydXBjaW9uZXNfbGFyZ2FzKVxucXFsaW5lKGVydXBjaW9uZXNfbGFyZ2FzKVxuXG4jTGEgQ09NUEFSQU1PUyBjb24gdW5hIHQtU3R1ZGVudCBkZSA1IGdyYWRvcyBkZSBsaWJlcnRhZDpcbnB1bnRvc190X3N0dWRlbnQgPC0gcnQoMjUwLCBkZiA9IDUpXG5xcW5vcm0ocHVudG9zX3Rfc3R1ZGVudClcbnFxbGluZShwdW50b3NfdF9zdHVkZW50KVxuXG4jUGludGFtb3MgZWwgcXFwbG90XG5xcXBsb3QocXQoIHBwb2ludHMoMjUwKSwgZGY9NSApLCBwdW50b3NfdF9zdHVkZW50LCB4bGFiID0gXCJRUXBsb3QgcGFyYSBsYSBkZW5zaWRhZCB0LVN0dWRlbnRcIilcbnFxbGluZShwdW50b3NfdF9zdHVkZW50KVxuYGBgIn0= -->
+<pre class="r"><code>par(pty=&quot;s&quot;) #pinta la caja cuadrada (en vez de que sea rectangular por defecto)
+qqnorm(erupciones_largas)
+qqline(erupciones_largas)
+
+#La COMPARAMOS con una t-Student de 5 grados de libertad:
+puntos_t_student &lt;- rt(250, df = 5)
+qqnorm(puntos_t_student)
+qqline(puntos_t_student)
+
+#Pintamos el qqplot
+qqplot(qt( ppoints(250), df=5 ), puntos_t_student, xlab = &quot;QQplot para la densidad t-Student&quot;)
+qqline(puntos_t_student)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<ol start="2" style="list-style-type: decimal">
+<li>Test Shapiro-Wilk:</li>
+</ol>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2hhcGlyby50ZXN0KGVydXBjaW9uZXNfbGFyZ2FzKVxuYGBgIn0= -->
+<pre class="r"><code>shapiro.test(erupciones_largas)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<ol start="3" style="list-style-type: decimal">
+<li>Test Kolmogorov-Smirnov:</li>
+</ol>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxua3MudGVzdChlcnVwY2lvbmVzX2xhcmdhcywgXCJwbm9ybVwiLCBtZWFuPW1lYW4oZXJ1cGNpb25lc19sYXJnYXMpLCBzZD1zcXJ0KHZhcihlcnVwY2lvbmVzX2xhcmdhcykpKVxuYGBgIn0= -->
+<pre class="r"><code>ks.test(erupciones_largas, &quot;pnorm&quot;, mean=mean(erupciones_largas), sd=sqrt(var(erupciones_largas)))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+</div>
+</div>
+
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiTUkgRVNUVURJTyBTT0JSRSBSIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCiMjIyBWYWxvcmVzIE5BIChtaXNzaW5nIHZhbHVlcykgeSBjw7NtbyByZWxsZW5hcmxvcwpQYXJ0aW1vcyBkZSB1bm8gZGUgbG9zIGRhdGFzZXRzIGRlIHBydWViYXMgcXVlIGhheSBlbiBSU3R1ZGlvLgpgYGB7cn0KI2xpYnJhcnkoaGVscD0iZGF0YXNldHMiKSAjbGlzdGEgY29tcGxldGEgKGNvZ2VyZW1vcyBlbCBkYXRhc2V0IGxsYW1hZG8gYXR0ZW51LCBwb3IgZWplbXBsbykKZGF0YShhdHRlbnUpCmF0dGFjaChhdHRlbnUpCmhlbHAoYXR0ZW51KQpib3hwbG90KGF0dGVudSwgY2V4LmF4aXM9MC41KSAKYGBgClZlbW9zIHF1ZSBsYSB2YXJpYWJsZSBkaXN0IGVzIGFzaW1ldHJpY2EgeSB0aWVuZSBvdXRsaWVycy4KVmFtb3MgcXVlIGxhcyB2YXJpYWJsZXMgbWFnIHkgYWNjZWwgc29uIGxlcHRvY8O6cnRpY2FzIChhcHJldGFkYXMgZW4gdG9ybm8gYSBsYSBtZWRpYSkKCmBgYHtyfQpzdW1tYXJ5KGF0dGVudSkKYGBgCgojIyMgTWF0cml6IGRlIHBhcmVqYXMgZGUgZmVhdHVyZXMgKENPUlJFTEFDSU9ORVMpCkhhY2Vtb3MgdW5hIGFuw6FsaXNpcyBleHBsb3JhdG9yaW8gZGUgbGFzIGNvcnJlbGFjaW9uZXMuCk1hdHJpeiBkZSBjb3JyZWxhY2lvbmVzIChlbnRyZSB2YXJpYWJsZXMpIHkgZnVuY2lvbiBkZSBkZW5zaWRhZCBkZSBwcm9iYWJpbGlkYWQgKHVuaXZhcmlhYmxlKToKYGBge3J9CmxpYnJhcnkoY2FyKQpzY2F0dGVycGxvdE1hdHJpeCh4PWF0dGVudSkKYGBgCk8gdGFtYmnDqW4gY29uc3RydWlybGEgdXNhbmRvIHVuYSBmdW5jacOzbiBwZXJzb25hbGl6YWRhIHBvciBub3NvdHJvczoKYGBge3J9CnBhaXJzKGF0dGVudSwgZ2FwPTAsIGxvd2VyLnBhbmVsID0gcGFuZWwuc21vb3RoLCB1cHBlci5wYW5lbCA9IGZ1bmN0aW9uKHgseSl7CiAgcGFuZWwuc21vb3RoKHgseSkKICBwYXIodXNyPWMoMCwxLDAsMSkpCiAgY29ycmVsYWNpb24gPC0gY29yKHgseSx1c2U9ImNvbXBsZXRlLm9icyIpCiAgdGV4dCgwLjYsMC43LGNvbD0iYmx1ZSIsIGNleD0xLjIsIHJvdW5kKGNvcnJlbGFjaW9uLCBkaWdpdHM9MikpCn0gICkKYGBgCkVzIGltcG9ydGFudGUgdmVyIHNpIGhheSBhbGd1bmEgY29ycmVsYWNpw7NuIGbDoWNpbG1lbnRlIHZpc2libGUgKGxpbmVhbC4uLikuCgpJRHMgZGUgbG9zIGVsZW1lbnRvcyBxdWUgdGllbmVuIHZhbG9yZXMgTkEgZW4gY3VhbHF1aWVyYSBkZSBzdXMgZmVhdHVyZXMgKGNvbHVtbmFzKToKYGBge3J9CndoaWNoKGlzLm5hKGF0dGVudSRldmVudCkpCndoaWNoKGlzLm5hKGF0dGVudSRtYWcpKQp3aGljaChpcy5uYShhdHRlbnUkc3RhdGlvbikpCndoaWNoKGlzLm5hKGF0dGVudSRkaXN0KSkKd2hpY2goaXMubmEoYXR0ZW51JGFjY2VsKSkKYGBgClZlbW9zIHF1ZSBzw7NsbyBsYSB2YXJpYWJsZSBzdGF0aW9uIHRpZW5lIHZhbG9yZXMgTkEuClRhbWJpw6luIHNlIHB1ZWRlbiBjb2dlciBzw7NsbyBsYXMgZmlsYXMgZW4gbGFzIHF1ZSB0b2RhcyBsYXMgZmVhdHVyZXMgZXN0w6FuIHJlbGxlbmFzIChzaW4gbmluZ8O6biB2YWxvciBOQSk6CmBgYHtyfQphdHRlbnVbY29tcGxldGUuY2FzZXMoYXR0ZW51KSxdCmBgYApTaSBxdWVyZW1vcyBFTElNSU5BUiBhcXVlbGxhcyBmaWxhcyAobWFyZ2luPTEgc2lnbmlmaWNhIFJPV1MpIHF1ZSB0ZW5nYW4gbcOhcyBkZSB1biB2YWxvciBOQToKMS4gQXBsaWNhciBsYSBmdW5jacOzbiBTVU0gc29icmUgZmlsYXMsIGNvbnRhbmRvIGVsIG7Dum1lcm8gZGUgZWxlbWVudG9zIE5BLgoyLiBTaSBoYXkgdW5vIG8gbcOhcywgc2FjbyBzdXMgw61uZGljZXMgKHdoaWNoKQozLiBDcmVvIHVuIHZlY3RvciBjb24gZXNvcyDDrW5kaWNlcyB5IHNlIGxvIHJlc3RvIGFsIGRhdGFzZXQgYXR0ZW51LgoKYGBge3J9CmZpbGFzX2Nvbl9uYSA8LSBhcHBseShhdHRlbnUsIE1BUkdJTiA9IDEsIEZVTiA9IGZ1bmN0aW9uKHgpeyBzdW0oaXMubmEoeCkpID49MX0pCmluZGljZXNfZGVfZmlsYXNfY29uX25hIDwtIHdoaWNoKGZpbGFzX2Nvbl9uYSkKZGF0b3Nfc2luaHVlY29zPWF0dGVudVsgLWMoIGluZGljZXNfZGVfZmlsYXNfY29uX25hICkgLCBdCmBgYAoKQ29tcHJvYmFtb3MgcXVlIHlhIG5vIGhheSBIVUVDT1MgKGNvbiBhbGfDum4gdmFsb3IgTkEpOgpgYGB7cn0KYXR0ZW51WyFjb21wbGV0ZS5jYXNlcyhkYXRvc19zaW5odWVjb3MpLF0KYGBgCiMjIyBBTkFMSVNJUyBERSBDT01QT05FTlRFUyBQUklOQ0lQQUxFUyAoUENBKQpTaSB0ZW5lbW9zIG11Y2hhcyBmZWF0dXJlcywgY29udmllbmUgcmVkdWNpcmxhcyBwYXJhIHF1ZSBlbCBhbsOhbGlzaXMgZGUgY29ycmVsYWNpb25lcyBzZWEgbcOhcyBzZW5jaWxsby4KRXMgTVVZIGltcG9ydGFudGUgaW5kaWNhciBxdWUgdHJhYmFqYW1vcyBjb24gbGEgbWF0cml6IGRlIGNvcnJlbGFjaW9uZXMgKGVuIHZleiBkZSBsYSBkZSBjb3Zhcmlhbnphcyk6IGNvcj1UUlVFCkFkZW3DoXMsIFBDIHPDs2xvIHRyYWJhamEgY29uIGZlYXR1cmVzIHF1ZSBzZWFuIE5VTUVSSUNBUywgYXPDrSBxdWUgZGViZW1vcyBjb21wcm9iYXIgcXVlIHRvZGFzIGxhcyBjb2x1bW5hcyAoZmVhdHVyZXMpIHNvbiBudW1lcmljYXMKYGBge3J9CmRyb3BzIDwtIGMoInN0YXRpb24iKQpkYXRvc19wYXJhX3BjYSA8LSBhdHRlbnVbICwgIShuYW1lcyhhdHRlbnUpICVpbiUgZHJvcHMpXQpkYXRvc19zaW5fbmEgPC0gbmEub21pdChkYXRvc19wYXJhX3BjYSkgIyBsaW1waWFyIGxvcyBOQQpzYXBwbHkoZGF0b3Nfc2luX25hLCBjbGFzcykgI2NsYXNlL21vZG8gZGUgY2FkYSBmZWF0dXJlCnNhcHBseShkYXRvc19zaW5fbmEsIHR5cGVvZikgI3RpcG8gZGUgY2FkYSBmZWF0dXJlCnBjYV9hdHRlbnUgPC0gcHJpbmNvbXAoZGF0b3Nfc2luX25hLCBjb3I9VFJVRSkgIApwY2FfYXR0ZW51CnBsb3QocGNhX2F0dGVudSkKc3VtbWFyeShwY2FfYXR0ZW51KQpiaXBsb3QocGNhX2F0dGVudSkgI1BDMiB2cyBQQzEKCiNMb3MgcGVzb3MgZGUgY2FkYSBpbmRpdmlkdW8gKGZpbGEpIHByb3llY3RhZG8gZW4gbGFzIGNvbXBvbmVudGVzIChQQzEsIFBDMi4uLikKcGNhX3Blc29zIDwtIHBjYV9hdHRlbnUkc2NvcmVzCnBjYV9wZXNvc19wYzFwYzIgPC0gcGNhX3Blc29zWywgMToyXSAjUGVzb3Mgc8OzbG8gZW4gbGFzIGNvbXBvbmVudGVzIHF1ZSBtw6FzIGluZmx1eWVuIGVuIGxhIHZhcmlhbnphIHRvdGFsCnBsb3QocGNhX3Blc29zX3BjMXBjMlssMV0sIHBjYV9wZXNvc19wYzFwYzJbLDJdKSAjbWlzbWEgZ3LDoWZpY2EgcXVlIHZlaWFtb3MgZW4gZWwgYmlwbG90CmBgYApWZW1vcyBxdWUgbGEgY29tcG9uZW50ZSAxIHRpZW5lIHVuIHBlc28gZGVsIDU0LjQxJSBzb2JyZSBsYXMgdmFyaWFuemFzOyBsYSAyIHRpZW5lIDI2LjklOyBldGMuCkNvZ2Vtb3MgbGEgUEMxIHkgUEMyLCBxdWUgc3VtYW4gdW4gODAlIGRlIGxhIGluZmx1ZW5jaWEgZW4gbGEgdmFyaWFuemEgdG90YWwuClZlbW9zIHRhbWJpw6luIGxvcyBwZXNvcyBxdWUgdGllbmVuIGxhcyB2YXJpYWJsZXMgZGUgZW50cmFkYSAoZmVhdHVyZXMpIGRlbnRybyBkZSBsYXMgY29tcG9uZW50ZXMgY29tcHVlc3RhcyAoUEMxLCBQQzIuLi4pLiwgbWlyYW5kbyBlbCBwbG90IGRlICpmbGVjaGFzKjoKLSBQQzEgKGVqZSBob3Jpem9udGFsKSBlc3TDoSBhZmVjdGFkYSBwb3IgbGFzIHZhcmlhYmxlczogZXZlbnQsIGRpc3QsIG1hZyB5IGFjY2VsLiAoZXMgZGVjaXIsIHBvciB0b2RhcyBsYXMgZmVhdHVyZXMgZGUgZW50cmFkYSwgcGVybyBlbiBwcm9wb3JjacOzbiBkaWZlcmVudGUpLgotIFBDMiAoZWplIHZlcnRpY2FsKTogCgoKIyMjIENMVVNURVJJTkcgKGhhYmllbmRvIGhlY2hvIFBDQSBhbnRlcykKVmFtb3MgYSBtb3N0cmFyIHVuIHN1YnRpcG8gZGUgImNsdXN0ZXJpbmcgamVyw6FycXVpY28iIGxsYW1hZG8gKkFnZ2xvbWVyYXRpdmUgTmVzdGluZyAoQUdORVMpKi4KSGF5IHRyZXMgdGlwb3MgZGUgbcOpdG9kb3MgZGUgdW5pw7NuIGVuIGNsdXN0ZXJpbmc6Ci0gU2luZ2xlIGxpbmthZ2U6IHNlZ8O6biBsYSBNSU5JTUEgZGlzdGFuY2lhIGVudHJlIGRvcyBlbGVtZW50b3MgZGUgY2x1c3RlcnMgZGlmZXJlbnRlcy4KLSBDb21wbGV0ZSBsaW5rYWdlOiBzZWfDum4gbGEgTUFYSU1BIGRpc3RhbmNpYSBlbnRyZSBkb3MgZWxlbWVudG9zIGRlIGNsdXN0ZXJzIGRpZmVyZW50ZXMuCi0gQXZlcmFnZSBsaW5rYWdlOiBzZWfDum4gbGEgZGlzdGFuY2lhIE1FRElBIGVudHJlIGRvcyBlbGVtZW50b3MgZGUgY2x1c3RlcnMgZGlmZXJlbnRlcy4KYGBge3J9CmxpYnJhcnkoY2x1c3RlcikKYWduZXNfc2luZ2xlIDwtIGFnbmVzKHggPSBkYXRvc19zaW5fbmEsIG1ldGhvZCA9ICJzaW5nbGUiKQpwbG90KGFnbmVzX3NpbmdsZSkgIyBDdWFuZG8gdmVhbW9zIGVzcGFjaW9zIGVudHJlIGxhcyBtdWVzdHJhcywgZXMgbGEgc2VwYXJhY2lvbiBlbnRyZSBjbHVzdGVycy4gRXMgRElGSUNJTCBkZSB2ZXIuCmBgYApDb24gU2luZ2xlLCB2ZW1vcyBxdWUgaGF5IDIgKMOzIGluY2x1c28gMykgY2x1c3RlcnMsIGZpasOhbmRvc2UgZW4gbG9zIGh1ZWNvcyBxdWUgaGF5IGVuIGVsIGdyw6FmaWNvICJiYW5uZXIiLCBxdWUgc2VwYXJhbiBhIGxvcyBjbHVzdGVycy4KYGBge3J9CmxpYnJhcnkoY2x1c3RlcikKYWduZXNfY29tcGxldGUgPC0gYWduZXMoeCA9IGRhdG9zX3Npbl9uYSwgbWV0aG9kID0gImNvbXBsZXRlIikKcGxvdChhZ25lc19jb21wbGV0ZSkgIyBDdWFuZG8gdmVhbW9zIGVzcGFjaW9zIGVudHJlIGxhcyBtdWVzdHJhcywgZXMgbGEgc2VwYXJhY2lvbiBlbnRyZSBjbHVzdGVycy4gRXMgRElGSUNJTCBkZSB2ZXIuCmBgYApDb24gQ29tcGxldGUsIHNlIHZlbiBjbGFyYW1lbnRlIDMgY2x1c3RlcnMuCmBgYHtyfQpsaWJyYXJ5KGNsdXN0ZXIpCmFnbmVzX2F2ZXJhZ2UgPC0gYWduZXMoeCA9IGRhdG9zX3Npbl9uYSwgbWV0aG9kID0gImF2ZXJhZ2UiKQpwbG90KGFnbmVzX2F2ZXJhZ2UpICMgQ3VhbmRvIHZlYW1vcyBlc3BhY2lvcyBlbnRyZSBsYXMgbXVlc3RyYXMsIGVzIGxhIHNlcGFyYWNpb24gZW50cmUgY2x1c3RlcnMuIEVzIERJRklDSUwgZGUgdmVyLgpgYGAKQ29uIEF2ZXJhZ2UsIHNlIHZlbiAyIMOzIDMgY2x1c3RlcnMuCkRvbmRlIG3DoXMgY2xhcm8gbG8gdmVtb3MgZXMgY29uIGVsIG3DqXRvZG8gImNvbXBsZXRlIiwgYXPDrSBxdWUgY3JlYW1vcyBsb3MgKmNsdXN0ZXJzKiB2aXN0b3MgY29uICpDT0xPUkVTKi4KRXNvcyBjb2xvcmVzIGxvcyBwaW50YW1vcyBzb2JyZSBsb3MgcGVzb3MgcXVlIHlhIGhhYmlhbW9zIGNhbGN1bGFkbyBwYXJhIFBDQSAoZGUgbGFzIGNvbXBvbmVudGVzIFBDMSB5IFBDMikuCmBgYHtyfQpjb21wbGV0ZV8zX2NsdXN0ZXJzPWN1dHJlZShhZ25lc19jb21wbGV0ZSwzKQpwbG90KHBjYV9wZXNvcyxjb2w9Y29tcGxldGVfM19jbHVzdGVycykKYGBgCgoKCiMjIyBSRUdSRVNJw5NOIExJTkVBTCBTSU1QTEUKTGluazogPGh0dHA6Ly9ycHVicy5jb20vam9zZXIvUmVncmVzaW9uU2ltcGxlPgpEYXRvcyBlbnRyYWRhOgpgYGB7cn0KZ3Jhc2FzX3RhYmxhIDwtIHJlYWQudGFibGUoJ2h0dHA6Ly92ZXJzby5tYXQudWFtLmVzL35qb3Nlci5iZXJyZW5kZXJvL2RhdG9zL0VkYWRQZXNvR3Jhc2FzLnR4dCcsIGhlYWRlciA9IFRSVUUpCm5hbWVzKGdyYXNhc190YWJsYSkKcGFpcnMoZ3Jhc2FzX3RhYmxhKQpjb3IoZ3Jhc2FzX3RhYmxhKQpgYGAKVmVtb3MgY29ycmVsYWNpw7NuICgwLjgzKSBlbnRyZSBsYXMgdmFyaWFibGVzIGVkYWQgeSBncmFzYXMsIGNvbW8gZXJhIGRlIGVzcGVyYXIgYSBzaW1wbGUgdmlzdGEuIEVsIGdyw6FmaWNvIG11ZXN0cmEgdGFtYmnDqW4gbGEgcmVsYWNpw7NuIGxpbmVhbCAoYSBvam8pLgoKUmVjdGEgZGUgbcOtbmltb3MgY3VhZHJhZG9zOgpVc2Ftb3MgdW4gTU9ERUxPIExJTkVBTCAobG0pIHBhcmEgY2FsY3VsYXIgdW5hIHJlZ3Jlc2nDs24gbGluZWFsIG11eSBzZW5jaWxsYSwgZGUgZ3Jhc2FzIHJlc3BlY3RvIGRlIGxhIGVkYWQ6ICR5ID0xMDIuNTc1KzUuMzIxKngkCgpPIG1lam9yIGF1bjogICR5ID0gMTAyLjU3NSAoKy8tMjkuNjM3NikgKyA1LjMyMSgrLy0wLjcyNDMpICogeCQKCmBgYHtyfQpyZWdyZXNpb24gPC0gbG0oZ3Jhc2FzIH4gZWRhZCwgZGF0YSA9IGdyYXNhc190YWJsYSkgI2dyYXNhcyBkZXBlbmRpZW50ZSBkZSBsYSBlZGFkCnN1bW1hcnkocmVncmVzaW9uKQoKcGxvdChncmFzYXNfdGFibGEkZWRhZCwgZ3Jhc2FzX3RhYmxhJGdyYXNhcywgeGxhYj0nRWRhZCcsIHlsYWI9J0dyYXNhcycpCmFibGluZShyZWdyZXNpb24pCmBgYApWZW1vcyBxdWUgZWwgUl4yXiBlcyAwLjcwMTIgLS0+IEJvbmRhZCBkZSBsYSByZWN0YSBkZSBhanVzdGUuCgojIyMjIFBSRURJQ0NJT04gUEFSQSBOVUVWQVMgRU5UUkFEQVM6ClVzYXIgbGEgcmVjdGE6CmBgYHtyfQpudWV2YXMuZWRhZGVzIDwtIGRhdGEuZnJhbWUoZWRhZCA9IHNlcSgzMCwgNTApKQpwcmVkaWNjaW9uX251ZXZhPC1wcmVkaWN0KHJlZ3Jlc2lvbiwgbnVldmFzLmVkYWRlcykKcHJlZGljY2lvbl9udWV2YQpgYGAKCiMjIyMgRXhwbGljYWNpw7NuIGRlbCBtb2RlbG8gZGUgcmVncmVzacOzbiBzaW1wbGU6Ci0gTGEgY29sdW1uYSB0LXZhbHVlIGVzIGVsIGVzdGFkw61zdGljbyB0IC0tPiBDb2NpZW50ZSBlbnRyZSBjYWRhIGVzdGltYWRvciB5IHN1IGVycm9yIHTDrXBpY28uIFBlcm1pdGUgcmVhbGl6YXIgbG9zIGNvbnRyYXN0ZXMgZGUgaGlww7N0ZXNpcyBudWxhIChxdWUgc2VhbiAwKSAtLT4gSH4wfjrOsn4wfj0wIHkgSH4wfjrOsn4xfj0wIAotIExvcyAgcC12YWxvcmVzIGFwYXJlY2VuIGVuIGxhIGNvbHVtbmEgUHIoPnx0fCkgLS0+IFByb2JhYmlsaWRhZCBkZSBzdXBlcmFyIGVsIHVtYnJhbCAtLT4gQ29tbyBzb24gbXV5IHBlcXVlw7FvcyAobWVub3JlcyBxdWUgMC4wMSDDsyAwLjA1LCB1dGlsaXphZG9zIG5vcm1hbG1lbnRlKSA9PT4gU2UgcmVjaGF6YW4gYW1iYXMgaGlww7N0ZXNpcyBudWxhcy4KLSBFbCBlc3RpbWFkb3IgZGUgbGEgZGVzdmlhY2nDs24gdMOtcGljYSAoz4MpIGRlIGxvcyBlcnJvcmVzIGFwYXJlY2UgY29tbyBSZXNpZHVhbCBzdGFuZGFyZCBlcnJvciB5IHN1IHZhbG9yIGVuIGVsIGVqZW1wbG8gZXMgNDMuNQotIExvcyBpbnRlcnZhbG9zIGRlIGNvbmZpYW56YSBwYXJhIGxvcyBwYXLDoW1ldHJvcyBzZSBvYnRpZW5lbiBjb24gZWwgY29tYW5kbyBjb25maW50LiBFbCBwYXLDoW1ldHJvIGxldmVsIHBlcm1pdGUgZWxlZ2lyIGVsIG5pdmVsIGRlIGNvbmZpYW56YSAocG9yIGRlZmVjdG8gZXMgMC45NSk6CmBgYHtyfQpjb25maW50KHJlZ3Jlc2lvbikKY29uZmludChyZWdyZXNpb24sIGxldmVsID0gMC45MCkKYGBgCgpMb3MgImludGVydmFsb3MgZGUgY29uZmlhbnphIHBhcmEgbGEgcmVzcHVlc3RhIG1lZGlhIiB5IGxvcyAiaW50ZXJ2YWxvcyBkZSBwcmVkaWNjacOzbiBwYXJhIGxhIHJlc3B1ZXN0YSIgc2UgcHVlZGVuIG9idGVuZXIgdXNhbmRvIGVsIGNvbWFuZG8gcHJlZGljdC4gClBvciBlamVtcGxvLCBlbCBzaWd1aWVudGUgY8OzZGlnbyBjYWxjdWxhIHkgcmVwcmVzZW50YSBsb3MgZG9zIHRpcG9zIGRlIGludGVydmFsb3MgcGFyYSBlbCByYW5nbyBkZSBlZGFkZXMgcXVlIHZhIGRlIDIwIGEgNjAgYcOxb3MgKGxvcyBkZSBwcmVkaWNjacOzbiBlbiByb2pvKToKCmBgYHtyfQpudWV2YXMuZWRhZGVzIDwtIGRhdGEuZnJhbWUoZWRhZCA9IHNlcSgyMCwgNjApKQojIEdyYWZpY28gZGUgZGlzcGVyc2lvbiB5IHJlY3RhCnBsb3QoZ3Jhc2FzX3RhYmxhJGVkYWQsIGdyYXNhc190YWJsYSRncmFzYXMsIHhsYWI9J0VkYWQnLCB5bGFiPSdHcmFzYXMnKQphYmxpbmUocmVncmVzaW9uKQoKIyBJbnRlcnZhbG9zIGRlIGNvbmZpYW56YSBkZSBsYSByZXNwdWVzdGEgbWVkaWE6CiMgaWMgZXMgdW5hIG1hdHJpeiBjb24gdHJlcyBjb2x1bW5hczogbGEgcHJpbWVyYSBlcyBsYSBwcmVkaWNjaW9uLCBsYXMgb3RyYXMgZG9zIHNvbiBsb3MgZXh0cmVtb3MgZGVsIGludGVydmFsbwppYyA8LSBwcmVkaWN0KHJlZ3Jlc2lvbiwgbnVldmFzLmVkYWRlcywgaW50ZXJ2YWwgPSAnY29uZmlkZW5jZScpCmxpbmVzKG51ZXZhcy5lZGFkZXMkZWRhZCwgaWNbLCAyXSwgbHR5ID0gMikKbGluZXMobnVldmFzLmVkYWRlcyRlZGFkLCBpY1ssIDNdLCBsdHkgPSAyKQoKIyBJbnRlcnZhbG9zIGRlIHByZWRpY2Npb24KaWMgPC0gcHJlZGljdChyZWdyZXNpb24sIG51ZXZhcy5lZGFkZXMsIGludGVydmFsID0gJ3ByZWRpY3Rpb24nKQpsaW5lcyhudWV2YXMuZWRhZGVzJGVkYWQsIGljWywgMl0sIGx0eSA9IDIsIGNvbCA9ICdyZWQnKQpsaW5lcyhudWV2YXMuZWRhZGVzJGVkYWQsIGljWywgM10sIGx0eSA9IDIsIGNvbCA9ICdyZWQnKQpgYGAKIyMjIyBBbsOhbGlzaXMgZGUgbGEgdmFyaWFuemE6CmBgYHtyfQphbm92YShyZWdyZXNpb24pCmBgYAoKRGlhZ27Ds3N0aWNvIGRlbCBtb2RlbG86CmBgYHtyfQpyZXNpZHVvcyA8LSByc3RhbmRhcmQocmVncmVzaW9uKQp2YWxvcmVzLmFqdXN0YWRvcyA8LSBmaXR0ZWQocmVncmVzaW9uKQpwbG90KHZhbG9yZXMuYWp1c3RhZG9zLCByZXNpZHVvcykKCiNQcnVlYmEgZGUgbm9ybWFsaWRhZCAoc2VuY2lsbGEpIHBhcmEgc2FiZXIgc2kgbGEgbXVlc3RyYSB0aWVuZSB1bmEgZGlzdHJpYnVjaW9uIE5PUk1BTApxcW5vcm0ocmVzaWR1b3MpCnFxbGluZShyZXNpZHVvcykKYGBgCkNvbW8gdGllbmUgcG9jYXMgbXVlc3RyYXMsIHBvZHLDrWFtb3MgaGFiZXIgcGludGFkbyB1bmEgdC1TdHVkZW50IGVuY2ltYSwgcGFyYSBwb2RlciBjb21wYXJhci4KCk90cmFzIHBydWViYXMgZGUgbm9ybWFsaWRhZCAtLT4gS29sbW9nb3Jvdi1TbWlybm92ICB5IFNoYXBpcm8tV2lsay4KCiMjIyMgRWplbXBsbyBpbnRlcmVzYW50ZTogCgpgYGB7cn0KeCA8LSBybm9ybSg1MCk7ICB5IDwtIHJub3JtKDUwKTsgIHBsb3QoeCx5KTsgbHMoKTsgcm0oeCx5KQoKeCA8LSAxOjIwCncgPC0gMSArIHNxcnQoeCkvMiAjZGVzdmlhY2lvbmVzIGVzdGFuZGFyIChwZXNvcykKZHVtbXkgPC0tIGRhdGEuZnJhbWUoeD14LCB5PSB4ICsgdypybm9ybSh4KSkKZHVtbXkKCmZtIDwtIGxtKHl+eCwgZGF0YT1kdW1teSkgI3NpbXBsZSBsaW5lYXIgcmVncmVzc2lvbgpzdW1tYXJ5KGZtKQoKZm0xIDwtIGxtKHl+eCwgZGF0YT1kdW1teSwgd2VpZ2h0PTEvd14yKSAjd2VpZ2h0ZWQgcmVncmVzc2lvbgpzdW1tYXJ5KGZtMSkKCmF0dGFjaChkdW1teSkgI2hhY2Vtb3MgdmlzaWJsZXMgbGFzIGNvbHVtbmFzIGRlbCBkYXRhZnJhbWUgCmxyZiA8LWxvd2Vzcyh4LHksIGYgPSAyLzMsIGl0ZXIgPSAzLCBkZWx0YSA9IDAuMDEgKiBkaWZmKHJhbmdlKHgpKSkgI0Z1bmNpb24gZGUgcmVncmVzaW9uIGxvY2FsIG5vIHBhcmFtZXRyaWNhOiBMT1dFU1Mgc21vb3RoZXIgKGxvY2FsbHktd2VpZ2h0ZWQgcG9seW5vbWlhbCByZWdyZXNzaW9uKQpzdW1tYXJ5KGxyZikKcGxvdCh4LHkpCmxpbmVzKHgsIGxyZiR5KSAjcGludGFtb3MgbGEgbGluZWEgZGUgbGEgcmVncmVzaT9uIGxpbmVhbAoKYWJsaW5lKDAsMSwgbHR5PTMpICNsaW5lYSBkZSByZWdyZXNpb24gdmVyZGFkZXJhIChpbnRlcmNlcHQgMCwgc2xvcGU9MSkgKGxpbmVhIGRlIHB1bnRvcykKYWJsaW5lKGNvZWYoZm0pKSAjbGluZWEgZGUgcmVncmVzaW9uIHNpbiBwZXNvcwphYmxpbmUoY29lZihmbTEpLCBjb2w9InJlZCIpICNsaW5lYSBkZSByZWdyZXNpb24gY29uIHBlc29zCgpkZXRhY2goKQoKcGxvdCggZml0dGVkKGZtKSwgcmVzaWQoZm0pLCB4bGFiPSJGaXR0ZWQgdmFsdWVzIiwgeWxhYj0iUmVzaWR1YWxzIiwgbWFpbj0iUmVzaWR1YWxzIHZzIEZpdHRlZCIgKSAjQW5hbGlzaXMgZGUgaGV0ZXJvZGljaWRhZApxcW5vcm0oIHJlc2lkKGZtKSwgbWFpbj0iUmVzaWR1YWxzIFJhbmtpdCBQbG90IiApICNBbmFsaXNpcyBkZSBza2V3bmVzcywga3VydG9zaXMgeSBvdXRsaWVycyAobm8gbXV5IHV0aWwgZW4gZXN0ZSBjYXNvKQpybSggZm0sIGZtMSwgbHJmLCB4LCBkdW1teSkgI2xpbXBpZXphIGRlIHZhcmlhYmxlcwpgYGAKCiMjIENSQU4tSU5UUk8uYXAuOC4yLgpMbyBiw6FzaWNvOgpgYGB7cn0KYXR0YWNoKGZhaXRoZnVsKQoKc3VtbWFyeShlcnVwdGlvbnMpCmZpdmVudW0oZXJ1cHRpb25zKSAjUGludGEgdW4gImRpYnVqbyIgaGVjaG8gY29uIG51bWVyb3MsIHF1ZSBwYXJlY2UgdW4gaGlzdG9ncmFtYQpzdGVtKGVydXB0aW9ucykKYGBgCkRpYnVqb3M6CmBgYHtyfQpoaXN0KGVydXB0aW9ucyxzZXEoZnJvbT0xLjYsIHRvPTUuMiwgYnk9MC4yKSwgcHJvYmFiaWxpdHkgPSBUUlVFKQpsaW5lcyhkZW5zaXR5KGVydXB0aW9ucywgYnc9MC4xKSkKcnVnKGVydXB0aW9ucykKYGBgCkxhIGZ1bmNpw7NuIGRlIGRlbnNpZGFkIChDREYpIGVzOgpgYGB7cn0KcGxvdChlY2RmKGVydXB0aW9ucyksIGRvLnBvaW50cz1GQUxTRSwgdmVydGljYWxzID0gVFJVRSkKYGBgClNpIGNvZ2Vtb3Mgc8OzbG8gYXF1ZWxsb3MgY29uIFg+MzoKYGBge3J9CmVydXBjaW9uZXNfbGFyZ2FzPC1lcnVwdGlvbnNbZXJ1cHRpb25zPjNdCmhpc3QoZXJ1cGNpb25lc19sYXJnYXMpCnBsb3QoZWNkZihlcnVwY2lvbmVzX2xhcmdhcyksIGRvLnBvaW50cz1GQUxTRSwgdmVydGljYWxzID0gVFJVRSkKeDwtc2VxKDMsIDUuNCwgMC4wMSkKCiNVc2FuZG8gbGEgZGlzdHJpYnVjaW9uIE5PUk1BTCAobm9ybSkKbGluZXMoeCwgcG5vcm0oeCwgbWVhbiA9IG1lYW4oZXJ1cGNpb25lc19sYXJnYXMpLCBzZD1zcXJ0KHZhcihlcnVwY2lvbmVzX2xhcmdhcykpKSwgbHR5PTMpICAjbGluZWEgZGUgcHVudG9zKGx0eT0zKQpgYGAKCiMjIyBQUlVFQkFTIERFIE5PUk1BTElEQUQ6CgoxLiBRLVEgKFF1YW50aWxlLVF1YW50aWxlKQpgYGB7cn0KcGFyKHB0eT0icyIpICNwaW50YSBsYSBjYWphIGN1YWRyYWRhIChlbiB2ZXogZGUgcXVlIHNlYSByZWN0YW5ndWxhciBwb3IgZGVmZWN0bykKcXFub3JtKGVydXBjaW9uZXNfbGFyZ2FzKQpxcWxpbmUoZXJ1cGNpb25lc19sYXJnYXMpCgojTGEgQ09NUEFSQU1PUyBjb24gdW5hIHQtU3R1ZGVudCBkZSA1IGdyYWRvcyBkZSBsaWJlcnRhZDoKcHVudG9zX3Rfc3R1ZGVudCA8LSBydCgyNTAsIGRmID0gNSkKcXFub3JtKHB1bnRvc190X3N0dWRlbnQpCnFxbGluZShwdW50b3NfdF9zdHVkZW50KQoKI1BpbnRhbW9zIGVsIHFxcGxvdApxcXBsb3QocXQoIHBwb2ludHMoMjUwKSwgZGY9NSApLCBwdW50b3NfdF9zdHVkZW50LCB4bGFiID0gIlFRcGxvdCBwYXJhIGxhIGRlbnNpZGFkIHQtU3R1ZGVudCIpCnFxbGluZShwdW50b3NfdF9zdHVkZW50KQpgYGAKCjIuIFRlc3QgU2hhcGlyby1XaWxrOgpgYGB7cn0Kc2hhcGlyby50ZXN0KGVydXBjaW9uZXNfbGFyZ2FzKQpgYGAKCjMuIFRlc3QgS29sbW9nb3Jvdi1TbWlybm92OgpgYGB7cn0Ka3MudGVzdChlcnVwY2lvbmVzX2xhcmdhcywgInBub3JtIiwgbWVhbj1tZWFuKGVydXBjaW9uZXNfbGFyZ2FzKSwgc2Q9c3FydCh2YXIoZXJ1cGNpb25lc19sYXJnYXMpKSkKYGBgCgoKCg==</div>
 
 
 
