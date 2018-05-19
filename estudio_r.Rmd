@@ -18,6 +18,9 @@ Vamos que las variables mag y accel son leptocúrticas (apretadas en torno a la 
 summary(attenu)
 ```
 
+
+
+
 ### Matriz de parejas de features (CORRELACIONES)
 Hacemos una análisis exploratorio de las correlaciones.
 Matriz de correlaciones (entre variables) y funcion de densidad de probabilidad (univariable):
@@ -103,19 +106,19 @@ library(cluster)
 agnes_single <- agnes(x = datos_sin_na, method = "single")
 plot(agnes_single) # Cuando veamos espacios entre las muestras, es la separacion entre clusters. Es DIFICIL de ver.
 ```
-Con Single, vemos que hay 2 (ó incluso 3) clusters, fijándose en los huecos que hay en el gráfico "banner", que separan a los clusters.
+Con Single, vemos que hay 3 clusters (si height=50), fijándose en los huecos que hay en el gráfico "banner", que separan a los clusters.
 ```{r}
 library(cluster)
 agnes_complete <- agnes(x = datos_sin_na, method = "complete")
 plot(agnes_complete) # Cuando veamos espacios entre las muestras, es la separacion entre clusters. Es DIFICIL de ver.
 ```
-Con Complete, se ven claramente 3 clusters.
+Con Complete, se ven claramente 3 clusters (si height=200).
 ```{r}
 library(cluster)
 agnes_average <- agnes(x = datos_sin_na, method = "average")
 plot(agnes_average) # Cuando veamos espacios entre las muestras, es la separacion entre clusters. Es DIFICIL de ver.
 ```
-Con Average, se ven 2 ó 3 clusters.
+Con Average, se ven 3 clusters (si height=100).
 Donde más claro lo vemos es con el método "complete", así que creamos los *clusters* vistos con *COLORES*.
 Esos colores los pintamos sobre los pesos que ya habiamos calculado para PCA (de las componentes PC1 y PC2).
 ```{r}
@@ -147,6 +150,8 @@ summary(regresion)
 
 plot(grasas_tabla$edad, grasas_tabla$grasas, xlab='Edad', ylab='Grasas')
 abline(regresion)
+
+plot(regresion)
 ```
 Vemos que el R^2^ es 0.7012 --> Bondad de la recta de ajuste.
 
@@ -297,6 +302,28 @@ shapiro.test(erupciones_largas)
 ```{r}
 ks.test(erupciones_largas, "pnorm", mean=mean(erupciones_largas), sd=sqrt(var(erupciones_largas)))
 ```
+
+
+### REGRESION LOGISTICA
+
+```{r}
+challenger <- read.table('http://verso.mat.uam.es/~joser.berrendero/datos/challenger.txt', header = TRUE)
+table(challenger$defecto)
+
+colores <- NULL
+colores[challenger$defecto==0] <- 'green'
+colores[challenger$defecto==1] <- 'red'
+plot(challenger$temp, challenger$defecto, pch = 21, bg = colores, xlab = 'Temperatura', ylab = 'Probabilidad de defectos')
+legend('bottomleft', c('No defecto', 'Si defecto'), pch = 21, col = c('green', 'red'))
+```
+
+
+### DISTRIBUICIONES DE PROBABILIDAD
+
+Hay muchas: binomial (binom), Poisson (pois), normal (norm), exponencial (exp), t-Student (t), chi-cuadrado (chisq), F (f)...
+
+
+
 
 
 
