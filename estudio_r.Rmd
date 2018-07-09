@@ -70,7 +70,7 @@ attenu[!complete.cases(datos_sinhuecos),]
 ### ANALISIS DE COMPONENTES PRINCIPALES (PCA)
 Si tenemos muchas features, conviene reducirlas para que el análisis de correlaciones sea más sencillo.
 Es MUY importante indicar que trabajamos con la matriz de correlaciones (en vez de la de covarianzas): cor=TRUE
-Además, PC sólo trabaja con features que sean NUMERICAS, así que debemos comprobar que todas las columnas (features) son numericas
+Además, PCA sólo trabaja con features que sean NUMERICAS, así que debemos comprobar que todas las columnas (features) son numericas
 ```{r}
 drops <- c("station")
 datos_para_pca <- attenu[ , !(names(attenu) %in% drops)]
@@ -89,18 +89,23 @@ pca_pesos_pc1pc2 <- pca_pesos[, 1:2] #Pesos sólo en las componentes que más in
 plot(pca_pesos_pc1pc2[,1], pca_pesos_pc1pc2[,2]) #misma gráfica que veiamos en el biplot
 ```
 Vemos que la componente 1 tiene un peso del 54.41% sobre las varianzas; la 2 tiene 26.9%; etc.
-Cogemos la PC1 y PC2, que suman un 80% de la influencia en la varianza total.
-Vemos también los pesos que tienen las variables de entrada (features) dentro de las componentes compuestas (PC1, PC2...)., mirando el plot de *flechas*:
+Cogemos la PC1 y PC2, que suman un 81% de la influencia en la varianza total.
+
+Vemos también los pesos que tienen las variables de entrada (features) dentro de las componentes compuestas (PC1, PC2...)., mirando el plot de **flechas**:
+
 - PC1 (eje horizontal) está afectada por las variables: event, dist, mag y accel. (es decir, por todas las features de entrada, pero en proporción diferente).
-- PC2 (eje vertical): 
+- PC2 (eje vertical): está afectada por mag y accel, principalmente.
 
 
 ### CLUSTERING (habiendo hecho PCA antes)
 Vamos a mostrar un subtipo de "clustering jerárquico" llamado *Agglomerative Nesting (AGNES)*.
+
 Hay tres tipos de métodos de unión en clustering:
-- Single linkage: según la MINIMA distancia entre dos elementos de clusters diferentes.
-- Complete linkage: según la MAXIMA distancia entre dos elementos de clusters diferentes.
-- Average linkage: según la distancia MEDIA entre dos elementos de clusters diferentes.
+
+- *Single linkage*: según la MINIMA distancia entre dos elementos de clusters diferentes.
+- *Complete linkage*: según la MAXIMA distancia entre dos elementos de clusters diferentes.
+- *Average linkage*: según la distancia MEDIA entre dos elementos de clusters diferentes.
+
 ```{r}
 library(cluster)
 agnes_single <- agnes(x = datos_sin_na, method = "single")
@@ -167,7 +172,7 @@ prediccion_nueva
 - La columna t-value es el estadístico t --> Cociente entre cada estimador y su error típico. Permite realizar los contrastes de hipótesis nula (que sean 0) --> H~0~:β~0~=0 y H~0~:β~1~=0 
 - Los  p-valores aparecen en la columna Pr(>|t|) --> Probabilidad de superar el umbral --> Como son muy pequeños (menores que 0.01 ó 0.05, utilizados normalmente) ==> Se rechazan ambas hipótesis nulas.
 - El estimador de la desviación típica (σ) de los errores aparece como Residual standard error y su valor en el ejemplo es 43.5
-- Los intervalos de confianza para los parámetros se obtienen con el comando confint. El parámetro level permite elegir el nivel de confianza (por defecto es 0.95):
+- Los intervalos de confianza para los parámetros se obtienen con el comando **confint**. El parámetro level permite elegir el nivel de confianza (por defecto es 0.95):
 ```{r}
 confint(regresion)
 confint(regresion, level = 0.90)
@@ -185,8 +190,8 @@ abline(regresion)
 # Intervalos de confianza de la respuesta media:
 # ic es una matriz con tres columnas: la primera es la prediccion, las otras dos son los extremos del intervalo
 ic <- predict(regresion, nuevas.edades, interval = 'confidence')
-lines(nuevas.edades$edad, ic[, 2], lty = 2)
-lines(nuevas.edades$edad, ic[, 3], lty = 2)
+lines(nuevas.edades$edad, ic[, 2], lty = 2, col = 'green')
+lines(nuevas.edades$edad, ic[, 3], lty = 2, col = 'green')
 
 # Intervalos de prediccion
 ic <- predict(regresion, nuevas.edades, interval = 'prediction')
@@ -213,44 +218,43 @@ Como tiene pocas muestras, podríamos haber pintado una t-Student encima, para p
 Otras pruebas de normalidad --> Kolmogorov-Smirnov  y Shapiro-Wilk.
 
 #### Ejemplo interesante: 
-
 ```{r}
-x <- rnorm(50);  y <- rnorm(50);  plot(x,y); ls(); rm(x,y)
-
 x <- 1:20
 w <- 1 + sqrt(x)/2 #desviaciones estandar (pesos)
-dummy <-- data.frame(x=x, y= x + w*rnorm(x))
-dummy
+y <- x + w*rnorm(x)
 
-fm <- lm(y~x, data=dummy) #simple linear regression
+dummy <-- data.frame(x=x, y=y)
+
+fm <- lm(y~x, data=dummy) #MODELO simple linear regression
 summary(fm)
 
-fm1 <- lm(y~x, data=dummy, weight=1/w^2) #weighted regression
+fm1 <- lm(y~x, data=dummy, weight=1/w^2) #MODELO con weighted regression
 summary(fm1)
-
-attach(dummy) #hacemos visibles las columnas del dataframe 
+```
+Resto del análisis:
+```{r}
+attach(dummy) #hacemos visibles las columnas del dataframe, para trabajar directamente con sus nombres.
 lrf <-lowess(x,y, f = 2/3, iter = 3, delta = 0.01 * diff(range(x))) #Funcion de regresion local no parametrica: LOWESS smoother (locally-weighted polynomial regression)
 summary(lrf)
 plot(x,y)
-lines(x, lrf$y) #pintamos la linea de la regresi?n lineal
+lines(x, lrf$y, col="blue") #pintamos la linea de la REGRESION LINEAL
 
-abline(0,1, lty=3) #linea de regresion verdadera (intercept 0, slope=1) (linea de puntos)
-abline(coef(fm)) #linea de regresion sin pesos
+abline(0,1, lty=3, col="magenta") #linea de regresion verdadera (intercept 0, slope=1) (linea de puntos)
+abline(coef(fm), col="green") #linea de regresion sin pesos
 abline(coef(fm1), col="red") #linea de regresion con pesos
 
 detach()
 
 plot( fitted(fm), resid(fm), xlab="Fitted values", ylab="Residuals", main="Residuals vs Fitted" ) #Analisis de heterodicidad
 qqnorm( resid(fm), main="Residuals Rankit Plot" ) #Analisis de skewness, kurtosis y outliers (no muy util en este caso)
-rm( fm, fm1, lrf, x, dummy) #limpieza de variables
+#rm( fm, fm1, lrf, x, dummy) #limpieza de variables
 ```
-
-## CRAN-INTRO.ap.8.2.
+## Manual de CRAN-INTRO.ap.8.2
 Lo básico:
 ```{r}
 attach(faithful)
 
-summary(eruptions)
+summary(eruptions) #Como he hecho attach, evito hacer esto: summary(faithful$eruptions)
 fivenum(eruptions) #Pinta un "dibujo" hecho con numeros, que parece un histograma
 stem(eruptions)
 ```
@@ -318,14 +322,15 @@ legend('bottomleft', c('No defecto', 'Si defecto'), pch = 21, col = c('green', '
 ```
 
 
-### DISTRIBUICIONES DE PROBABILIDAD
-
+### DISTRIBUCIONES DE PROBABILIDAD
 Hay muchas: binomial (binom), Poisson (pois), normal (norm), exponencial (exp), t-Student (t), chi-cuadrado (chisq), F (f)...
 
 
 ### MAQUINAS DE VECTOR SOPORTE (SVM)
+Busca el hiperplano que separe las observaciones según su clases (clasificación).
+Buena explicación: <https://www.youtube.com/watch?v=ImhjKyc88x0>
 
-Link: <http://rpubs.com/joser/svm>
+Link de mi ejemplo: <http://rpubs.com/joser/svm>
 ```{r}
 library(MASS)
 library(e1071)
@@ -335,7 +340,7 @@ load(url('http://www.uam.es/joser.berrendero/datos/practica-svm-io.RData'))
 head(breast.cancer2)
 ```
 
-Gráficamente:
+Gráficamente, pintamos la correlación entre las 2 features de entrada:
 ```{r}
 # Prepara los datos
 x <- cbind(breast.cancer2$x.smoothness, breast.cancer2$x.concavepoints)
@@ -353,7 +358,7 @@ plot(x, pch = pchn, bg = colores, xlab='smoothness', ylab='concavepoints')
 ```
 
 #### SVM lineal
-Siendo la variable *y* un factor, queremos predecir usando el resto de features.
+Siendo la variable **y** un factor, queremos predecir usando el resto de features.
 
 Para calcular la regla de clasificación SVM lineal con C=10, se usa la función svm del paquete e1071. 
 El primer argumento y~. indica que la variable y (que debe ser necesariamente un factor) se desea predecir en términos del resto de variables del fichero. La sintaxis es similar a la que utilizaríamos para ajustar un modelo lineal o un modelo de regresión logística.
@@ -365,9 +370,8 @@ Con el fin de estimar la probabilidad de clasificar erróneamente una observaci�
 Finalmente, scale=FALSE se usa para usar los datos no estandarizados (por defecto, sí se estandarizan).
 ```{r}
 C <- 10
-svm.lineal <- svm(y~., data=breast.cancer2, kernel='linear', cost=C, cross=2, scale=FALSE)
+svm.lineal <- svm(y~., data=breast.cancer2, kernel='linear', cost=C, cross=2, scale=FALSE) #Su type es C-classification porque y es un factor
 summary(svm.lineal)
-
 
 x.svm <- x[svm.lineal$index,]
 w <- crossprod(x.svm, svm.lineal$coefs)
@@ -375,24 +379,395 @@ w0 <- svm.lineal$rho
 
 plot(x, pch = pchn, bg = colores, xlab='smoothness', ylab='concavepoints')
 abline(w0/w[2], -w[1]/w[2], lwd=2, col='blue')
+
+#Estadisticas: precisión y cobertura
+table(predict(svm.lineal), breast.cancer2$y, dnn=c("Prediction", "Actual"))
+library(caret)
+confusionMatrix(breast.cancer2$y, predict(svm.lineal))
 ```
 Indica que hay 258 vectores soporte.
 Usando validación cruzada con la muestra dividida en dos partes se estima una probabilidad de acierto en la clasificación de aproximadamente el 88%. Podemos cambiar el parámetro de penalización para ver si estos valores aumentan o disminuyen.
 
 #### SVM cuadrático
 ```{r}
-svm.cuadratico <- svm(y~., data=breast.cancer2, kernel='polynomial', degree=2, gamma=1, coef0=1, cost=C, cross=10, scale=FALSE)
+svm.cuadratico <- svm(formula = y~., data = breast.cancer2, kernel='polynomial', degree=2, gamma=1, coef0=1, cost=C, cross=10, scale=FALSE)
 summary(svm.cuadratico)
 
-
-x.svm <- x[svm.cuadratico$index,]
-w <- crossprod(x.svm, svm.cuadratico$coefs)
-w0 <- svm.cuadratico$rho
-
-plot(x, pch = pchn, bg = colores, xlab='smoothness', ylab='concavepoints')
-abline(w0/w[2], -w[1]/w[2], lwd=2, col='blue')
+#Estadisticas: precisión y cobertura
+table(predict(svm.cuadratico), breast.cancer2$y, dnn=c("Prediction", "Actual"))
+library(caret)
+confusionMatrix(breast.cancer2$y, predict(svm.cuadratico))
 ```
 
-Se ve que es peor...
+#### SVM radial
+```{r}
+svm.radial <- svm(formula = y~., data = breast.cancer2, kernel='radial', degree=2, gamma=1, coef0=1, cost=C, cross=10, scale=FALSE)
+summary(svm.radial)
+
+#Estadisticas: precisión y cobertura
+table(predict(svm.radial), breast.cancer2$y, dnn=c("Prediction", "Actual"))
+library(caret)
+confusionMatrix(breast.cancer2$y, predict(svm.radial))
+```
+Se ve que es mejor el kernel LINEAL (grado), pero debemos mirar el *accuracy* y *cobertura* --> Gana CUADRATICO, parece.
+
+
+
+### ARBOLES DE DECISIÓN
+Link: <https://www.youtube.com/watch?v=mgh4KdbYHv0>
+Es un algoritmo de CLASIFICACIÓN supervisada. La variable dependiente predicha puede ser:
+
+- Cuantitativa --> Árbol de REGRESIÓN
+- Cualitativa --> Árbol de CLASIFICACIÓN
+
+#### Cargar dataset
+```{r}
+library(rpart) #Algoritmo para árbol de decisión
+library(rpart.plot) #Plot de árbol de decisión
+library("C50") #paquete que tiene el dataset de entrada y el algoritmo (rpart)
+data(churn) #DATASET de ejemplo sobre CHURN (clientes que abandonan una empresa)
+```
+#### Preparar set de datos, dividiendo en entrenamiento y test
+```{r}
+churn_juntos <- rbind(churnTest, churnTrain) #junta filas
+head(churn_juntos, n=3L) #FEATURES disponibles (5000x20). Mostramos 3 filas
+churn <- churn_juntos[, c(4,7,8,16,19,17,20)] #Usaremos solo algunas columnas (features)
+names(churn) # nombres en ingles
+names(churn) <- c("Tiene plan internacional", "Minutos al dia", "Llamadas al dia", "Minutos internacionales", "Reclamaciones", "Llamadas internacionales", "Cancelacion") #los renombro a nombres en espanhol
+
+ind <- sample(2, nrow(churn), replace=TRUE, prob=c(0.6, 0.4)) #train (60%) y test (40%)
+trainData <- churn[ind==1, ] #train
+testData <- churn[ind==2, ] #test
+```
+#### Crear árbol de decisión
+```{r}
+ArbolRpart <- rpart(Cancelacion ~ ., method="class", data=trainData) #Formula: variable dependiente (Cancelacion) depende todas las otras
+```
+
+#### Gráficos
+```{r}
+print(ArbolRpart)                         
+rpart.plot(ArbolRpart,extra=4)  # extra=4:probabilidad de observaciones por clase
+
+printcp(ArbolRpart)             # estadísticas de resultados
+plotcp(ArbolRpart)              # evolución del error a medida que se incrementan los nodos
+```
+
+```{r}
+# Podado del árbol
+pArbolRpart<- prune(ArbolRpart, cp= ArbolRpart$cptable[which.min(ArbolRpart$cptable[,"xerror"]),"CP"])
+pArbolRpart<- prune(ArbolRpart, cp= 0.011111)
+printcp(pArbolRpart)
+```
+
+#### Predice las cancelaciones en testData 
+```{r}
+# Validamos la capacidad de predicción del árbol con el fichero de validación
+testPredRpart <- predict(ArbolRpart, newdata = testData, type = "class")
+
+# Visualizamos una matriz de confusión
+table(testPredRpart, testData$Cancelacion)
+```
+
+#### Estadística del modelo  
+```{r}
+# Calculamos el % de aciertos
+sum(testPredRpart == testData$Cancelacion) / length(testData$Cancelacion)*100
+```
+
+
+### SVM (otro ejemplo)
+Modelo SVM sobre datos de iris:
+```{r}
+data(iris)
+attach(iris)
+
+## classification mode
+# default with factor response:
+model <- svm(Species ~ ., data = iris)
+
+# alternatively the traditional interface:
+x <- subset(iris, select = -Species)
+y <- Species
+model <- svm(x, y) 
+
+print(model)
+summary(model)
+```
+Testeo con datos de entrenamiento (claro, el modelo está muy ajustado para ellos):
+```{r}
+# test with train data
+pred <- predict(model, x)
+# (same as:)
+#pred <- fitted(model)
+
+# Check accuracy:
+table(pred, y)
+
+# compute decision values and probabilities:
+pred <- predict(model, x, decision.values = TRUE)
+attr(pred, "decision.values")[1:4,]
+
+# visualize (classes by color, SV by crosses):
+distancias_escaladas <- cmdscale(dist(iris[,-5]))
+plot(distancias_escaladas,
+     col = as.integer(iris[,5]),
+     pch = c("o","+")[1:150 %in% model$index + 1])
+
+```
+Modelo de REGRESION en 2 dimensiones:
+```{r}
+## try regression mode on two dimensions
+
+# create data
+x <- seq(0.1, 5, by = 0.05)
+y <- log(x) + rnorm(x, sd = 0.2)
+
+# estimate model and predict input values
+m   <- svm(x, y)
+summary(m)
+new <- predict(m, x)
+
+# visualize
+plot(x, y)
+points(x, log(x), col = 2)
+points(x, new, col = 4)
+
+## density-estimation
+
+```
+Creamos otras features con distribución normal y modelamos:
+```{r}
+# create 2-dim. normal with rho=0:
+X <- data.frame(a = rnorm(1000), b = rnorm(1000))
+attach(X)
+
+# MODELO:
+#traditional way:
+#m <- svm(X, gamma = 0.1)
+# formula interface:
+m <- svm(~., data = X, gamma = 0.1)
+# Otra forma:X <- data.frame(a = rnorm(1000), b = rnorm(1000))
+attach(X)
+
+#m <- svm(~ a + b, gamma = 0.1)
+
+summary(m)
+
+# test:
+newdata <- data.frame(a = c(0, 4), b = c(0, 4))
+predict(m, newdata)
+
+# visualize:
+plot(X, col = 1:1000 %in% m$index + 1, xlim = c(-5,5), ylim=c(-5,5))
+points(newdata, pch = "+", col = 2, cex = 5)
+
+# weights: (example not particularly sensible)
+i2 <- iris
+levels(i2$Species)[3] <- "versicolor"
+summary(i2$Species)
+wts <- 100 / table(i2$Species)
+wts
+m <- svm(Species ~ ., data = i2, class.weights = wts)
+```
+
+
+### SVM (ejemplo perros y gatos)
+Link: <https://www.youtube.com/watch?v=ImhjKyc88x0>
+```{r}
+library(e1071)
+data(cats, package = 'MASS') # Features: sexo (sex), peso (bwt), peso_corazon (hwt)
+
+#Datasets: train y test
+ind <- sample(x=2, size = nrow(cats), replace = TRUE, prob = c(0.7,0.3)) #vector 1:144 de índices. Sus valores están en el rango entre 1:x; en este caso, los unos aparecerán un 70% y los doses un 30%.
+testset <- cats[ind == 1,] #Coge las filas de CATS en aquellos indices que 'ind' toma valor 1
+trainset <- cats[ind == 2,] #Coge las filas de CATS en aquellos indices que 'ind' toma valor 2
+
+#Entrenamos el modelo
+modelo_svm <- svm(Sex~., data=trainset, kernel = "radial")
+prediccion <- predict(modelo_svm, newdata = testset[-1])
+
+#Resultado y porcentaje de acierto
+plot(modelo_svm, cats)
+MC <- table(testset[,1], prediccion) #matriz de confusión
+MC
+acierto <- ( sum(diag(MC)) )/ (sum(MC))
+acierto
+
+```
+
+
+###Otro ejemplo completo
+Link: <https://machinelearningmastery.com/how-to-estimate-model-accuracy-in-r-using-the-caret-package/>
+
+####Data split:
+```{r}
+# load the libraries
+library(caret)
+library(klaR)
+# load the iris dataset
+data(iris)
+# define an 80%/20% train/test split of the dataset
+split=0.80
+trainIndex <- createDataPartition(iris$Species, p=split, list=FALSE)
+data_train <- iris[ trainIndex,]
+data_test <- iris[-trainIndex,]
+# train a naive bayes model
+model <- NaiveBayes(Species~., data=data_train)
+# make predictions
+x_test <- data_test[,1:4]
+y_test <- data_test[,5]
+predictions <- predict(model, x_test)
+# summarize results
+confusionMatrix(predictions$class, y_test)
+```
+####Bootstrap:
+```{r}
+# load the library
+library(caret)
+# load the iris dataset
+data(iris)
+# define training control
+train_control <- trainControl(method="boot", number=100)
+# train the model
+model <- train(Species~., data=iris, trControl=train_control, method="nb")
+# summarize results
+print(model)
+```
+####k-fold Cross Validation:
+```{r}
+# load the library
+library(caret)
+# load the iris dataset
+data(iris)
+# define training control
+train_control <- trainControl(method="cv", number=10)
+# fix the parameters of the algorithm
+grid <- expand.grid(.fL=c(0), .usekernel=c(FALSE))
+# train the model
+model <- train(Species~., data=iris, trControl=train_control, method="nb")#, tuneGrid=grid
+# summarize results
+print(model)
+```
+####Repeated k-fold Cross Validation:
+```{r}
+# load the library
+library(caret)
+# load the iris dataset
+data(iris)
+# define training control
+train_control <- trainControl(method="repeatedcv", number=10, repeats=3)
+# train the model
+model <- train(Species~., data=iris, trControl=train_control, method="nb")
+# summarize results
+print(model)
+```
+####Leave One Out Cross Validation:
+```{r}
+# load the library
+library(caret)
+# load the iris dataset
+data(iris)
+# define training control
+train_control <- trainControl(method="LOOCV")
+# train the model
+model <- train(Species~., data=iris, trControl=train_control, method="nb")
+# summarize results
+print(model)
+```
+
+###Otro ejemplo SVM vs RPART:
+```{r}
+library(e1071)
+library(rpart)
+
+#DATOS:
+data(Ozone, package="mlbench")
+
+## Split en Datasets (train y test)
+index     <- 1:nrow(Ozone)
+tercio <- trunc(length(index)/3) #usamos un 30% para test
+testindex <- sample(index, tercio, replace = FALSE, prob = NULL)
+testset   <- na.omit(Ozone[testindex,]) #TEST Quita las filas que tengan ALGUN valor NA
+trainset  <- na.omit(Ozone[-testindex,])#TRAIN Quita las filas que tengan ALGUN valor NA
+
+#Columna TARGET
+indice_target <- which( colnames(trainset) == "V4" )
+
+## svm (MAQUINAS VECTOR SOPORTE) para REGRESIÓN NO LINEAL
+svm.model <- svm(formula = V4 ~ ., data = trainset, cost = 1000, gamma = 0.0001)
+svm.pred  <- predict(svm.model, testset[,-indice_target])
+svm_error <- crossprod(svm.pred - testset[,indice_target]) / length(testindex)
+svm_error
+
+## rpart (ARBOLES DE REGRESION) para REGRESIÓN NO LINEAL
+rpart.model <- rpart(formula = V4 ~ ., data = trainset)
+rpart.pred  <- predict(rpart.model, testset[,-indice_target])
+rpart_error <- crossprod(rpart.pred - testset[,indice_target]) / length(testindex)
+rpart_error
+```
+
+###ENSEMBLING
+Link: <https://www.datacamp.com/community/tutorials/ensemble-r-machine-learning>
+
+```{r}
+library("SuperLearner")
+
+library(MASS) #Data
+# Train and test sets
+train <- Pima.tr
+test <- Pima.te
+
+head(train)
+summary(train)
+help(Pima.tr)
+```
+El campo target es *type* (que es un factor), que indica si el paciente tiene diabetes o no.
+```{r}
+#Since the type column was a factor, R will encode it to 1 and 2, but this is not what you want: ideally, you would like to work with the type encoded as 0 and 1, which are "No" and "Yes", respectively. In the above code chunk, you subtract 1 from the whole set to get your 0-1 encoding. R will also encode this in the factor order.
+y <- as.numeric(train[,8]) - 1
+ytest <- as.numeric(test[,8]) - 1
+
+#Predictores y respuestas
+x <- data.frame(train[,1:7])
+xtest <- data.frame(test[,1:7])
+
+#MODELOS DISPONIBLES:
+listWrappers()
+
+#Modelos, usando cross-validation (con 5 intentos):
+set.seed(150)
+model <- SuperLearner(y, 
+                      x,
+                      SL.library=list("SL.ranger",
+                                      "SL.ksvm",
+                                      "SL.ipredbagg",
+                                      "SL.bayesglm"))
+# Return the model
+summary(model)
+
+```
+
+Predicciones con SuperLearner:
+```{r}
+predictions <- predict.SuperLearner(model, newdata = xtest)
+
+#the overall ensemble predictions
+head(predictions$pred)
+
+#the individual library predictions:
+head(predictions$library.predict)
+
+
+#En el caso de clasificación binomial, debemos fijar un umbral (por ejemplo 0.5) y ver los que caen en cada lado
+library(dplyr)
+conv.preds <- ifelse(predictions$pred >= 0.5,1,0)
+library(caret)
+#cm <- confusionMatrix(data =conv.preds, reference = ytest)
+#cm # Se obtiene  0.7921687 accuracy
+```
+
+
+
 
 

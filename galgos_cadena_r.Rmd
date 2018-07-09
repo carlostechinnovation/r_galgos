@@ -8,49 +8,194 @@ OUTPUT: análisis, datasets elaborados y modelos
 
 Analisis de datasets en proyecto GALGOS.
 
-Importando datos desde MySQL:
-
+#### Conexion a BBDD MySQL
 ```{r}
 library(RMySQL)
-#library(DBI)
+library(DBI)
 
 #Conexiones ya abiertas
 conexiones_abiertas <- dbListConnections(MySQL())
 #Cerramos las conexiones abiertas
 #dbDisconnect(dbListConnections(MySQL())[[1]])
 
-mydb = dbConnect(MySQL(), user='root', password='datos1986', dbname='datos_desa', host='localhost')
+mydb = dbConnect(MySQL(), user = 'root', password = 'datos1986', dbname = 'datos_desa', host = 'localhost')
 on.exit(dbDisconnect(mydb))
 #dbListTables(mydb)  #Todas las tablas que tengo
-
-#Datasets INPUT
-pasado_f_rs <- dbSendQuery(mydb, "SELECT * FROM datos_desa.tb_ds_pasado_train_features_TOTAL LIMIT 1000000")
+```
+#### Features (INPUT)
+```{r}
+pasado_f_rs <- dbSendQuery(mydb, "SELECT * FROM datos_desa.tb_ds_pasado_train_features_TOTAL LIMIT 10000")
 pasado_f <- dbFetch(pasado_f_rs, n = -1)
-dbClearResult(pasado_f_rs)
+#dbClearResult(pasado_f_rs)
 
-pasado_t_rs <- dbSendQuery(mydb, "SELECT * FROM datos_desa.tb_ds_pasado_train_targets_TOTAL LIMIT 1000000")
-pasado_t <- dbFetch(pasado_t_rs, n = -1)
-dbClearResult(pasado_t_rs)
+#EXCEPCION Quito columna mes
+mes_indice <- which( colnames(pasado_f) == "mes_norm" )
+pasado_f <- pasado_f[, -mes_indice]
 
-#Sacar DATASETS para usarlos despues
 attach(pasado_f)
+names(pasado_f)
+paste("FEATURE MATRIX: ", nrow(pasado_f), "x", ncol(pasado_f))
+```
+#### Targets (INPUT)
+```{r}
+pasado_t_rs <- dbSendQuery(mydb, "SELECT * FROM datos_desa.tb_ds_pasado_train_targets_TOTAL LIMIT 10000")
+pasado_t <- dbFetch(pasado_t_rs, n = -1)
+#dbClearResult(pasado_t_rs)
 attach(pasado_t)
+names(pasado_t)
+paste("TARGET MATRIX: ", nrow(pasado_t), "x", ncol(pasado_t))
 ```
 
 ## ANALISIS PRELIMINAR DE DATOS
-
 ```{r}
-head(pasado_f)
-boxplot(pasado_f, cex.axis=0.5) 
+#Juntar FEATURES y TARGET
+pasado_ft <- cbind(pasado_f, pasado_t)
 
-head(pasado_t)
-boxplot(pasado_t, cex.axis=0.5) 
+head(pasado_ft)
+boxplot(pasado_ft, cex.axis=0.5) 
 ```
 Vemos que hay variables con outliers y otras leptocúrticas (apretadas en torno a la media).
 ```{r}
-#summary(pasado_f)
-lapply(pasado_f, summary)
+#summary(pasado_ft)
+lapply(pasado_ft, summary)
 ```
+
+Creamos un modelo para cada tipo de DISTANCIA, para usar sólo las columnas útiles para esa distancia:
+```{r}
+col_cortas <- c("vel_real_cortas_mediana_norm", "vel_real_cortas_max_norm", "vel_going_cortas_mediana_norm", "vel_going_cortas_max_norm")
+col_medias <- c("vel_real_longmedias_mediana_norm", "vel_real_longmedias_max_norm", "vel_going_longmedias_mediana_norm", "vel_going_longmedias_max_norm")
+col_largas <- c("vel_real_largas_mediana_norm", "vel_real_largas_max_norm", "vel_going_largas_mediana_norm", "vel_going_largas_max_norm")
+
+#QUITAR las COLUMNAS que no son UTILES para esa DISTANCIA
+pasado_ft_cortas <- na.omit( pasado_ft[, !(names(pasado_ft) %in% col_medias | names(pasado_ft) %in% col_largas)] )
+colSums(is.na(pasado_ft_cortas)) #comprobamos que no hay missing data
+indices_sin_na_cortas <- as.numeric( na.action(pasado_ft_cortas) )
+paste("CORTAS:", nrow(pasado_ft_cortas), "x", ncol(pasado_ft_cortas))
+
+pasado_ft_medias <- na.omit( pasado_ft[, !(names(pasado_ft) %in% col_cortas | names(pasado_ft) %in% col_largas)] )
+colSums(is.na(pasado_ft_medias)) #comprobamos que no hay missing data
+indices_sin_na_medias <- as.numeric( na.action(pasado_ft_medias) )
+paste("MEDIAS:", nrow(pasado_ft_medias), "x", ncol(pasado_ft_medias))
+
+pasado_ft_largas <- na.omit( pasado_ft[, !(names(pasado_ft) %in% col_cortas | names(pasado_ft) %in% col_medias)] )
+colSums(is.na(pasado_ft_largas)) #comprobamos que no hay missing data
+indices_sin_na_largas <- as.numeric( na.action(pasado_ft_largas) )
+paste("LARGAS:", nrow(pasado_ft_largas), "x", ncol(pasado_ft_largas))
+```
+
+
+Analisis:
+```{r}
+
+
+analisis_modelos <- function(matrizentrada){
+  library(e1071) #SVM
+  library(rpart) #Regression trees
+  
+  ## Split en Datasets (train y test)
+  index     <- 1:nrow(matrizentrada)
+  tercio <- trunc(0.30 * length(index)) #70%-TRAIN, 30%-Test
+  testindex <- sample(index, tercio, replace = FALSE, prob = NULL)
+  testset   <- na.omit(matrizentrada[testindex,]) #TEST Quita las filas que tengan ALGUN valor NA
+  trainset  <- na.omit(matrizentrada[-testindex,])#TRAIN Quita las filas que tengan ALGUN valor NA
+  
+  #Columna TARGET
+  indice_target <- which( colnames(trainset) == "TARGET" )
+  
+  ## svm (MAQUINAS VECTOR SOPORTE) para REGRESIÓN NO LINEAL
+  svm.model <- svm(formula = TARGET ~ ., data = trainset, cost = 1000, gamma = 0.0001)
+  svm.pred  <- predict(svm.model, testset[,-indice_target])
+  svm_error <- crossprod(svm.pred - testset[,indice_target]) / length(testindex)
+  svm_error
+  
+  ## rpart (ARBOLES DE REGRESION) para REGRESIÓN NO LINEAL
+  rpart.model <- rpart(formula = TARGET ~ ., data = trainset)
+  rpart.pred  <- predict(rpart.model, testset[,-indice_target])
+  rpart_error <- crossprod(rpart.pred - testset[,indice_target]) / length(testindex)
+  rpart_error
+  
+  if ( svm_error < rpart_error ) {
+    print("Gana modelo SVM")
+    return(svm.model)
+  } else {
+    print("Gana modelo RPART")
+    return( rpart.model )
+  }
+}
+
+
+analisis_modelos_superlearner <- function(matrizentrada){
+  
+  library("SuperLearner")
+  
+  
+  ## Split en Datasets (train y test)
+  index     <- 1:nrow(matrizentrada)
+  tercio <- trunc(0.30 * length(index)) #70%-TRAIN, 30%-Test
+  testindex <- sample(index, tercio, replace = FALSE, prob = NULL)
+  testset   <- na.omit(matrizentrada[testindex,]) #TEST Quita las filas que tengan ALGUN valor NA
+  trainset  <- na.omit(matrizentrada[-testindex,])#TRAIN Quita las filas que tengan ALGUN valor NA
+  
+  #Columna TARGET
+  indice_target <- which( colnames(trainset) == "TARGET" )
+  
+  #Features y target de los datasets de TRAIN y TEST
+  x_train <- subset(trainset, select = -indice_target)
+  y_train <- trainset$TARGET
+  x_test <- subset(testset, select = -indice_target)
+  y_test <- testset$TARGET
+  
+  #Estructura y dimensiones de los datos
+  str(x_train)
+  dim(x_train)
+  
+  
+  #MODELOS DISPONIBLES:
+  listWrappers()
+  
+  set.seed(150)
+  
+  modelo_super <- SuperLearner(Y=y_train, X=x_train, SL.library=list("SL.svm", "SL.randomForest") )
+  
+  # Return the model
+  summary(modelo_super)
+
+  return( modelo_super)
+}
+
+
+
+############### Para cada distancia, obtengo el mejor modelo #################
+#modelo_cortas <- analisis_modelos(pasado_ft_cortas)
+#modelo_medias <- analisis_modelos(pasado_ft_medias)
+#modelo_largas <- analisis_modelos(pasado_ft_largas)
+
+modelo_cortas <- analisis_modelos_superlearner(pasado_ft_cortas)
+#modelo_medias <- analisis_modelos_superlearner(pasado_ft_medias)
+#modelo_largas <- analisis_modelos_superlearner(pasado_ft_largas)
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
