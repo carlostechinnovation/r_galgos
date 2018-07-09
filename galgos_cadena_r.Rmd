@@ -28,14 +28,31 @@ pasado_f_rs <- dbSendQuery(mydb, "SELECT * FROM datos_desa.tb_ds_pasado_train_fe
 pasado_f <- dbFetch(pasado_f_rs, n = -1)
 dbClearResult(pasado_f_rs)
 
-
-
 pasado_t_rs <- dbSendQuery(mydb, "SELECT * FROM datos_desa.tb_ds_pasado_train_targets_TOTAL LIMIT 1000000")
 pasado_t <- dbFetch(pasado_t_rs, n = -1)
 dbClearResult(pasado_t_rs)
+
+#Sacar DATASETS para usarlos despues
+attach(pasado_f)
+attach(pasado_t)
 ```
 
-Interpretando datos:
+## ANALISIS PRELIMINAR DE DATOS
+
+```{r}
+head(pasado_f)
+boxplot(pasado_f, cex.axis=0.5) 
+
+head(pasado_t)
+boxplot(pasado_t, cex.axis=0.5) 
+```
+Vemos que hay variables con outliers y otras leptocúrticas (apretadas en torno a la media).
+```{r}
+#summary(pasado_f)
+lapply(pasado_f, summary)
+```
+
+
 
 
 

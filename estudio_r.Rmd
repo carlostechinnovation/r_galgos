@@ -323,7 +323,76 @@ legend('bottomleft', c('No defecto', 'Si defecto'), pch = 21, col = c('green', '
 Hay muchas: binomial (binom), Poisson (pois), normal (norm), exponencial (exp), t-Student (t), chi-cuadrado (chisq), F (f)...
 
 
+### MAQUINAS DE VECTOR SOPORTE (SVM)
+
+Link: <http://rpubs.com/joser/svm>
+```{r}
+library(MASS)
+library(e1071)
+load(url('http://www.uam.es/joser.berrendero/datos/practica-svm-io.RData'))
+
+# Mostramos 10 filas
+head(breast.cancer2)
+```
+
+Gráficamente:
+```{r}
+# Prepara los datos
+x <- cbind(breast.cancer2$x.smoothness, breast.cancer2$x.concavepoints)
+head(x)
+y <- breast.cancer2$y
+head(y)
+n0 <- sum(y==0)
+n1 <- sum(y==1)
+# Para que los graficos queden mas bonitos (rojo = maligno, verde = benigno)
+colores <- c(rep('green',n0),rep('red',n1))
+pchn <- 21
+
+# Diagrama de dispersion
+plot(x, pch = pchn, bg = colores, xlab='smoothness', ylab='concavepoints')
+```
+
+#### SVM lineal
+Siendo la variable *y* un factor, queremos predecir usando el resto de features.
+
+Para calcular la regla de clasificación SVM lineal con C=10, se usa la función svm del paquete e1071. 
+El primer argumento y~. indica que la variable y (que debe ser necesariamente un factor) se desea predecir en términos del resto de variables del fichero. La sintaxis es similar a la que utilizaríamos para ajustar un modelo lineal o un modelo de regresión logística.
+El segundo argumento indica el fichero en el que están las variables que vamos a usar. 
+El argumento kernel corresponde al núcleo que representa el producto escalar que queremos utilizar. 
+La opción linear corresponde a k(x,y)=x′y. 
+El argumento cost determina la penalización que ponemos a los errores de clasificación. 
+Con el fin de estimar la probabilidad de clasificar erróneamente una observación se puede utilizar validación cruzada, dividiendo la muestra en, por ejemplo, dos partes. Ello se consigue fijando cross=2. 
+Finalmente, scale=FALSE se usa para usar los datos no estandarizados (por defecto, sí se estandarizan).
+```{r}
+C <- 10
+svm.lineal <- svm(y~., data=breast.cancer2, kernel='linear', cost=C, cross=2, scale=FALSE)
+summary(svm.lineal)
 
 
+x.svm <- x[svm.lineal$index,]
+w <- crossprod(x.svm, svm.lineal$coefs)
+w0 <- svm.lineal$rho
+
+plot(x, pch = pchn, bg = colores, xlab='smoothness', ylab='concavepoints')
+abline(w0/w[2], -w[1]/w[2], lwd=2, col='blue')
+```
+Indica que hay 258 vectores soporte.
+Usando validación cruzada con la muestra dividida en dos partes se estima una probabilidad de acierto en la clasificación de aproximadamente el 88%. Podemos cambiar el parámetro de penalización para ver si estos valores aumentan o disminuyen.
+
+#### SVM cuadrático
+```{r}
+svm.cuadratico <- svm(y~., data=breast.cancer2, kernel='polynomial', degree=2, gamma=1, coef0=1, cost=C, cross=10, scale=FALSE)
+summary(svm.cuadratico)
+
+
+x.svm <- x[svm.cuadratico$index,]
+w <- crossprod(x.svm, svm.cuadratico$coefs)
+w0 <- svm.cuadratico$rho
+
+plot(x, pch = pchn, bg = colores, xlab='smoothness', ylab='concavepoints')
+abline(w0/w[2], -w[1]/w[2], lwd=2, col='blue')
+```
+
+Se ve que es peor...
 
 
