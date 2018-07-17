@@ -61,7 +61,7 @@ leerDesdeBaseDatosYEscribirCSV <- function(){
 }
 
 #En Valladolid, debo tener esto siempre comentado
-# leerDesdeBaseDatosYEscribirCSV()
+leerDesdeBaseDatosYEscribirCSV()
 ```
 
 #### Lectura de ficheroS CSV (features y targets)
@@ -189,17 +189,60 @@ analisis_modelos_superlearner <- function(matrizentrada){
   
   
   
-  #Memoria 5GB
-  options(java.parameters = '-Xmx5g')
+  #RECURSOS
+  options(java.parameters = '-Xmx5g') #Memoria 5GB
   
-  #HYPERPARAMETERS: override default parameters of some functions to fit better
-  #Pendiente
+  #HYPERPARAMETROS: override default parameters of some functions to fit better
+  mtry_seq <- floor(sqrt(ncol(x_train)) * c(1, 2)) #MTRY: how many features are randomly chosen within each decision tree node
+  print(mtry_seq)
+  
+  print('Learners modificados (con hyperparametros):')
+  learners_rf <- create.Learner(base_learner = "SL.randomForest",
+                               params = list(),
+                               tune = list(mtry = mtry_seq))
+  print(learners_rf)
   
   #Algoritmos usados
-  algoritmosPredictivosUsados <- list("SL.bartMachine", "SL.glm", "SL.xgboost")
+  print('Algoritmos usados:')
+  algoritmosPredictivosUsados <- list("SL.bartMachine", "SL.bayesglm",  
+                                      "SL.glm", "SL.xgboost",
+                                      # learners_rf$names, 
+                                      "SL.randomForest",
+                                      "SL.ksvm", "SL.ranger",  "SL.ridge",  "SL.rpart", "SL.svm")
+  #PENDIENTE: https://cran.r-project.org/web/packages/SuperLearner/vignettes/Guide-to-SuperLearner.html#test-algorithm-with-multiple-hyperparameter-settings
+  
+  
+  #-------------------- MULTICORE -------------
+  # print('Multicore (snow o multicore')
+  # num_cores = RhpcBLASctl::get_num_cores()
+  # print(paste('Numero cores = ', num_cores))
+  # options(mc.cores = num_cores) #Uso todas las CPUs
+  # getOption("mc.cores") #En Linux, comprobamos su estamos usando todos los cores
+  # 
+  # We need to set a different type of seed that works across cores.
+  # Otherwise the other cores will go rogue and we won't get repeatable results.
+  # This version is for the "multicore" parallel system in R.
+  #set.seed(1, "L'Ecuyer-CMRG")
+  # 
+  # While this is running check CPU using in Activity Monitor / Task Manager.
+  # print('SUPERLEARNER con MULTICORE:')
+  # system.time({
+  #   cv_sl = CV.SuperLearner(Y = y_train, X = x_train, family = gaussian(), V = 3, SL.library=algoritmosPredictivosUsados,
+  #                           method = "method.NNLS", id = NULL, verbose = FALSE,
+  #                           control = list(saveFitLibrary = FALSE), cvControl = list(),
+  #                           innerCvControl = list(),              
+  #                           obsWeights = NULL, saveAll = TRUE, parallel = "seq", env = parent.frame())
+  # })
+  # summary(cv_sl)
+  # ----------------------------------------------
+  
+  #CROSS_VALIDATION: https://cran.r-project.org/web/packages/SuperLearner/vignettes/Guide-to-SuperLearner.html#fit-ensemble-with-external-cross-validation
   
   #SUPERLEARNER
-  modelo_super <- SuperLearner(Y=y_train, X=x_train,  newX = NULL, family = gaussian(), SL.library = algoritmosPredictivosUsados,  method = "method.NNLS", id = NULL, verbose = FALSE,  control = list(), cvControl = list(), obsWeights = NULL, env = parent.frame())
+  print('SUPERLEARNER con solo UN core:')
+  modelo_super <- SuperLearner(Y = y_train, X = x_train,
+                               family = gaussian(), 
+                               SL.library = algoritmosPredictivosUsados, method = "method.NNLS")
   
   
   #----------- PREDICCION sobre dataset TEST ----
@@ -209,13 +252,14 @@ analisis_modelos_superlearner <- function(matrizentrada){
   
   #Graficos de la prediccion
   library(ggplot2)
-  qplot(y_test_predicho_objeto$y_test_predicho_objeto[, 1]) + theme_minimal() #Histograma de los valores predichos
-  qplot(Y_holdout, pred$pred[, 1]) + theme_minimal() #Scatterplot
+  qplot(y_test_predicho_objeto$pred[, 1]) + theme_minimal() #Histograma de los valores predichos
+  qplot(y_test, y_test_predicho_objeto$pred[, 1]) + theme_minimal() #Scatterplot
   
+  #ROC (Solo para CLASIFICACION BINARIA)
   # Curva ROC (AUC, Area Under Curve): AUC can range from 0.5 (no better than chance) to 1.0 (perfect)
-  pred_rocr = ROCR::prediction(pred$pred, Y_holdout)
-  auc = ROCR::performance(pred_rocr, measure = "auc", x.measure = "cutoff")@y.values[[1]]
-  print(auc)
+  #pred_rocr <- ROCR::prediction(predictions=y_test_predicho_objeto$pred, labels = y_test, label.ordering = NULL)
+  #auc = ROCR::performance(pred_rocr, measure = "auc", x.measure = "cutoff")@y.values[[1]]
+  #print(auc)
   #---------------------------
   
   return( modelo_super)
