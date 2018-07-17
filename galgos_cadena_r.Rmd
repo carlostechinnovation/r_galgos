@@ -13,37 +13,62 @@ Analisis de datasets en proyecto GALGOS.
 library(RMySQL)
 library(DBI)
 
-#Conexiones ya abiertas
-conexiones_abiertas <- dbListConnections(MySQL())
-#Cerramos las conexiones abiertas
-#dbDisconnect(dbListConnections(MySQL())[[1]])
+leerDesdeBaseDatosYEscribirCSV <- function(){
+  
+  # ---------------Conexion a BBDD ------------
+  #Conexiones ya abiertas
+  conexiones_abiertas <- dbListConnections(MySQL())
+  #Cerramos las conexiones abiertas
+  #dbDisconnect(dbListConnections(MySQL())[[1]])
 
-mydb = dbConnect(MySQL(), user = 'root', password = 'datos1986', dbname = 'datos_desa', host = 'localhost')
-on.exit(dbDisconnect(mydb))
-#dbListTables(mydb)  #Todas las tablas que tengo
+  mydb = dbConnect(MySQL(), user = 'root', password = 'datos1986', dbname = 'datos_desa', host = 'localhost')
+  on.exit(dbDisconnect(mydb))
+  #dbListTables(mydb)  #Todas las tablas que tengo
+  
+  
+  # ------------- Features (INPUT) -----------------------
+  pasado_f_rs <- dbSendQuery(mydb, "SELECT * FROM datos_desa.tb_ds_pasado_train_features_TOTAL LIMIT 10000")
+  typeof(pasado_f_rs)
+  pasado_f <- dbFetch(pasado_f_rs, n = -1)
+  #dbClearResult(pasado_f_rs)
+
+  #EXCEPCION Quito columna mes
+  mes_indice <- which( colnames(pasado_f) == "mes_norm" )
+  pasado_f <- pasado_f[, -mes_indice]
+  
+  attach(pasado_f)
+  names(pasado_f)
+  print(paste("FEATURE MATRIX: ", nrow(pasado_f), "x", ncol(pasado_f)))
+  print(typeof(pasado_f)) #Formato: lista
+
+  
+  # -------------------- Targets (INPUT) -----------------
+  pasado_t_rs <- dbSendQuery(mydb, "SELECT * FROM datos_desa.tb_ds_pasado_train_targets_TOTAL LIMIT 10000")
+  typeof(pasado_t_rs)
+  pasado_t <- dbFetch(pasado_t_rs, n = -1)
+  #dbClearResult(pasado_t_rs)
+  attach(pasado_t)
+  names(pasado_t)
+  print(paste("TARGET MATRIX: ", nrow(pasado_t), "x", ncol(pasado_t)))
+  print(typeof(pasado_t))
+
+
+  # ----- Escritura a fichero CSV (para poder trabajar en Valladolid, que no tengo montada la BBDD con datos) ----
+  print(getwd())
+  write.csv(x = pasado_f, file = 'input_features.csv', append = FALSE, quote = TRUE, sep = '|', eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names = TRUE, qmethod = c("escape", "double"), fileEncoding = "UTF-8")
+  write.csv(x = pasado_t, file = 'input_targets.csv', append = FALSE, quote = TRUE, sep = '|', eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names = TRUE, qmethod = c("escape", "double"), fileEncoding = "UTF-8")
+
+}
+
+#En Valladolid, debo tener esto siempre comentado
+# leerDesdeBaseDatosYEscribirCSV()
 ```
-#### Features (INPUT)
-```{r}
-pasado_f_rs <- dbSendQuery(mydb, "SELECT * FROM datos_desa.tb_ds_pasado_train_features_TOTAL LIMIT 10000")
-pasado_f <- dbFetch(pasado_f_rs, n = -1)
-#dbClearResult(pasado_f_rs)
 
-#EXCEPCION Quito columna mes
-mes_indice <- which( colnames(pasado_f) == "mes_norm" )
-pasado_f <- pasado_f[, -mes_indice]
-
-attach(pasado_f)
-names(pasado_f)
-paste("FEATURE MATRIX: ", nrow(pasado_f), "x", ncol(pasado_f))
-```
-#### Targets (INPUT)
+#### Lectura de ficheroS CSV (features y targets)
 ```{r}
-pasado_t_rs <- dbSendQuery(mydb, "SELECT * FROM datos_desa.tb_ds_pasado_train_targets_TOTAL LIMIT 10000")
-pasado_t <- dbFetch(pasado_t_rs, n = -1)
-#dbClearResult(pasado_t_rs)
-attach(pasado_t)
-names(pasado_t)
-paste("TARGET MATRIX: ", nrow(pasado_t), "x", ncol(pasado_t))
+print(getwd())
+pasado_f <- read.csv('input_features.csv')
+pasado_t <- read.csv('input_targets.csv')
 ```
 
 ## ANALISIS PRELIMINAR DE DATOS
@@ -155,7 +180,7 @@ analisis_modelos_superlearner <- function(matrizentrada){
   
   set.seed(150)
   
-  modelo_super <- SuperLearner(Y=y_train, X=x_train, SL.library=list("SL.svm", "SL.randomForest") )
+  modelo_super <- SuperLearner(Y=y_train, X=x_train, SL.library = list("SL.glmnet", "SL.randomForest", "SL.xgboost", "SL.svm", "SL.bartMachine") )
   
   # Return the model
   summary(modelo_super)
