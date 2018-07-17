@@ -766,7 +766,8 @@ library(caret)
 #cm <- confusionMatrix(data =conv.preds, reference = ytest)
 #cm # Se obtiene  0.7921687 accuracy
 ```
-
+### Otro ejemplo MUY completo con SUPERLEARNER:
+Link: <https://cran.r-project.org/web/packages/SuperLearner/vignettes/Guide-to-SuperLearner.html>
 
 
 

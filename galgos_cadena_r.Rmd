@@ -111,8 +111,6 @@ paste("LARGAS:", nrow(pasado_ft_largas), "x", ncol(pasado_ft_largas))
 
 Analisis:
 ```{r}
-
-
 analisis_modelos <- function(matrizentrada){
   library(e1071) #SVM
   library(rpart) #Regression trees
@@ -153,7 +151,6 @@ analisis_modelos_superlearner <- function(matrizentrada){
   
   library("SuperLearner")
   
-  
   ## Split en Datasets (train y test)
   index     <- 1:nrow(matrizentrada)
   tercio <- trunc(0.30 * length(index)) #70%-TRAIN, 30%-Test
@@ -174,17 +171,53 @@ analisis_modelos_superlearner <- function(matrizentrada){
   str(x_train)
   dim(x_train)
   
-  
   #MODELOS DISPONIBLES:
   listWrappers()
   
   set.seed(150)
   
-  modelo_super <- SuperLearner(Y=y_train, X=x_train, SL.library = list("SL.glmnet", "SL.randomForest", "SL.xgboost", "SL.svm", "SL.bartMachine") )
+  algoritmosPredictivosTodos <- list("SL.bartMachine", "SL.bayesglm",  "SL.biglasso",  "SL.caret",
+                                      "SL.caret.rpart",  "SL.cforest", "SL.dbarts",  "SL.earth",
+                                      "SL.extraTrees",  "SL.gam",  "SL.gbm",  "SL.glm",  "SL.glm.interaction",
+                                      "SL.glmnet",  "SL.ipredbagg",   "SL.kernelKnn",  "SL.knn",
+                                      "SL.ksvm",  "SL.lda",  "SL.leekasso",  "SL.lm",  "SL.loess",
+                                      "SL.logreg",  "SL.mean",  "SL.nnet",  "SL.nnls",  "SL.polymars",
+                                      "SL.qda",  "SL.randomForest",  "SL.ranger",  "SL.ridge",  "SL.rpart",
+                                      "SL.rpartPrune",  "SL.speedglm",  "SL.speedlm",  "SL.step",
+                                      "SL.stepAIC",  "SL.step.forward",  "SL.step.interaction",  "SL.svm",
+                                      "SL.template",  "SL.xgboost")
   
-  # Return the model
-  summary(modelo_super)
-
+  
+  
+  #Memoria 5GB
+  options(java.parameters = '-Xmx5g')
+  
+  #HYPERPARAMETERS: override default parameters of some functions to fit better
+  #Pendiente
+  
+  #Algoritmos usados
+  algoritmosPredictivosUsados <- list("SL.bartMachine", "SL.glm", "SL.xgboost")
+  
+  #SUPERLEARNER
+  modelo_super <- SuperLearner(Y=y_train, X=x_train,  newX = NULL, family = gaussian(), SL.library = algoritmosPredictivosUsados,  method = "method.NNLS", id = NULL, verbose = FALSE,  control = list(), cvControl = list(), obsWeights = NULL, env = parent.frame())
+  
+  
+  #----------- PREDICCION sobre dataset TEST ----
+  y_test_predicho_objeto <- predict(modelo_super, x_test, onlySL = TRUE) #No usa los que tionen peso =0
+  str(y_test_predicho_objeto)
+  summary(y_test_predicho_objeto$library.predict)
+  
+  #Graficos de la prediccion
+  library(ggplot2)
+  qplot(y_test_predicho_objeto$y_test_predicho_objeto[, 1]) + theme_minimal() #Histograma de los valores predichos
+  qplot(Y_holdout, pred$pred[, 1]) + theme_minimal() #Scatterplot
+  
+  # Curva ROC (AUC, Area Under Curve): AUC can range from 0.5 (no better than chance) to 1.0 (perfect)
+  pred_rocr = ROCR::prediction(pred$pred, Y_holdout)
+  auc = ROCR::performance(pred_rocr, measure = "auc", x.measure = "cutoff")@y.values[[1]]
+  print(auc)
+  #---------------------------
+  
   return( modelo_super)
 }
 
@@ -200,29 +233,21 @@ modelo_cortas <- analisis_modelos_superlearner(pasado_ft_cortas)
 #modelo_largas <- analisis_modelos_superlearner(pasado_ft_largas)
 
 
+#------------------- Analisis de los modelos ganadores
+#Tiempo de ejecucion
+modelo_cortas$times$everything
+#El riesgo del MEJOR modelo (gana el que tiene MENOR riesgo)
+riesgo_submodelo_ganador <- modelo_cortas$cvRisk[which.min(modelo_cortas$cvRisk)]
+#Resumen
+summary(modelo_cortas)
+#Riesgo (risk) y peso (coef) de los submodelos utilizados
+modelo_cortas
+#------------------------------------
+
+
 
 
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
