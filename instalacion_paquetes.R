@@ -24,4 +24,5 @@
 # install.packages("klaR")
 # install.packages("dplyr")
 # install.packages("mlbench")
+# install.packages("RhpcBLASctl")
 

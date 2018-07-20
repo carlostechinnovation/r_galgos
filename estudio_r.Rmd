@@ -25,8 +25,8 @@ summary(attenu)
 Hacemos una análisis exploratorio de las correlaciones.
 Matriz de correlaciones (entre variables) y funcion de densidad de probabilidad (univariable):
 ```{r}
-library(car)
-scatterplotMatrix(x=attenu)
+#library(graphics)
+#scatterplotMatrix(x=attenu)
 ```
 O también construirla usando una función personalizada por nosotros:
 ```{r}
@@ -709,7 +709,7 @@ rpart_error
 
 ###ENSEMBLING
 Link: <https://www.datacamp.com/community/tutorials/ensemble-r-machine-learning>
-
+El ensemble es un supermodelo formado por otros modelos ponderados con pesos segun su riesgo de acierto (calculado internamente al entrenar).
 ```{r}
 library("SuperLearner")
 
@@ -750,25 +750,35 @@ summary(model)
 
 Predicciones con SuperLearner:
 ```{r}
+#Si metemos como nuevos datos X al conjunto xtest:
 predictions <- predict.SuperLearner(model, newdata = xtest)
 
-#the overall ensemble predictions
-head(predictions$pred)
+#Respuesta IDEAL (target)
+head(ytest, n=10L)
 
-#the individual library predictions:
-head(predictions$library.predict)
+#Respuesta con el supermodelo ENSEMBLE (target predicho por el ENSEMBLE):
+head(predictions$pred, n=10L)
 
+#Respuesta calculada por cada modelo individual (los que forman el ensemble):
+head(predictions$library.predict, n=10L)
 
+#MEDICION DE LOS ACIERTOS
 #En el caso de clasificación binomial, debemos fijar un umbral (por ejemplo 0.5) y ver los que caen en cada lado
 library(dplyr)
-conv.preds <- ifelse(predictions$pred >= 0.5,1,0)
+conv.preds <- ifelse(predictions$pred >= 0.5, 1, 0)
 library(caret)
-#cm <- confusionMatrix(data =conv.preds, reference = ytest)
-#cm # Se obtiene  0.7921687 accuracy
+cm <- confusionMatrix(data =conv.preds, reference = ytest)
+cm # Se obtiene  0.7921687 accuracy
 ```
-### Otro ejemplo MUY completo con SUPERLEARNER:
+###Otro ejemplo MUY completo con SUPERLEARNER:
 Link: <https://cran.r-project.org/web/packages/SuperLearner/vignettes/Guide-to-SuperLearner.html>
 
+####Monocore vs MULTICORE vs SNOW
+```{r}
 
+
+```
+
+####Prueba de Super
 
 
