@@ -213,9 +213,12 @@ analisis_modelos_superlearner <- function(matrizentrada){
   
   #--------------------------------------------------------------- 
   print('UNICORE (con cross validation)...')
-  modelo_super <- SuperLearner(Y = y_train, X = x_train,
+  modelo_super <- SuperLearner(Y = y_train, X = x_train, newX = x_test,
                                family = gaussian(), 
-                               SL.library = algoritmosPredictivosUsados, method = "method.NNLS")
+                               SL.library = algoritmosPredictivosUsados, method = "method.NNLS",
+                               id = NULL, verbose = FALSE,
+                               control = list(), cvControl = list(), obsWeights = NULL, env = parent.frame())
+  
   summary(modelo_super)
   
   

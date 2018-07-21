@@ -424,8 +424,9 @@ Es un algoritmo de CLASIFICACIÓN supervisada. La variable dependiente predicha 
 ```{r}
 library(rpart) #Algoritmo para árbol de decisión
 library(rpart.plot) #Plot de árbol de decisión
-library("C50") #paquete que tiene el dataset de entrada y el algoritmo (rpart)
+library(C50) #paquete que tiene el dataset de entrada y el algoritmo (rpart)
 data(churn) #DATASET de ejemplo sobre CHURN (clientes que abandonan una empresa)
+View(churn)
 ```
 #### Preparar set de datos, dividiendo en entrenamiento y test
 ```{r}
@@ -767,7 +768,11 @@ head(predictions$library.predict, n=10L)
 library(dplyr)
 conv.preds <- ifelse(predictions$pred >= 0.5, 1, 0)
 library(caret)
-cm <- confusionMatrix(data =conv.preds, reference = ytest)
+f_conv_preds <- factor(conv.preds)
+str(f_conv_preds)
+f_ytest <- factor(ytest)
+str(f_ytest)
+cm <- confusionMatrix(data = f_conv_preds, reference = f_ytest)
 cm # Se obtiene  0.7921687 accuracy
 ```
 ###Otro ejemplo MUY completo con SUPERLEARNER:
@@ -779,6 +784,9 @@ Link: <https://cran.r-project.org/web/packages/SuperLearner/vignettes/Guide-to-S
 
 ```
 
-####Prueba de Super
+####Prueba de SuperLearner (con datos muy controlados, para ver si predice bien)
+```{r}
+
+```
 
 
