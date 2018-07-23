@@ -13,6 +13,12 @@ Analisis de datasets en proyecto GALGOS.
 library(RMySQL)
 library(DBI)
 
+#' Conexion a base de datos para LECTURA MASIVA y escritura a CSV.
+#'
+#' @return
+#' @export
+#'
+#' @examples
 leerDesdeBaseDatosYEscribirCSV <- function(){
   
   # ---------------Conexion a BBDD ------------
@@ -111,7 +117,14 @@ paste("LARGAS:", nrow(pasado_ft_largas), "x", ncol(pasado_ft_largas))
 
 Analisis:
 ```{r}
-# SELECCION DEL MODELO DE FORMA MANUAL
+#' SELECCION DEL MODELO DE FORMA MANUAL
+#'
+#' @param matrizentrada 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 analisis_modelos <- function(matrizentrada){
   library(e1071) #SVM
   library(rpart) #Regression trees
@@ -147,7 +160,15 @@ analisis_modelos <- function(matrizentrada){
   }
 }
 
-# SELECCION DEL MODELO USANDO SUPERLEARNER
+
+#' SELECCION DEL MODELO USANDO SUPERLEARNER
+#'
+#' @param matrizentrada 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 analisis_modelos_superlearner <- function(matrizentrada){
   
   library("SuperLearner")
@@ -189,44 +210,48 @@ analisis_modelos_superlearner <- function(matrizentrada){
                                       "SL.template",  "SL.xgboost")
   
   #RECURSOS
-  #options(java.parameters = '-Xmx5g') #Memoria 5GB
+  options(java.parameters = '-Xmx5g') #Memoria 5GB
   
-  #---------------------HYPERPARAMETROS--------------
+  
+  print('---------------------HYPERPARAMETROS--------------')
   #Explicacion: override default parameters of some functions to fit better
-  mtry_seq <- floor(sqrt(ncol(x_train)) * c(1, 2)) #MTRY: how many features are randomly chosen within each decision tree node
-  print(mtry_seq)
+  mtry_seq <- floor(sqrt(ncol(x_train)) * c(1,2,3)) #MTRY: how many features are randomly chosen within each decision tree node
+  print(paste('mtry_seq: ', mtry_seq))
   
   print('Learners modificados (con hyperparametros):')
   learners_rf <- create.Learner(base_learner = "SL.randomForest",
                                params = list(),
-                               tune = list(mtry = mtry_seq))
+                               tune = list(mtry = mtry_seq),
+                               verbose = TRUE)
   print(learners_rf)
   
-  #--------------------------------------------------------
-  print('Algoritmos usados:')
-  algoritmosPredictivosUsados <- list(learners_rf$names, "SL.ridge")
-  algoritmosPredictivosUsados
+  
+  print('------- Algoritmos usados -------')
+  algoritmosPredictivosUsados <- list(
+    # learners_rf$names,
+    "SL.randomForest", "SL.ridge", "SL.nnet"
+    )
+  names(algoritmosPredictivosUsados)
   
   
   #PENDIENTE: https://cran.r-project.org/web/packages/SuperLearner/vignettes/Guide-to-SuperLearner.html#test-algorithm-with-multiple-hyperparameter-settings
   
   
   #--------------------------------------------------------------- 
-  print('UNICORE (con cross validation)...')
-  modelo_super <- SuperLearner(Y = y_train, X = x_train, newX = x_test,
-                               family = gaussian(), 
-                               SL.library = algoritmosPredictivosUsados, method = "method.NNLS",
-                               id = NULL, verbose = FALSE,
-                               control = list(), cvControl = list(), obsWeights = NULL, env = parent.frame())
-  
-  summary(modelo_super)
+  # print('UNICORE (con cross validation)...')
+  # modelo_super <- SuperLearner(Y = y_train, X = x_train, family = gaussian(), 
+  #                              SL.library = algoritmosPredictivosUsados, method = "method.NNLS",
+  #                              id = NULL, verbose = TRUE,
+  #                              control = list(), cvControl = list(), obsWeights = NULL, env = parent.frame())
+  # 
+  # summary(modelo_super)
   
   
   #------------------------------------------------------------
   print('MULTICORE (con cross validation)...')
   print('Se puede usar la libreria SNOW (Windows, Linux; pero dificil) o multicore (Linux).')
-  num_cores_disponibles = RhpcBLASctl::get_num_cores()
-  num_cores_usados <- (num_cores-1)
+  num_cores_disponibles <- RhpcBLASctl::get_num_cores()
+  num_cores_usados <- (num_cores_disponibles)
   print(paste('Uso ', num_cores_usados, ' cores de ', num_cores_disponibles, ' cores disponibles'))
   options(mc.cores = num_cores_usados) #Uso todas las CPUs (menos una, para dejar libre el PC para trabajar)
   getOption("mc.cores") #En Linux, comprobamos su estamos usando todos los cores
@@ -236,48 +261,125 @@ analisis_modelos_superlearner <- function(matrizentrada){
   # This version is for the "multicore" parallel system in R.
   set.seed(1, "L'Ecuyer-CMRG")
 
+  #Numero de subsets para hacer la cross-validation
+  num_v <- 2
+  
   # While this is running check CPU using in Activity Monitor / Task Manager.
   print('SUPERLEARNER con MULTICORE:')
+  print('Con método NNLS (Non-negative Least Squares)')
+  print('Esta forma con CV no mide el rendimiento, asi que lo medimos por fuera')
   system.time({
-    modelo_multicore_con_cv=CV.SuperLearner(Y = y_train, X = x_train, family = gaussian(), V = 2,
+    modelo_multicore_con_cv <- CV.SuperLearner(Y = y_train, X = x_train, family = gaussian(), 
                           parallel = "multicore",
-                          SL.library = algoritmosPredictivosUsados)
+                          SL.library = algoritmosPredictivosUsados, 
+                          method = "method.NNLS", verbose = F,
+                          cvControl = list(V = num_v), saveAll=T)
   })
-  summary(modelo_multicore_con_cv)
   
+  summary(modelo_multicore_con_cv)
+  # Review the distribution of the best single learner as external CV folds
+  table( simplify2array( modelo_multicore_con_cv$whichDiscreteSL ) )
+  # Plot the performance with 95% CIs (use a better ggplot theme)
+  plot(modelo_multicore_con_cv) + theme_bw()
+
   
   #------------------------------------------------------------------
-  print('MULTICORE (sin cross validation)...')
-  # Set multicore compatible seed.
-  set.seed(1, "L'Ecuyer-CMRG")
-  # Fit the SuperLearner.
-  modelo_multicore_sin_cv = mcSuperLearner(Y = y_train, X = x_train, family = gaussian(),
-                    SL.library = algoritmosPredictivosUsados)
-  summary(modelo_multicore_sin_cv)
+  # print('MULTICORE (sin cross validation)...')
+  # # Set multicore compatible seed.
+  # set.seed(1, "L'Ecuyer-CMRG")
+  # # Fit the SuperLearner.
+  # modelo_multicore_sin_cv = mcSuperLearner(Y = y_train, X = x_train, family = gaussian(),
+  #                   SL.library = algoritmosPredictivosUsados, verbose = TRUE)
+  # summary(modelo_multicore_sin_cv)
   
   # ----------------------------------------------
   
   #CROSS_VALIDATION: https://cran.r-project.org/web/packages/SuperLearner/vignettes/Guide-to-SuperLearner.html#fit-ensemble-with-external-cross-validation
   
   
-  #----------- PREDICCION sobre dataset TEST ----
-  y_test_predicho_objeto <- predict(modelo_super, x_test, onlySL = TRUE) #No usa los que tienen peso =0
-  str(y_test_predicho_objeto)
-  summary(y_test_predicho_objeto$library.predict)
+  #--------------------------------------------------------------- 
+  # print('Validando modelo UNICORE (con cross validation) sobre dataset de test...')
+  # validarModelo(modelo_super, x_test, y_test, "UNICORE_CON_CV")
+  print('Validando modelo MULTICORE (con cross validation) sobre dataset de test...')
+  validarModelo(modelo_multicore_con_cv, x_test, y_test, "MULTICORE_CON_CV")
+  # print('Validando modelo MULTICORE (sin cross validation) sobre dataset de test...')
+  # validarModelo(modelo_multicore_sin_cv, x_test, y_test, "MULTICORE_SIN_CV")
   
-  #Graficos de la prediccion
-  library(ggplot2)
-  qplot(y_test_predicho_objeto$pred[, 1]) + theme_minimal() #Histograma de los valores predichos
-  qplot(y_test, y_test_predicho_objeto$pred[, 1]) + theme_minimal() #Scatterplot
   
-  #ROC (Solo para CLASIFICACION BINARIA)
-  # Curva ROC (AUC, Area Under Curve): AUC can range from 0.5 (no better than chance) to 1.0 (perfect)
-  #pred_rocr <- ROCR::prediction(predictions=y_test_predicho_objeto$pred, labels = y_test, label.ordering = NULL)
-  #auc = ROCR::performance(pred_rocr, measure = "auc", x.measure = "cutoff")@y.values[[1]]
-  #print(auc)
-  #---------------------------
+  return(modelo_multicore_con_cv)
+}
+
+
+#' VALIDACION del modelo ENTRENADO usando dataset de TEST. Obtengo porcentaje de acierto.
+#'
+#' @param modeloEntrenado 
+#' @param x_text 
+#' @param y_test 
+#' @param tipo 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+validarModelo <- function(modeloEntrenado, x_text, y_test, tipo){
   
-  return(modelo_super)
+  print('Usando dataset de test para validar el modelo y obtener porcentaje de aciertoPREDICCION sobre datos test (validacion)...')
+  print(paste('Tipo: ', tipo))
+  
+  if (tipo == "UNICORE_CON_CV") {
+    
+    y_test_predicho_objeto <- predict.SuperLearner(object = modeloEntrenado, newdata = x_test, onlySL = TRUE) #No usa los que tienen peso =0
+    
+    
+    print('str:')
+    str(y_test_predicho_objeto)
+    print('summary:')
+    summary(y_test_predicho_objeto$library.predict)
+    
+    #Graficos de la prediccion
+    library(ggplot2)
+    qplot(y_test_predicho_objeto$pred[, 1]) + theme_minimal() #Histograma de los valores predichos
+    qplot(y_test, y_test_predicho_objeto$pred[, 1]) + theme_minimal() #Scatterplot
+    
+    #ROC (Solo para CLASIFICACION BINARIA)
+    # Curva ROC (AUC, Area Under Curve): AUC can range from 0.5 (no better than chance) to 1.0 (perfect)
+    #pred_rocr <- ROCR::prediction(predictions=y_test_predicho_objeto$pred, labels = y_test, label.ordering = NULL)
+    #auc = ROCR::performance(pred_rocr, measure = "auc", x.measure = "cutoff")@y.values[[1]]
+    #print(auc)
+    
+     
+  } else if (tipo == "MULTICORE_CON_CV") {
+    
+    
+    num_v <- modeloEntrenado$V
+    print(paste('El modelo usó CV con v: ', num_v))
+    
+    y_test_predicho_objeto <- predict( modeloEntrenado$AllSL[[num_v]] )$pred
+    
+    plot( 
+      y_test[ modeloEntrenado$folds[[num_v]] ], #target RELA (test)
+      y_test_predicho_objeto, #target predicho
+      xlab = "Actual", ylab = "Predicted",
+      main = paste('Fold numero ', num_v)
+      )  
+    
+    
+    print('str PREDICHO:')
+    str(y_test_predicho_objeto)
+    print('str TEST (lo esperable):')
+    str(y_test)
+    
+    #Graficos de la prediccion
+    library(ggplot2)
+    qplot(y_test_predicho_objeto[, 1]) + theme_minimal() #Histograma de los valores predichos
+    qplot(y_test, y_test_predicho_objeto[, 1]) + theme_minimal() #Scatterplot
+    
+  } else if(tipo == "MULTICORE_SIN_CV"){
+    
+  }
+  
+  
+  
 }
 
 
@@ -295,21 +397,39 @@ modelo_cortas <- analisis_modelos_superlearner(pasado_ft_cortas)
 
 Analisis de los modelos ganadores:
 ```{r}
-#------------------- Analisis de los modelos ganadores
-#Tiempo de ejecucion
-modelo_cortas$times$everything
-#El riesgo del MEJOR modelo (gana el que tiene MENOR riesgo)
-riesgo_submodelo_ganador <- modelo_cortas$cvRisk[which.min(modelo_cortas$cvRisk)]
-#Resumen
-summary(modelo_cortas)
-#Riesgo (risk) y peso (coef) de los submodelos utilizados
-modelo_cortas
-#------------------------------------
+#' EXPLICACION detallada de un modelo
+#'
+#' @param modeloInput 
+#' @param nombre 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+explicarModelo <- function(modeloInput, nombre){
+  
+  print(paste('---------- Explicacion del modelo ', nombre, ' -----------'))
+  
+  print('Tiempo de ejecucion:')
+  modeloInput$times$everything
+  print('El riesgo del MEJOR modelo (gana el que tiene MENOR riesgo):')
+  riesgo_submodelo_ganador <- modeloInput$cvRisk[which.min(modeloInput$cvRisk)]
+  print('Resumen:')
+  summary(modeloInput)
+  print('Riesgo (risk) y peso (coef) de los submodelos utilizados:')
+  modeloInput
+  
+}
+
+explicarModelo(modelo_cortas, 'CORTAS')
+#explicarModelo(modelo_medias, 'MEDIAS')
+#explicarModelo(modelo_largas, 'LARGAS')
+
 ```
 
 Prediccion del futuro usando los modelos ganadores:
 ```{r}
-print('meter prediccion sobre X futuro...')
+print('Implementar la prediccion sobre el dataset X futuro (del que no conocemos target)...')
 ```
 
 

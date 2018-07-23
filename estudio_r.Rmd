@@ -735,6 +735,7 @@ xtest <- data.frame(test[,1:7])
 
 #MODELOS DISPONIBLES:
 listWrappers()
+#vignette("SuperLearner") #Parametros ajustables de esos modelos
 
 #Modelos, usando cross-validation (con 5 intentos):
 set.seed(150)
@@ -784,7 +785,25 @@ Link: <https://cran.r-project.org/web/packages/SuperLearner/vignettes/Guide-to-S
 
 ```
 
-####Prueba de SuperLearner (con datos muy controlados, para ver si predice bien)
+####Prueba de SuperLearner solo con los algoritmos de REGRESION (los indicados por Matlab)
+```{r}
+# Linear Regression, GLM
+
+# SVR, GPR
+
+# Ensemble methods
+
+# Decision Trees
+
+# Neural Networks
+
+
+```
+
+### SUBSEMBLE:
+Link: <https://www.stat.berkeley.edu/~ledell/docs/dlab_ensembles.pdf>
+
+Se divide la entrada en subsets y después, se aplica un ensemble en cada uno de esos subsets.
 ```{r}
 
 ```
