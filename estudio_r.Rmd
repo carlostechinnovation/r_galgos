@@ -2,6 +2,12 @@
 title: "MI ESTUDIO SOBRE R"
 output: html_notebook
 ---
+
+### Generalidades sobre R, RStudio y demás
+Link: <https://rpubs.com/bjpredo/lab_00>
+
+
+
 ### Valores NA (missing values) y cómo rellenarlos
 Partimos de uno de los datasets de pruebas que hay en RStudio.
 ```{r}

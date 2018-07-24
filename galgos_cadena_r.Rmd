@@ -115,7 +115,7 @@ paste("LARGAS:", nrow(pasado_ft_largas), "x", ncol(pasado_ft_largas))
 ```
 
 
-Analisis:
+Analisis de MODELOS de forma directa (sin SuperLearner):
 ```{r}
 #' SELECCION DEL MODELO DE FORMA MANUAL
 #'
@@ -161,6 +161,18 @@ analisis_modelos <- function(matrizentrada){
 }
 
 
+
+############### Para cada distancia, obtengo el mejor modelo #################
+#modelo_cortas <- analisis_modelos(pasado_ft_cortas)
+#modelo_medias <- analisis_modelos(pasado_ft_medias)
+#modelo_largas <- analisis_modelos(pasado_ft_largas)
+
+
+```
+
+
+Analisis de modelos usando SuperLearner:
+```{r}
 #' SELECCION DEL MODELO USANDO SUPERLEARNER
 #'
 #' @param matrizentrada 
@@ -231,7 +243,7 @@ analisis_modelos_superlearner <- function(matrizentrada){
     # learners_rf$names,
     "SL.randomForest", "SL.ridge", "SL.nnet"
     )
-  names(algoritmosPredictivosUsados)
+  print( algoritmosPredictivosUsados )
   
   
   #PENDIENTE: https://cran.r-project.org/web/packages/SuperLearner/vignettes/Guide-to-SuperLearner.html#test-algorithm-with-multiple-hyperparameter-settings
@@ -248,7 +260,7 @@ analisis_modelos_superlearner <- function(matrizentrada){
   
   
   #------------------------------------------------------------
-  print('MULTICORE (con cross validation)...')
+  print('------ MULTICORE (con cross validation)... -------')
   print('Se puede usar la libreria SNOW (Windows, Linux; pero dificil) o multicore (Linux).')
   num_cores_disponibles <- RhpcBLASctl::get_num_cores()
   num_cores_usados <- (num_cores_disponibles)
@@ -273,10 +285,14 @@ analisis_modelos_superlearner <- function(matrizentrada){
                           parallel = "multicore",
                           SL.library = algoritmosPredictivosUsados, 
                           method = "method.NNLS", verbose = F,
-                          cvControl = list(V = num_v), saveAll=T)
+                          cvControl = list(V = num_v, shuffle=FALSE), 
+                          innerCvControl = list(list(V = 2)), 
+                          saveAll=FALSE)
   })
   
-  summary(modelo_multicore_con_cv)
+  print( summary(modelo_multicore_con_cv) )
+  plot(modelo_multicore_con_cv)
+  
   # Review the distribution of the best single learner as external CV folds
   table( simplify2array( modelo_multicore_con_cv$whichDiscreteSL ) )
   # Plot the performance with 95% CIs (use a better ggplot theme)
@@ -321,18 +337,20 @@ analisis_modelos_superlearner <- function(matrizentrada){
 #' @export
 #'
 #' @examples
-validarModelo <- function(modeloEntrenado, x_text, y_test, tipo){
+validarModelo <- function(modeloEntrenado, x_test, y_test, tipo){
   
+  print('-------------- VALIDACION ---------------')
   print('Usando dataset de test para validar el modelo y obtener porcentaje de aciertoPREDICCION sobre datos test (validacion)...')
   print(paste('Tipo: ', tipo))
+  print( paste("VALIDACION-INPUTS:", "  x_test=",nrow(x_test), "x", ncol(x_test),  "   y_test=",nrow(x_test), "x", ncol(x_test)) )
   
   if (tipo == "UNICORE_CON_CV") {
     
     y_test_predicho_objeto <- predict.SuperLearner(object = modeloEntrenado, newdata = x_test, onlySL = TRUE) #No usa los que tienen peso =0
     
-    
-    print('str:')
+    print('str (descripcion y filas de ejemplo):')
     str(y_test_predicho_objeto)
+    head(y_test_predicho_objeto)
     print('summary:')
     summary(y_test_predicho_objeto$library.predict)
     
@@ -352,9 +370,15 @@ validarModelo <- function(modeloEntrenado, x_text, y_test, tipo){
     
     
     num_v <- modeloEntrenado$V
-    print(paste('El modelo usó CV con v: ', num_v))
+    print(paste('El modelo usó CV con V folds: ', num_v))
     
-    y_test_predicho_objeto <- predict( modeloEntrenado$AllSL[[num_v]] )$pred
+    print("Coeficientes por algoritmo y fold (muestro 10 filas):")
+    head( coef(test) )
+    
+    y_test_predicho_objeto <- modeloEntrenado$SL.predict
+    print(paste("y_test_predicho_objeto: ", y_test_predicho_objeto))
+    
+    
     
     plot( 
       y_test[ modeloEntrenado$folds[[num_v]] ], #target RELA (test)
@@ -364,20 +388,33 @@ validarModelo <- function(modeloEntrenado, x_text, y_test, tipo){
       )  
     
     
-    print('str PREDICHO:')
+    print('str PREDICHO (descripcion y filas de ejemplo):')
     str(y_test_predicho_objeto)
+    print( head(y_test_predicho_objeto) )
+    
     print('str TEST (lo esperable):')
     str(y_test)
+    print( head(y_test_predicho_objeto) )
     
-    #Graficos de la prediccion
-    library(ggplot2)
-    qplot(y_test_predicho_objeto[, 1]) + theme_minimal() #Histograma de los valores predichos
-    qplot(y_test, y_test_predicho_objeto[, 1]) + theme_minimal() #Scatterplot
+    
+    
+    if(length(y_test_predicho_objeto) != length(y_test)){
+      print('Deberian tener las mismas dimensiones!!!!! COMPROBARLO!!!')
+      
+    } else {
+      #Graficos de la prediccion
+      library(ggplot2)
+      qplot(y_test_predicho_objeto) + theme_minimal() #Histograma de los valores predichos
+      qplot(y_test, y_test_predicho_objeto) + theme_minimal() #Scatterplot
+      
+    }
+    
+  
+    
     
   } else if(tipo == "MULTICORE_SIN_CV"){
     
   }
-  
   
   
 }
@@ -385,9 +422,6 @@ validarModelo <- function(modeloEntrenado, x_text, y_test, tipo){
 
 
 ############### Para cada distancia, obtengo el mejor modelo #################
-#modelo_cortas <- analisis_modelos(pasado_ft_cortas)
-#modelo_medias <- analisis_modelos(pasado_ft_medias)
-#modelo_largas <- analisis_modelos(pasado_ft_largas)
 
 modelo_cortas <- analisis_modelos_superlearner(pasado_ft_cortas)
 #modelo_medias <- analisis_modelos_superlearner(pasado_ft_medias)
