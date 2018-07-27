@@ -204,8 +204,16 @@ analisis_modelos_superlearner <- function(matrizentrada){
   #Estructura y dimensiones de los datos
   #str(x_train)
   #dim(x_train)
+  print( paste( "matrizentrada=",nrow(matrizentrada), "x", ncol(matrizentrada) ) )
+  print( paste( "testset=",nrow(testset), "x", ncol(testset) ) )
+  print( paste( "trainset=",nrow(trainset), "x", ncol(trainset) ) )
+  print( paste( "x_train=",nrow(x_train), "x", ncol(x_train) ) )
+  print( paste( "y_train=",nrow(y_train), "x", ncol(y_train) ) )
+  print( paste( "x_test=",nrow(x_test), "x", ncol(x_test) ) )
+  print( paste( "y_test=",nrow(y_test), "x", ncol(y_test) ) )
   
-  #MODELOS DISPONIBLES:
+  
+  #MODELOS DISPONIBLES en libreria SuperLearner:
   #listWrappers()
   
   set.seed(150)
@@ -227,7 +235,7 @@ analisis_modelos_superlearner <- function(matrizentrada){
   
   print('---------------------HYPERPARAMETROS--------------')
   #Explicacion: override default parameters of some functions to fit better
-  mtry_seq <- floor(sqrt(ncol(x_train)) * c(1,2,3)) #MTRY: how many features are randomly chosen within each decision tree node
+  mtry_seq <- floor(sqrt(ncol(x_train)) * c(1,3,5,8,13)) #MTRY: how many features are randomly chosen within each decision tree node
   print(paste('mtry_seq: ', mtry_seq))
   
   print('Learners modificados (con hyperparametros):')
@@ -240,7 +248,7 @@ analisis_modelos_superlearner <- function(matrizentrada){
   
   print('------- Algoritmos usados -------')
   algoritmosPredictivosUsados <- list(
-    # learners_rf$names,
+    learners_rf$names,
     "SL.randomForest", "SL.ridge", "SL.nnet"
     )
   print( algoritmosPredictivosUsados )
@@ -272,30 +280,36 @@ analisis_modelos_superlearner <- function(matrizentrada){
   # Otherwise the other cores will go rogue and we won't get repeatable results.
   # This version is for the "multicore" parallel system in R.
   set.seed(1, "L'Ecuyer-CMRG")
-
-  #Numero de subsets para hacer la cross-validation
-  num_v <- 2
   
-  # While this is running check CPU using in Activity Monitor / Task Manager.
+  
+  num_v <- 3 # splits the data into V folds and then calls SuperLearner
+  internal_v <- 2 #inner cross-validation process (replicated across all folds)
+  
   print('SUPERLEARNER con MULTICORE:')
   print('Con método NNLS (Non-negative Least Squares)')
-  print('Esta forma con CV no mide el rendimiento, asi que lo medimos por fuera')
+  print(paste('num_v = ', num_v))
+  print(paste('internal_v = ', internal_v))
+  print('Esta forma con CV no mide el rendimiento, asi que lo medimos por fuera...')
+  
   system.time({
     modelo_multicore_con_cv <- CV.SuperLearner(Y = y_train, X = x_train, family = gaussian(), 
                           parallel = "multicore",
                           SL.library = algoritmosPredictivosUsados, 
                           method = "method.NNLS", verbose = F,
                           cvControl = list(V = num_v, shuffle=FALSE), 
-                          innerCvControl = list(list(V = 2)), 
+                          innerCvControl = list(list(V = internal_v)), 
                           saveAll=FALSE)
   })
   
+  library(ggplot2)
+  
+  print('Modelo:')
   print( summary(modelo_multicore_con_cv) )
   plot(modelo_multicore_con_cv)
   
-  # Review the distribution of the best single learner as external CV folds
+  print('Review the distribution of the best single learner as external CV folds:')
   table( simplify2array( modelo_multicore_con_cv$whichDiscreteSL ) )
-  # Plot the performance with 95% CIs (use a better ggplot theme)
+  print('Plot the performance with 95% CIs (use a better ggplot theme):')
   plot(modelo_multicore_con_cv) + theme_bw()
 
   
@@ -317,12 +331,12 @@ analisis_modelos_superlearner <- function(matrizentrada){
   # print('Validando modelo UNICORE (con cross validation) sobre dataset de test...')
   # validarModelo(modelo_super, x_test, y_test, "UNICORE_CON_CV")
   print('Validando modelo MULTICORE (con cross validation) sobre dataset de test...')
-  validarModelo(modelo_multicore_con_cv, x_test, y_test, "MULTICORE_CON_CV")
+  #validarModelo(modelo_multicore_con_cv, x_test, y_test, "MULTICORE_CON_CV")
   # print('Validando modelo MULTICORE (sin cross validation) sobre dataset de test...')
   # validarModelo(modelo_multicore_sin_cv, x_test, y_test, "MULTICORE_SIN_CV")
   
   
-  return(modelo_multicore_con_cv)
+  return(list(modelo_multicore_con_cv, x_test, y_test))
 }
 
 
@@ -340,9 +354,9 @@ analisis_modelos_superlearner <- function(matrizentrada){
 validarModelo <- function(modeloEntrenado, x_test, y_test, tipo){
   
   print('-------------- VALIDACION ---------------')
-  print('Usando dataset de test para validar el modelo y obtener porcentaje de aciertoPREDICCION sobre datos test (validacion)...')
+  print('Usando dataset de test para validar el modelo y obtener porcentaje de acierto...')
   print(paste('Tipo: ', tipo))
-  print( paste("VALIDACION-INPUTS:", "  x_test=",nrow(x_test), "x", ncol(x_test),  "   y_test=",nrow(x_test), "x", ncol(x_test)) )
+  print( paste("VALIDACION-INPUTS:", "  x_test=",nrow(x_test), "x", ncol(x_test),  "   y_test=",length(y_test) ) )
   
   if (tipo == "UNICORE_CON_CV") {
     
@@ -372,20 +386,15 @@ validarModelo <- function(modeloEntrenado, x_test, y_test, tipo){
     num_v <- modeloEntrenado$V
     print(paste('El modelo usó CV con V folds: ', num_v))
     
-    print("Coeficientes por algoritmo y fold (muestro 10 filas):")
-    head( coef(test) )
-    
     y_test_predicho_objeto <- modeloEntrenado$SL.predict
-    print(paste("y_test_predicho_objeto: ", y_test_predicho_objeto))
+    print("modeloEntrenado$SL.predict (muestro 10 filas):")
+    head(y_test_predicho_objeto)
     
+    print("Coeficientes por algoritmo y fold (muestro 10 filas):")
+    modeloEntrenado$coef
     
-    
-    plot( 
-      y_test[ modeloEntrenado$folds[[num_v]] ], #target RELA (test)
-      y_test_predicho_objeto, #target predicho
-      xlab = "Actual", ylab = "Predicted",
-      main = paste('Fold numero ', num_v)
-      )  
+    print("Pintando plot...")
+    plot(modeloEntrenado, package = "ggplot2", constant = qnorm(0.975), sort = TRUE) 
     
     
     print('str PREDICHO (descripcion y filas de ejemplo):')
@@ -423,9 +432,14 @@ validarModelo <- function(modeloEntrenado, x_test, y_test, tipo){
 
 ############### Para cada distancia, obtengo el mejor modelo #################
 
-modelo_cortas <- analisis_modelos_superlearner(pasado_ft_cortas)
-#modelo_medias <- analisis_modelos_superlearner(pasado_ft_medias)
-#modelo_largas <- analisis_modelos_superlearner(pasado_ft_largas)
+
+out_cortas <- analisis_modelos_superlearner(pasado_ft_cortas)
+#out_medias <- analisis_modelos_superlearner(pasado_ft_medias)
+#out_largas <- analisis_modelos_superlearner(pasado_ft_largas)
+
+modelo_cortas <- out_cortas[[1]]
+#modelo_medias <- out_medias[[1]]
+#modelo_largas <- out_largas[[1]]
 
 ```
 
