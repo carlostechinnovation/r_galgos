@@ -340,14 +340,16 @@ Link de mi ejemplo: <http://rpubs.com/joser/svm>
 ```{r}
 library(MASS)
 library(e1071)
+
+prueba_svm <- function() {
+
 load(url('http://www.uam.es/joser.berrendero/datos/practica-svm-io.RData'))
 
 # Mostramos 10 filas
 head(breast.cancer2)
-```
 
-Gráficamente, pintamos la correlación entre las 2 features de entrada:
-```{r}
+
+#-------- Gráficamente, pintamos la correlación entre las 2 features de entrada: -------
 # Prepara los datos
 x <- cbind(breast.cancer2$x.smoothness, breast.cancer2$x.concavepoints)
 head(x)
@@ -361,20 +363,20 @@ pchn <- 21
 
 # Diagrama de dispersion
 plot(x, pch = pchn, bg = colores, xlab='smoothness', ylab='concavepoints')
-```
 
-#### SVM lineal
-Siendo la variable **y** un factor, queremos predecir usando el resto de features.
 
-Para calcular la regla de clasificación SVM lineal con C=10, se usa la función svm del paquete e1071. 
-El primer argumento y~. indica que la variable y (que debe ser necesariamente un factor) se desea predecir en términos del resto de variables del fichero. La sintaxis es similar a la que utilizaríamos para ajustar un modelo lineal o un modelo de regresión logística.
-El segundo argumento indica el fichero en el que están las variables que vamos a usar. 
-El argumento kernel corresponde al núcleo que representa el producto escalar que queremos utilizar. 
-La opción linear corresponde a k(x,y)=x′y. 
-El argumento cost determina la penalización que ponemos a los errores de clasificación. 
-Con el fin de estimar la probabilidad de clasificar erróneamente una observación se puede utilizar validación cruzada, dividiendo la muestra en, por ejemplo, dos partes. Ello se consigue fijando cross=2. 
-Finalmente, scale=FALSE se usa para usar los datos no estandarizados (por defecto, sí se estandarizan).
-```{r}
+print('-------------- SVM lineal -------------------------')
+# Siendo la variable **y** un factor, queremos predecir usando el resto de features.
+# 
+# Para calcular la regla de clasificación SVM lineal con C=10, se usa la función svm del paquete e1071. 
+# El primer argumento y~. indica que la variable y (que debe ser necesariamente un factor) se desea predecir en términos del resto de variables del fichero. La sintaxis es similar a la que utilizaríamos para ajustar un modelo lineal o un modelo de regresión logística.
+# El segundo argumento indica el fichero en el que están las variables que vamos a usar. 
+# El argumento kernel corresponde al núcleo que representa el producto escalar que queremos utilizar. 
+# La opción linear corresponde a k(x,y)=x′y. 
+# El argumento cost determina la penalización que ponemos a los errores de clasificación. 
+# Con el fin de estimar la probabilidad de clasificar erróneamente una observación se puede utilizar validación cruzada, dividiendo la muestra en, por ejemplo, dos partes. Ello se consigue fijando cross=2. 
+# Finalmente, scale=FALSE se usa para usar los datos no estandarizados (por defecto, sí se estandarizan).
+
 C <- 10
 svm.lineal <- svm(y~., data=breast.cancer2, kernel='linear', cost=C, cross=2, scale=FALSE) #Su type es C-classification porque y es un factor
 summary(svm.lineal)
@@ -390,12 +392,13 @@ abline(w0/w[2], -w[1]/w[2], lwd=2, col='blue')
 table(predict(svm.lineal), breast.cancer2$y, dnn=c("Prediction", "Actual"))
 library(caret)
 confusionMatrix(breast.cancer2$y, predict(svm.lineal))
-```
-Indica que hay 258 vectores soporte.
-Usando validación cruzada con la muestra dividida en dos partes se estima una probabilidad de acierto en la clasificación de aproximadamente el 88%. Podemos cambiar el parámetro de penalización para ver si estos valores aumentan o disminuyen.
 
-#### SVM cuadrático
-```{r}
+# Indica que hay 258 vectores soporte.
+# Usando validación cruzada con la muestra dividida en dos partes se estima una probabilidad de acierto en la clasificación de aproximadamente el 88%. Podemos cambiar el parámetro de penalización para ver si estos valores aumentan o disminuyen.
+
+
+print('-------------------- SVM cuadrático --------------')
+
 svm.cuadratico <- svm(formula = y~., data = breast.cancer2, kernel='polynomial', degree=2, gamma=1, coef0=1, cost=C, cross=10, scale=FALSE)
 summary(svm.cuadratico)
 
@@ -403,10 +406,9 @@ summary(svm.cuadratico)
 table(predict(svm.cuadratico), breast.cancer2$y, dnn=c("Prediction", "Actual"))
 library(caret)
 confusionMatrix(breast.cancer2$y, predict(svm.cuadratico))
-```
 
-#### SVM radial
-```{r}
+
+print('-------------------- SVM radial -----------------')
 svm.radial <- svm(formula = y~., data = breast.cancer2, kernel='radial', degree=2, gamma=1, coef0=1, cost=C, cross=10, scale=FALSE)
 summary(svm.radial)
 
@@ -414,6 +416,10 @@ summary(svm.radial)
 table(predict(svm.radial), breast.cancer2$y, dnn=c("Prediction", "Actual"))
 library(caret)
 confusionMatrix(breast.cancer2$y, predict(svm.radial))
+
+}
+
+# prueba_svm()
 ```
 Se ve que es mejor el kernel LINEAL (grado), pero debemos mirar el *accuracy* y *cobertura* --> Gana CUADRATICO, parece.
 
@@ -689,7 +695,7 @@ library(e1071)
 library(rpart)
 
 #DATOS:
-data(Ozone, package="mlbench")
+data(Ozone, package = "mlbench")
 
 ## Split en Datasets (train y test)
 index     <- 1:nrow(Ozone)
@@ -785,8 +791,131 @@ cm # Se obtiene  0.7921687 accuracy
 ###Otro ejemplo MUY completo con SUPERLEARNER:
 Link: <https://cran.r-project.org/web/packages/SuperLearner/vignettes/Guide-to-SuperLearner.html>
 
-####Monocore vs MULTICORE vs SNOW
+####Monocore vs MULTICORE-Simple vs MULTICORE-CV vs SNOW>: el resultado debe coincidir
+Link: <http://benkeser.github.io/sllecture/>
 ```{r}
+oscuridad_pelo <- c(1,2,3,4,5,6,6,6,6,6)
+edad <- c(20,25,50,30,26,31,32,33,34,35)
+TARGET <- c(15.03, 18.02, 22.41, 17.40, 15.45, 15.22, 14.99, 15.42, 15.88, 16.30) #tiempo de carrera: cuanto más oscuro y menor edad ==> menor tiempo
+matrizentrada <- data.frame(oscuridad_pelo, edad, TARGET)
+class(matrizentrada)
+matrizentrada
+
+#Crear datasets features+target para train y test
+index     <- 1:nrow(matrizentrada)
+tercio <- trunc(0.30 * length(index)) #70%-TRAIN, 30%-Test
+testindex <- sample(index, tercio, replace = FALSE, prob = NULL)
+testset   <- na.omit(matrizentrada[testindex,])
+trainset  <- na.omit(matrizentrada[-testindex,])
+
+indice_target <- which( colnames(trainset) == "TARGET" ) #Columna TARGET
+x_train <- subset(trainset, select = -indice_target)
+y_train <- trainset$TARGET
+x_test <- subset(testset, select = -indice_target)
+y_test <- testset$TARGET
+  
+print( paste( "matrizentrada=",nrow(matrizentrada), "x", ncol(matrizentrada) ) )
+print( paste( "testset=",nrow(testset), "x", ncol(testset) ) )
+print( paste( "trainset=",nrow(trainset), "x", ncol(trainset) ) )
+print( paste( "x_train=",nrow(x_train), "x", ncol(x_train) ) )
+print( paste( "y_train=",length(y_train) ) )
+print( paste( "x_test=",nrow(x_test), "x", ncol(x_test) ) )
+print( paste( "y_test=",length(y_test) ) )
+
+######################## MODELOS PREDICTIVOS ############3
+library("SuperLearner")
+library(nnls)
+library(nnet)
+library(randomForest)
+library(ggplot2)
+library(parallel)
+algoritmosPredictivosUsados <- list("SL.randomForest", "SL.nnet")
+
+print('-------- UNICORE (con cross validation) ----------')
+modelo_unicore <- SuperLearner(Y = y_train, X = x_train, family = gaussian(), 
+                             SL.library = algoritmosPredictivosUsados, method = "method.NNLS",
+                             id = NULL, verbose = FALSE,
+                             control = list(), cvControl = list(), obsWeights = NULL, env = parent.frame())
+summary(modelo_unicore)
+print('Validando modelo UNICORE sobre dataset de test...')
+out_unicore <- predict.SuperLearner(object = modelo_unicore, newdata = x_test, onlySL = TRUE) #No usa los que tienen peso =0
+print('PREDICCION:')
+out_unicore_predicho <- out_unicore$pred; str(out_unicore_predicho)
+print('ESPERABLE:')
+str(y_test)
+qplot(y_test, out_unicore_predicho) #Scatterplot
+
+
+print('-------- MULTICORE-Simple (con cross validation) ----------')
+set.seed(1, "L'Ecuyer-CMRG") #multicore compatible seed
+modelo_multicore_sin_cv = mcSuperLearner(Y = y_train, X = x_train, family = gaussian(),
+                                         SL.library = algoritmosPredictivosUsados, verbose = FALSE)
+summary(modelo_multicore_sin_cv)
+print('Validando modelo MULTICORE (sin cross validation) sobre dataset de test...')
+out_multicore_simple <- predict.SuperLearner(object = modelo_unicore, newdata = x_test, onlySL = TRUE) #No usa los que tienen peso =0
+print('PREDICCION:')
+out_multicore_simple_predicho <- out_multicore_simple$pred; str(out_multicore_simple_predicho)
+print('ESPERABLE:')
+str(y_test)
+qplot(y_test, out_multicore_simple_predicho) #Scatterplot
+
+
+print('-------- MULTICORE-CV (con cross validation) ----------')
+print('Se puede usar la libreria SNOW (Windows, Linux; pero dificil) o multicore (Linux).')
+num_cores_disponibles <- RhpcBLASctl::get_num_cores()
+num_cores_usados <- (num_cores_disponibles)
+print(paste('Uso ', num_cores_usados, ' cores de ', num_cores_disponibles, ' cores disponibles'))
+options(mc.cores = num_cores_usados) #Uso todas las CPUs (menos una, para dejar libre el PC para trabajar)
+getOption("mc.cores") #En Linux, comprobamos su estamos usando todos los cores
+
+# We need to set a different type of seed that works across cores.
+# Otherwise the other cores will go rogue and we won't get repeatable results.
+# This version is for the "multicore" parallel system in R.
+set.seed(1, "L'Ecuyer-CMRG")
+
+num_v <- 3 # splits the data into V folds and then calls SuperLearner
+internal_v <- 2 #inner cross-validation process (replicated across all folds)
+
+print('SUPERLEARNER con MULTICORE:')
+print('Con método NNLS (Non-negative Least Squares)')
+print(paste('num_v = ', num_v))
+print(paste('internal_v = ', internal_v))
+print('Esta forma con CV no mide el rendimiento, asi que lo medimos por fuera...')
+
+system.time({
+    modelo_multicore_con_cv <- CV.SuperLearner(Y = y_train, X = x_train, family = gaussian(), 
+                          parallel = "multicore",
+                          SL.library = algoritmosPredictivosUsados, 
+                          method = "method.NNLS", verbose = F,
+                          cvControl = list(V = num_v, shuffle = FALSE), 
+                          innerCvControl = list(list(V = internal_v)), 
+                          saveAll = FALSE)
+})
+
+library(ggplot2)
+
+print('Modelo:')
+print( summary(modelo_multicore_con_cv) )
+
+print('En cada fold, ha ganado este algoritmo:')
+table( simplify2array( modelo_multicore_con_cv$whichDiscreteSL ) )
+print('En cada fold, cada algoritmo tiene estos pesos:')
+modelo_multicore_con_cv$coef
+print('Plot the performance with 95% CIs (use a better ggplot theme):')
+plot(modelo_multicore_con_cv) + theme_bw()
+
+print('Validando modelo MULTICORE (con cross validation) sobre dataset de test...')
+out_multicore_cv <- predict.SuperLearner(object = modelo_multicore_con_cv, newdata = x_test, onlySL = TRUE) #No usa los que tienen peso =0
+print('PREDICCION:')
+out_multicore_cv_predicho_algor1 <- out_multicore_cv$library.predict[,1]; str(y_test_predicho_algor1)
+out_multicore_cv_predicho_algor2 <- out_multicore_cv$library.predict[,2]; str(y_test_predicho_algor2)
+print('ESPERABLE:')
+str(y_test)
+qplot(y_test, out_multicore_cv_predicho_algor1) #Scatterplot
+qplot(y_test, out_multicore_cv_predicho_algor2) #Scatterplot
+
+print('-------- SNOW: procesado multicore (sirve en Linux y Windows)----------')
+
 
 
 ```

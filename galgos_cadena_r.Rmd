@@ -208,9 +208,9 @@ analisis_modelos_superlearner <- function(matrizentrada){
   print( paste( "testset=",nrow(testset), "x", ncol(testset) ) )
   print( paste( "trainset=",nrow(trainset), "x", ncol(trainset) ) )
   print( paste( "x_train=",nrow(x_train), "x", ncol(x_train) ) )
-  print( paste( "y_train=",nrow(y_train), "x", ncol(y_train) ) )
+  print( paste( "y_train=",length(y_train) ) )
   print( paste( "x_test=",nrow(x_test), "x", ncol(x_test) ) )
-  print( paste( "y_test=",nrow(y_test), "x", ncol(y_test) ) )
+  print( paste( "y_test=",length(y_test) ) )
   
   
   #MODELOS DISPONIBLES en libreria SuperLearner:
@@ -249,7 +249,7 @@ analisis_modelos_superlearner <- function(matrizentrada){
   print('------- Algoritmos usados -------')
   algoritmosPredictivosUsados <- list(
     learners_rf$names,
-    "SL.randomForest", "SL.ridge", "SL.nnet"
+    "SL.randomForest"
     )
   print( algoritmosPredictivosUsados )
   
@@ -304,7 +304,7 @@ analisis_modelos_superlearner <- function(matrizentrada){
   print('Plot the performance with 95% CIs (use a better ggplot theme):')
   plot(modelo_multicore_con_cv) + theme_bw()
   
-  # 
+
   # VALIDATION
   print('Validando modelo MULTICORE (con cross validation) sobre dataset de test...')
   #validarModelo(modelo_multicore_con_cv, x_test, y_test, "MULTICORE_CON_CV")
@@ -337,9 +337,6 @@ analisis_modelos_superlearner <- function(matrizentrada){
   # validarModelo(modelo_super, x_test, y_test, "UNICORE_CON_CV")
   # ----------------------------------------------
   
- 
-  
-  #--------------------------------------------------------------- 
   
   return(list(modelo_multicore_con_cv, x_test, y_test))
 }
