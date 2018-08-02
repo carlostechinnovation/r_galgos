@@ -861,6 +861,7 @@ qplot(y_test, out_multicore_simple_predicho) #Scatterplot
 
 
 print('-------- MULTICORE-CV (con cross validation) ----------')
+print('Se usa para EVALUAR EL RENDIMIENTO: para elegir algoritmos y sus parametros adecuados. Luego habrá que usarlos en un modelo sin CV')
 print('Se puede usar la libreria SNOW (Windows, Linux; pero dificil) o multicore (Linux).')
 num_cores_disponibles <- RhpcBLASctl::get_num_cores()
 num_cores_usados <- (num_cores_disponibles)
@@ -904,15 +905,22 @@ modelo_multicore_con_cv$coef
 print('Plot the performance with 95% CIs (use a better ggplot theme):')
 plot(modelo_multicore_con_cv) + theme_bw()
 
-print('Validando modelo MULTICORE (con cross validation) sobre dataset de test...')
-out_multicore_cv <- predict.SuperLearner(object = modelo_multicore_con_cv, newdata = x_test, onlySL = TRUE) #No usa los que tienen peso =0
-print('PREDICCION:')
-out_multicore_cv_predicho_algor1 <- out_multicore_cv$library.predict[,1]; str(y_test_predicho_algor1)
-out_multicore_cv_predicho_algor2 <- out_multicore_cv$library.predict[,2]; str(y_test_predicho_algor2)
-print('ESPERABLE:')
-str(y_test)
-qplot(y_test, out_multicore_cv_predicho_algor1) #Scatterplot
-qplot(y_test, out_multicore_cv_predicho_algor2) #Scatterplot
+
+# Review meta-weights (coefficients) from a CV.SuperLearner object
+review_weights <- function(cv_sl) {
+  meta_weights = coef(cv_sl)
+  means = colMeans(meta_weights)
+  sds = apply(meta_weights, MARGIN = 2,  FUN = function(col) { sd(col) })
+  mins = apply(meta_weights, MARGIN = 2, FUN = function(col) { min(col) })
+  maxs = apply(meta_weights, MARGIN = 2, FUN = function(col) { max(col) })
+  # Combine the stats into a single matrix.
+  sl_stats = cbind("mean(weight)" = means, "sd" = sds, "min" = mins, "max" = maxs)
+  # Sort by decreasing mean weight.
+  sl_stats[order(sl_stats[, 1], decreasing = T), ]
+}
+
+print(review_weights(modelo_multicore_con_cv), digits = 3)
+
 
 print('-------- SNOW: procesado multicore (sirve en Linux y Windows)----------')
 

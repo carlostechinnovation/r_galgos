@@ -33,7 +33,7 @@ leerDesdeBaseDatosYEscribirCSV <- function(){
   
   
   # ------------- Features (INPUT) -----------------------
-  pasado_f_rs <- dbSendQuery(mydb, "SELECT * FROM datos_desa.tb_ds_pasado_train_features_TOTAL LIMIT 10000")
+  pasado_f_rs <- dbSendQuery(mydb, "SELECT * FROM datos_desa.tb_ds_pasado_train_features_TOTAL LIMIT 1000")
   typeof(pasado_f_rs)
   pasado_f <- dbFetch(pasado_f_rs, n = -1)
   #dbClearResult(pasado_f_rs)
@@ -49,7 +49,7 @@ leerDesdeBaseDatosYEscribirCSV <- function(){
 
   
   # -------------------- Targets (INPUT) -----------------
-  pasado_t_rs <- dbSendQuery(mydb, "SELECT * FROM datos_desa.tb_ds_pasado_train_targets_TOTAL LIMIT 10000")
+  pasado_t_rs <- dbSendQuery(mydb, "SELECT * FROM datos_desa.tb_ds_pasado_train_targets_TOTAL LIMIT 1000")
   typeof(pasado_t_rs)
   pasado_t <- dbFetch(pasado_t_rs, n = -1)
   #dbClearResult(pasado_t_rs)
@@ -67,7 +67,7 @@ leerDesdeBaseDatosYEscribirCSV <- function(){
 }
 
 #Si no tengo acceso a BBDD local, debo tener esto siempre comentado para no pisar el actual CSV
-#leerDesdeBaseDatosYEscribirCSV()
+leerDesdeBaseDatosYEscribirCSV()
 ```
 
 #### Lectura de ficheros CSV (features y targets)
@@ -114,63 +114,6 @@ indices_sin_na_largas <- as.numeric( na.action(pasado_ft_largas) )
 paste("LARGAS:", nrow(pasado_ft_largas), "x", ncol(pasado_ft_largas))
 ```
 
-
-Analisis de MODELOS de forma directa (sin SuperLearner):
-```{r}
-#' SELECCION DEL MODELO DE FORMA MANUAL
-#'
-#' @param matrizentrada 
-#'
-#' @return
-#' @export
-#'
-#' @examples
-analisis_modelos <- function(matrizentrada){
-  library(e1071) #SVM
-  library(rpart) #Regression trees
-  
-  ## Split en Datasets (train y test)
-  index     <- 1:nrow(matrizentrada)
-  tercio <- trunc(0.30 * length(index)) #70%-TRAIN, 30%-Test
-  testindex <- sample(index, tercio, replace = FALSE, prob = NULL)
-  testset   <- na.omit(matrizentrada[testindex,]) #TEST Quita las filas que tengan ALGUN valor NA
-  trainset  <- na.omit(matrizentrada[-testindex,])#TRAIN Quita las filas que tengan ALGUN valor NA
-  
-  #Columna TARGET
-  indice_target <- which( colnames(trainset) == "TARGET" )
-  
-  ## svm (MAQUINAS VECTOR SOPORTE) para REGRESIÓN NO LINEAL
-  svm.model <- svm(formula = TARGET ~ ., data = trainset, cost = 1000, gamma = 0.0001)
-  svm.pred  <- predict(svm.model, testset[,-indice_target])
-  svm_error <- crossprod(svm.pred - testset[,indice_target]) / length(testindex)
-  svm_error
-  
-  ## rpart (ARBOLES DE REGRESION) para REGRESIÓN NO LINEAL
-  rpart.model <- rpart(formula = TARGET ~ ., data = trainset)
-  rpart.pred  <- predict(rpart.model, testset[,-indice_target])
-  rpart_error <- crossprod(rpart.pred - testset[,indice_target]) / length(testindex)
-  rpart_error
-  
-  if ( svm_error < rpart_error ) {
-    print("Gana modelo SVM")
-    return(svm.model)
-  } else {
-    print("Gana modelo RPART")
-    return( rpart.model )
-  }
-}
-
-
-
-############### Para cada distancia, obtengo el mejor modelo #################
-#modelo_cortas <- analisis_modelos(pasado_ft_cortas)
-#modelo_medias <- analisis_modelos(pasado_ft_medias)
-#modelo_largas <- analisis_modelos(pasado_ft_largas)
-
-
-```
-
-
 Analisis de modelos usando SuperLearner:
 ```{r}
 #' SELECCION DEL MODELO USANDO SUPERLEARNER
@@ -184,37 +127,34 @@ Analisis de modelos usando SuperLearner:
 analisis_modelos_superlearner <- function(matrizentrada){
   
   library("SuperLearner")
+  library(nnls)
+library(nnet)
+library(randomForest)
+library(ggplot2)
+library(parallel)
   
-  ## Split en Datasets (train y test)
+  #Crear datasets features+target para train y test
   index     <- 1:nrow(matrizentrada)
-  tercio <- trunc(0.30 * length(index)) #70%-TRAIN, 30%-Test
-  testindex <- sample(index, tercio, replace = FALSE, prob = NULL)
-  testset   <- na.omit(matrizentrada[testindex,]) #TEST Quita las filas que tengan ALGUN valor NA
-  trainset  <- na.omit(matrizentrada[-testindex,])#TRAIN Quita las filas que tengan ALGUN valor NA
+tercio <- trunc(0.30 * length(index)) #70%-TRAIN, 30%-Test
+testindex <- sample(index, tercio, replace = FALSE, prob = NULL)
+testset   <- na.omit(matrizentrada[testindex,])
+trainset  <- na.omit(matrizentrada[-testindex,])
+
+indice_target <- which( colnames(trainset) == "TARGET" ) #Columna TARGET
+x_train <- subset(trainset, select = -indice_target)
+y_train <- trainset$TARGET
+x_test <- subset(testset, select = -indice_target)
+y_test <- testset$TARGET
   
-  #Columna TARGET
-  indice_target <- which( colnames(trainset) == "TARGET" )
+print( paste( "matrizentrada=",nrow(matrizentrada), "x", ncol(matrizentrada) ) )
+print( paste( "testset=",nrow(testset), "x", ncol(testset) ) )
+print( paste( "trainset=",nrow(trainset), "x", ncol(trainset) ) )
+print( paste( "x_train=",nrow(x_train), "x", ncol(x_train) ) )
+print( paste( "y_train=",length(y_train) ) )
+print( paste( "x_test=",nrow(x_test), "x", ncol(x_test) ) )
+print( paste( "y_test=",length(y_test) ) )
   
-  #Features y target de los datasets de TRAIN y TEST
-  x_train <- subset(trainset, select = -indice_target)
-  y_train <- trainset$TARGET
-  x_test <- subset(testset, select = -indice_target)
-  y_test <- testset$TARGET
-  
-  #Estructura y dimensiones de los datos
-  #str(x_train)
-  #dim(x_train)
-  print( paste( "matrizentrada=",nrow(matrizentrada), "x", ncol(matrizentrada) ) )
-  print( paste( "testset=",nrow(testset), "x", ncol(testset) ) )
-  print( paste( "trainset=",nrow(trainset), "x", ncol(trainset) ) )
-  print( paste( "x_train=",nrow(x_train), "x", ncol(x_train) ) )
-  print( paste( "y_train=",length(y_train) ) )
-  print( paste( "x_test=",nrow(x_test), "x", ncol(x_test) ) )
-  print( paste( "y_test=",length(y_test) ) )
-  
-  
-  #MODELOS DISPONIBLES en libreria SuperLearner:
-  #listWrappers()
+  #listWrappers()  #MODELOS DISPONIBLES en libreria SuperLearner:
   
   set.seed(150)
   
@@ -247,200 +187,93 @@ analisis_modelos_superlearner <- function(matrizentrada){
   
   
   print('------- Algoritmos usados -------')
-  algoritmosPredictivosUsados <- list(
-    learners_rf$names,
-    "SL.randomForest"
-    )
-  print( algoritmosPredictivosUsados )
+  algoritmosPredictivosUsados <- list( learners_rf$names, "SL.randomForest", "SL.bayesglm", "SL.caret.rpart", "SL.cforest", "SL.glm", "SL.glmnet",
+                                       "SL.lm",  "SL.loess","SL.logreg",  "SL.mean",  "SL.nnet",  "SL.nnls",  "SL.polymars", "SL.ridge",  "SL.rpart")
+  print( algoritmosPredictivosTodos )
   
   
   #PENDIENTE: https://cran.r-project.org/web/packages/SuperLearner/vignettes/Guide-to-SuperLearner.html#test-algorithm-with-multiple-hyperparameter-settings
+  #CROSS_VALIDATION: https://cran.r-project.org/web/packages/SuperLearner/vignettes/Guide-to-SuperLearner.html#fit-ensemble-with-external-cross-validation
   
-   #CROSS_VALIDATION: https://cran.r-project.org/web/packages/SuperLearner/vignettes/Guide-to-SuperLearner.html#fit-ensemble-with-external-cross-validation
   
-  
-  #------------------------------------------------------------
-  print('------ MULTICORE (con cross validation)... -------')
-  print('Se puede usar la libreria SNOW (Windows, Linux; pero dificil) o multicore (Linux).')
-  num_cores_disponibles <- RhpcBLASctl::get_num_cores()
-  num_cores_usados <- (num_cores_disponibles)
-  print(paste('Uso ', num_cores_usados, ' cores de ', num_cores_disponibles, ' cores disponibles'))
-  options(mc.cores = num_cores_usados) #Uso todas las CPUs (menos una, para dejar libre el PC para trabajar)
-  getOption("mc.cores") #En Linux, comprobamos su estamos usando todos los cores
+  print('-------- MULTICORE-CV (con cross validation) ----------')
+print('Se usa para EVALUAR EL RENDIMIENTO: para elegir algoritmos y sus parametros adecuados. Luego habrá que usarlos en un modelo sin CV')
+print('Se puede usar la libreria SNOW (Windows, Linux; pero dificil) o multicore (Linux).')
+num_cores_disponibles <- RhpcBLASctl::get_num_cores()
+num_cores_usados <- (num_cores_disponibles)
+print(paste('Uso ', num_cores_usados, ' cores de ', num_cores_disponibles, ' cores disponibles'))
+options(mc.cores = num_cores_usados) #Uso todas las CPUs (menos una, para dejar libre el PC para trabajar)
+getOption("mc.cores") #En Linux, comprobamos su estamos usando todos los cores
 
-  # We need to set a different type of seed that works across cores.
-  # Otherwise the other cores will go rogue and we won't get repeatable results.
-  # This version is for the "multicore" parallel system in R.
-  set.seed(1, "L'Ecuyer-CMRG")
-  
-  
-  num_v <- 3 # splits the data into V folds and then calls SuperLearner
-  internal_v <- 2 #inner cross-validation process (replicated across all folds)
-  
-  print('SUPERLEARNER con MULTICORE:')
-  print('Con método NNLS (Non-negative Least Squares)')
-  print(paste('num_v = ', num_v))
-  print(paste('internal_v = ', internal_v))
-  print('Esta forma con CV no mide el rendimiento, asi que lo medimos por fuera...')
-  
-  system.time({
+# We need to set a different type of seed that works across cores.
+# Otherwise the other cores will go rogue and we won't get repeatable results.
+# This version is for the "multicore" parallel system in R.
+set.seed(1, "L'Ecuyer-CMRG")
+
+num_v <- 3 # splits the data into V folds and then calls SuperLearner
+internal_v <- 2 #inner cross-validation process (replicated across all folds)
+
+print('SUPERLEARNER con MULTICORE:')
+print('Con método NNLS (Non-negative Least Squares)')
+print(paste('num_v = ', num_v))
+print(paste('internal_v = ', internal_v))
+print('Esta forma con CV no mide el rendimiento, asi que lo medimos por fuera...')
+
+system.time({
     modelo_multicore_con_cv <- CV.SuperLearner(Y = y_train, X = x_train, family = gaussian(), 
                           parallel = "multicore",
                           SL.library = algoritmosPredictivosUsados, 
                           method = "method.NNLS", verbose = F,
-                          cvControl = list(V = num_v, shuffle=FALSE), 
+                          cvControl = list(V = num_v, shuffle = FALSE), 
                           innerCvControl = list(list(V = internal_v)), 
-                          saveAll=FALSE)
-  })
-  
-  library(ggplot2)
-  
-  print('Modelo:')
-  print( summary(modelo_multicore_con_cv) )
-  plot(modelo_multicore_con_cv)
-  
-  print('Review the distribution of the best single learner as external CV folds:')
-  table( simplify2array( modelo_multicore_con_cv$whichDiscreteSL ) )
-  print('Plot the performance with 95% CIs (use a better ggplot theme):')
-  plot(modelo_multicore_con_cv) + theme_bw()
-  
+                          saveAll = FALSE)
+})
 
-  # VALIDATION
-  print('Validando modelo MULTICORE (con cross validation) sobre dataset de test...')
-  #validarModelo(modelo_multicore_con_cv, x_test, y_test, "MULTICORE_CON_CV")
+library(ggplot2)
+
+print('Modelo:')
+print( summary(modelo_multicore_con_cv) )
+
+print('En cada fold, ha ganado este algoritmo:')
+table( simplify2array( modelo_multicore_con_cv$whichDiscreteSL ) )
+print('En cada fold, cada algoritmo tiene estos pesos:')
+modelo_multicore_con_cv$coef
+print('Plot the performance with 95% CIs (use a better ggplot theme):')
+plot(modelo_multicore_con_cv) + theme_bw()
+
+
+# Review meta-weights (coefficients) from a CV.SuperLearner object
+review_weights <- function(cv_sl) {
+  meta_weights = coef(cv_sl)
+  means = colMeans(meta_weights)
+  sds = apply(meta_weights, MARGIN = 2,  FUN = function(col) { sd(col) })
+  mins = apply(meta_weights, MARGIN = 2, FUN = function(col) { min(col) })
+  maxs = apply(meta_weights, MARGIN = 2, FUN = function(col) { max(col) })
+  # Combine the stats into a single matrix.
+  sl_stats = cbind("mean(weight)" = means, "sd" = sds, "min" = mins, "max" = maxs)
+  # Sort by decreasing mean weight.
+  sl_stats[order(sl_stats[, 1], decreasing = T), ]
+}
+
+print(review_weights(modelo_multicore_con_cv), digits = 3)
   
-  #------------------------------------------------------------------
-  # print('MULTICORE (sin cross validation)...')
-  # # Set multicore compatible seed.
-  # set.seed(1, "L'Ecuyer-CMRG")
-  # # Fit the SuperLearner.
-  # modelo_multicore_sin_cv = mcSuperLearner(Y = y_train, X = x_train, family = gaussian(),
-  #                   SL.library = algoritmosPredictivosUsados, verbose = TRUE)
-  # summary(modelo_multicore_sin_cv)
-  # 
-  # VALIDATION
-  # print('Validando modelo MULTICORE (sin cross validation) sobre dataset de test...')
-  # validarModelo(modelo_multicore_sin_cv, x_test, y_test, "MULTICORE_SIN_CV")
-  # ----------------------------------------------
   
-  #--------------------------------------------------------------- 
-  # print('UNICORE (con cross validation)...')
-  # modelo_super <- SuperLearner(Y = y_train, X = x_train, family = gaussian(), 
-  #                              SL.library = algoritmosPredictivosUsados, method = "method.NNLS",
-  #                              id = NULL, verbose = TRUE,
-  #                              control = list(), cvControl = list(), obsWeights = NULL, env = parent.frame())
-  # 
-  # summary(modelo_super)
-  # 
-  # VALIDATION
-  # print('Validando modelo UNICORE (con cross validation) sobre dataset de test...')
-  # validarModelo(modelo_super, x_test, y_test, "UNICORE_CON_CV")
-  # ----------------------------------------------
   
   
   return(list(modelo_multicore_con_cv, x_test, y_test))
 }
 
 
-#' VALIDACION del modelo ENTRENADO usando dataset de TEST. Obtengo porcentaje de acierto.
-#'
-#' @param modeloEntrenado 
-#' @param x_text 
-#' @param y_test 
-#' @param tipo 
-#'
-#' @return
-#' @export
-#'
-#' @examples
-validarModelo <- function(modeloEntrenado, x_test, y_test, tipo){
-  
-  print('-------------- VALIDACION ---------------')
-  print('Usando dataset de test para validar el modelo y obtener porcentaje de acierto...')
-  print(paste('Tipo: ', tipo))
-  print( paste("VALIDACION-INPUTS:", "  x_test=",nrow(x_test), "x", ncol(x_test),  "   y_test=",length(y_test) ) )
-  
-  if (tipo == "MULTICORE_CON_CV") {
-    
-    
-    num_v <- modeloEntrenado$V
-    print(paste('El modelo usó CV con V folds: ', num_v))
-    
-    y_test_predicho_objeto <- modeloEntrenado$SL.predict
-    print("modeloEntrenado$SL.predict (muestro 10 filas):")
-    head(y_test_predicho_objeto)
-    
-    print("Coeficientes por algoritmo y fold (muestro 10 filas):")
-    modeloEntrenado$coef
-    
-    print("Pintando plot...")
-    plot(modeloEntrenado, package = "ggplot2", constant = qnorm(0.975), sort = TRUE) 
-    
-    
-    print('str PREDICHO (descripcion y filas de ejemplo):')
-    str(y_test_predicho_objeto)
-    print( head(y_test_predicho_objeto) )
-    
-    print('str TEST (lo esperable):')
-    str(y_test)
-    print( head(y_test_predicho_objeto) )
-    
-    
-    
-    if(length(y_test_predicho_objeto) != length(y_test)){
-      print('Deberian tener las mismas dimensiones!!!!! COMPROBARLO!!!')
-      
-    } else {
-      #Graficos de la prediccion
-      library(ggplot2)
-      qplot(y_test_predicho_objeto) + theme_minimal() #Histograma de los valores predichos
-      qplot(y_test, y_test_predicho_objeto) + theme_minimal() #Scatterplot
-      
-    }
-    
-    
-  } else if(tipo == "MULTICORE_SIN_CV"){
-    
-    
-  } else if (tipo == "UNICORE_CON_CV") {
-    
-    y_test_predicho_objeto <- predict.SuperLearner(object = modeloEntrenado, newdata = x_test, onlySL = TRUE) #No usa los que tienen peso =0
-    
-    print('str (descripcion y filas de ejemplo):')
-    str(y_test_predicho_objeto)
-    head(y_test_predicho_objeto)
-    print('summary:')
-    summary(y_test_predicho_objeto$library.predict)
-    
-    #Graficos de la prediccion
-    library(ggplot2)
-    qplot(y_test_predicho_objeto$pred[, 1]) + theme_minimal() #Histograma de los valores predichos
-    qplot(y_test, y_test_predicho_objeto$pred[, 1]) + theme_minimal() #Scatterplot
-    
-    #ROC (Solo para CLASIFICACION BINARIA)
-    # Curva ROC (AUC, Area Under Curve): AUC can range from 0.5 (no better than chance) to 1.0 (perfect)
-    #pred_rocr <- ROCR::prediction(predictions=y_test_predicho_objeto$pred, labels = y_test, label.ordering = NULL)
-    #auc = ROCR::performance(pred_rocr, measure = "auc", x.measure = "cutoff")@y.values[[1]]
-    #print(auc)
-    
-     
-  }
-  
-  
-}
-
-
-
 ############### Para cada distancia, obtengo el mejor modelo #################
 
 
 out_cortas <- analisis_modelos_superlearner(pasado_ft_cortas)
-#out_medias <- analisis_modelos_superlearner(pasado_ft_medias)
-#out_largas <- analisis_modelos_superlearner(pasado_ft_largas)
+out_medias <- analisis_modelos_superlearner(pasado_ft_medias)
+out_largas <- analisis_modelos_superlearner(pasado_ft_largas)
 
 modelo_cortas <- out_cortas[[1]]
-#modelo_medias <- out_medias[[1]]
-#modelo_largas <- out_largas[[1]]
+modelo_medias <- out_medias[[1]]
+modelo_largas <- out_largas[[1]]
 
 ```
 
