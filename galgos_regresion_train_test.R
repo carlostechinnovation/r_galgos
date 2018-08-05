@@ -248,6 +248,92 @@ analisis_modelos_superlearner <- function(matrizentrada, distancia_str, ejecutar
 }
 
 
+#' Calcular VALIDATION para un subgrupo TAG.
+#'
+#' @param tag 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+calcular_validation_file <- function(tag, ){
+  
+  library("SuperLearner")
+  
+  print(getwd())
+  
+  # ----------- Modelos ENTRENADOS----------
+  load(file = "/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/modelo_cortas_file")
+  load(file = "/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/modelo_medias_file")
+  load(file = "/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/modelo_largas_file")
+  ls() # Compruebo que se han cargado
+  
+  # Las entradas (validation-features) estan divididas en en 3 subsets segun DISTANCIA. Predecimos cada una por separado con su modelo adecuado. Luego juntamos resultados en un solo dataset de salida, pero manteniendo el ORDEN!!!!!!!!!
+  
+  
+  # ---------------Entradas (validation features: mantener el ORDEN)-----------
+  #anhado un indice, para poder recuperar el ORDEN al final
+  pasado_vf$INDICE_ORDEN <- seq.int(nrow(pasado_vf))
+  
+  pasado_vf_cortas <- na.omit( subset(pasado_vf[, !(names(pasado_vf) %in% col_medias | names(pasado_vf) %in% col_largas)], distancia_norm <= 0.33) )
+  pasado_vf_medias <- na.omit( subset(pasado_vf[, !(names(pasado_vf) %in% col_cortas | names(pasado_vf) %in% col_largas)], distancia_norm > 0.33 & distancia_norm <= 0.66) )
+  pasado_vf_largas <- na.omit( subset(pasado_vf[, !(names(pasado_vf) %in% col_cortas | names(pasado_vf) %in% col_medias)], distancia_norm > 0.66) )
+  
+  paste("CORTAS-VF (sin NAs):", nrow(pasado_vf_cortas), "x", ncol(pasado_vf_cortas))
+  paste("MEDIAS-VF (sin NAs):", nrow(pasado_vf_medias), "x", ncol(pasado_vf_medias))
+  paste("LARGAS-VF (sin NAs):", nrow(pasado_vf_largas), "x", ncol(pasado_vf_largas))
+  
+  
+  #Prediccion CORTAS
+  predicciones_vt_model_cortas <- predict.SuperLearner(object = modelo_cortas, newdata = subset(pasado_vf_cortas, select = -c(INDICE_ORDEN)), onlySL = TRUE) #No usa los que tienen peso =0
+  predicciones_vt_cortas <- predicciones_vt_model_cortas$pred #Prediccion
+  print(paste("PREDICCION CORTAS =", length(predicciones_vt_cortas)))
+  
+  #Prediccion MEDIAS
+  predicciones_vt_model_medias <- predict.SuperLearner(object = modelo_medias, newdata = subset(pasado_vf_medias, select = -c(INDICE_ORDEN)), onlySL = TRUE) #No usa los que tienen peso =0
+  predicciones_vt_medias <- predicciones_vt_model_medias$pred #Prediccion
+  print(paste("PREDICCION MEDIAS =", length(predicciones_vt_medias)))
+  
+  #Prediccion LARGAS
+  predicciones_vt_model_largas <- predict.SuperLearner(object = modelo_largas, newdata = subset(pasado_vf_largas, select = -c(INDICE_ORDEN)), onlySL = TRUE) #No usa los que tienen peso =0
+  predicciones_vt_largas <- predicciones_vt_model_largas$pred #Prediccion
+  print(paste("PREDICCION LARGAS =", length(predicciones_vt_largas)))
+  
+  
+  library(plyr)
+  # CBIND: entrada(con orden) + salida
+  pasado_vft_cortas <- rename( cbind(pasado_vf_cortas, predicciones_vt_cortas) , c("predicciones_vt_cortas"="TARGET_predicho"))
+  pasado_vft_medias <- rename( cbind(pasado_vf_medias, predicciones_vt_medias) , c("predicciones_vt_medias"="TARGET_predicho"))
+  pasado_vft_largas <- rename( cbind(pasado_vf_largas, predicciones_vt_largas) , c("predicciones_vt_largas"="TARGET_predicho"))
+  #Cogemos solo las columnas que queremos (indice y target)
+  pasado_v_it_cortas <- subset(pasado_vft_cortas, select = c(INDICE_ORDEN, TARGET_predicho))
+  pasado_v_it_medias <- subset(pasado_vft_medias, select = c(INDICE_ORDEN, TARGET_predicho))
+  pasado_v_it_largas <- subset(pasado_vft_largas, select = c(INDICE_ORDEN, TARGET_predicho))
+  #Juntamos cortas, medias y largas. 
+  pasado_v_it <- rbind( rbind(pasado_v_it_cortas, pasado_v_it_medias), pasado_v_it_largas)
+  
+  #Ordenamos por INDICE_ORDEN
+  pasado_v_it_ordenado <- pasado_v_it[order(pasado_v_it$INDICE_ORDEN),] 
+  
+  # Rellenamos las  filas que eran NAs (rellenando en los huecos del indice, hasta el numero de elementos de entrada)
+  num_input <- nrow(pasado_vf)
+  df_nulos <- data.frame( matrix(NA, nrow = num_input, ncol = 1) )
+  df_nulos$INDICE_ORDEN <- seq.int(nrow(df_nulos))
+  juntos <- merge(x = df_nulos, y = pasado_v_it_ordenado, by = "INDICE_ORDEN", all = TRUE) #LEFT OUTER JOIN
+  
+  #Fichero de salida
+  out_validation_target_predicho <- subset(juntos, select = c(TARGET_predicho))
+  
+  print(paste('Escribiendo a fichero de VALIDATION (target predicho) con', nrow(out_validation_target_predicho), 'filas...'))
+  path_validation_targets <- paste("/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pasado_validation_targets_predichos_", tag, ".txt", sep = '')
+  
+  out_validation_target_predicho.df = data.frame(out_validation_target_predicho)
+  write.table(out_validation_target_predicho.df , file = path_validation_targets, append = FALSE, quote = TRUE, sep = " ",
+              eol = "\n", na = "\\N", dec = ".", row.names = FALSE, col.names = FALSE)
+  
+}
+
+
 #---------------------- CUERPO de este SCRIPT -------------
 # PARAMETROS
 # 1 TAG (subgrupo)
@@ -266,5 +352,14 @@ if (length(args) == 0) {
   #Borramos array de parametros, para evitar confusiones
   rm(args)
 }
+
+#--- CADENA:
+establecerConfigGeneral()
+leerDesdeBaseDatosYEscribirCSV("TOTAL", 500)
+print(getwd())
+pasado_f <- read.csv('input_features.csv')
+pasado_t <- read.csv('input_targets.csv')
+pasado_vf <- read.csv('input_validation_features.csv')
+
 
 

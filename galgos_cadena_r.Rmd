@@ -14,7 +14,6 @@ Analisis de datasets en proyecto GALGOS.
 source("/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_regresion_train_test.R")
 establecerConfigGeneral()
 ```
-
 #### Conexion a BBDD MySQL
 ```{r}
 #Si no tengo acceso a BBDD local, debo tener esto siempre comentado para no pisar el actual CSV
@@ -45,6 +44,9 @@ lapply(pasado_ft, summary)
 
 Creamos un modelo para cada tipo de DISTANCIA, para usar sólo las columnas útiles para esa distancia:
 ```{r}
+
+
+
 #Para quitar las COLUMNAS que no son UTILES para esa DISTANCIA
 col_cortas <- c("vel_real_cortas_mediana_norm", "vel_real_cortas_max_norm", "vel_going_cortas_mediana_norm", "vel_going_cortas_max_norm")
 col_medias <- c("vel_real_longmedias_mediana_norm", "vel_real_longmedias_max_norm", "vel_going_longmedias_mediana_norm", "vel_going_longmedias_max_norm")
@@ -84,9 +86,9 @@ modelo_largas <- out_largas[[1]]
 
 Guardando los modelos a ficheros:
 ```{r}
-save(modelo_cortas, file = '/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/modelo_cortas_file')
-save(modelo_medias, file = '/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/modelo_medias_file')
-save(modelo_largas, file = '/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/modelo_largas_file')
+save(modelo_cortas, file = paste('/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/modelo_cortas_',tag,sep=''))
+save(modelo_medias, file = paste('/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/modelo_medias_',tag,sep=''))
+save(modelo_largas, file = paste('/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/modelo_largas_',tag,sep=''))
 
 rm(modelo_cortas)
 rm(modelo_medias)
@@ -97,71 +99,10 @@ ls() # Compruebo que se han borrado
 
 #### VALIDATION (pasado, pero saco el target predicho a un fichero, para enriquecerlo con campos de dinero y comprobar la RENTABILIDAD por fuera)
 ```{r}
-library("SuperLearner")
-
-print(getwd())
-
-# ----------- Modelos ENTRENADOS----------
-load(file = "/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/modelo_cortas_file")
-load(file = "/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/modelo_medias_file")
-load(file = "/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/modelo_largas_file")
-ls() # Compruebo que se han cargado
-
-tag <- "TOTAL" #PENDIENTE quitar (coger por parametro)!!!!!!!!!!!!!!
-
-
-# Las entradas (validation-features) estan divididas en en 3 subsets segun DISTANCIA. Predecimos cada una por separado con su modelo adecuado. Luego juntamos resultados en un solo dataset de salida, pero manteniendo el ORDEN (PENDIENTE conocemos los índices, para reconstruir el orden)!!!!!!!!!
-
-
-# ---------------Entradas (validation features: mantener el ORDEN)-----------
-#anhado un indice, para poder recuperar el ORDEN al final
-pasado_vf$INDICE_ORDEN <- seq.int(nrow(pasado_vf))
-
-pasado_vf_cortas <- na.omit( subset(pasado_vf[, !(names(pasado_vf) %in% col_medias | names(pasado_vf) %in% col_largas)], distancia_norm <= 0.33) )
-pasado_vf_medias <- na.omit( subset(pasado_vf[, !(names(pasado_vf) %in% col_cortas | names(pasado_vf) %in% col_largas)], distancia_norm > 0.33 & distancia_norm <= 0.66) )
-pasado_vf_largas <- na.omit( subset(pasado_vf[, !(names(pasado_vf) %in% col_cortas | names(pasado_vf) %in% col_medias)], distancia_norm > 0.66) )
-
-paste("CORTAS-VF (sin NAs):", nrow(pasado_vf_cortas), "x", ncol(pasado_vf_cortas))
-paste("MEDIAS-VF (sin NAs):", nrow(pasado_vf_medias), "x", ncol(pasado_vf_medias))
-paste("LARGAS-VF (sin NAs):", nrow(pasado_vf_largas), "x", ncol(pasado_vf_largas))
-
-#PENDIENTE Atencion, hemos quitado filas que tenian valores NAs. Al final, tenemos que meter esas filas, con cuidado de mantener el orden y los huecos.
-
-
-#Prediccion CORTAS
-predicciones_vt_model_cortas <- predict.SuperLearner(object = modelo_cortas, newdata = subset(pasado_vf_cortas, select = -c(INDICE_ORDEN)), onlySL = TRUE) #No usa los que tienen peso =0
-predicciones_vt_cortas <- predicciones_vt_model_cortas$pred #Prediccion
-print(paste("PREDICCION CORTAS =", length(predicciones_vt_cortas)))
-
-#Prediccion MEDIAS
-predicciones_vt_model_medias <- predict.SuperLearner(object = modelo_medias, newdata = subset(pasado_vf_medias, select = -c(INDICE_ORDEN)), onlySL = TRUE) #No usa los que tienen peso =0
-predicciones_vt_medias <- predicciones_vt_model_medias$pred #Prediccion
-print(paste("PREDICCION MEDIAS =", length(predicciones_vt_medias)))
-
-#Prediccion LARGAS
-predicciones_vt_model_largas <- predict.SuperLearner(object = modelo_largas, newdata = subset(pasado_vf_largas, select = -c(INDICE_ORDEN)), onlySL = TRUE) #No usa los que tienen peso =0
-predicciones_vt_largas <- predicciones_vt_model_largas$pred #Prediccion
-print(paste("PREDICCION LARGAS =", length(predicciones_vt_largas)))
-
-
-# CBIND: entrada(con orden) + salida
-pasado_vft_cortas <- cbind(pasado_vf_cortas, predicciones_vt_cortas)
-pasado_vft_medias <- cbind(pasado_vf_medias, predicciones_vt_medias)
-pasado_vft_largas <- cbind(pasado_vf_largas, predicciones_vt_largas)
-#Juntamos cortas, medias y largas
-pasado_vft <- rbind( rbind(pasado_vft_cortas, pasado_vft_medias), pasado_vft_largas)
-# Rellenamos las  filas que eran NAs
-
-#Ordenamos por INDICE_ORDEN
-
-
-path_validation_targets <- paste("/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pasado_validation_targets_predichos_", tag, ".txt")
-#save(out_multicore_simple_predicho, file = path_validation_targets)
-
+calcular_validation_file("TOTAL")
 ```
 
 #### PREDICCION del FUTURO usando los modelos ganadores:
-
 
 ```{r}
 print('Implementar la prediccion sobre el dataset X futuro (del que no conocemos target)...')
