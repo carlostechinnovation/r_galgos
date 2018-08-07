@@ -3,109 +3,28 @@ title: "GALGOS Cadena en R"
 output: html_notebook
 ---
 
-INPUT: datasets preparados, 
+INPUT: datasets preparados (tablas MySQL).
 OUTPUT: análisis, datasets elaborados y modelos
 
 Analisis de datasets en proyecto GALGOS.
 
+#### CADENA COMPLETA para ENTRENAMIENTO
+```{r}
+modo <- 1 # 1=train+test+validation
+tag <- "DOW_LAB"
+limiteSql <- "1000"
+commandArgs <- c(modo, tag, limiteSql)
 
-#### CONFIGURACIONES GENERALES
-```{r}
-source("/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_regresion_train_test.R")
-establecerConfigGeneral()
-```
-#### Conexion a BBDD MySQL
-```{r}
-#Si no tengo acceso a BBDD local, debo tener esto siempre comentado para no pisar el actual CSV
-leerDesdeBaseDatosYEscribirCSV("TOTAL", 500)
+source("/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_regresion_train_test.R", echo = FALSE)
 ```
 
-#### Lectura de ficheros CSV (features y targets)
+## ANALISIS PRELIMINAR DE DATOS con los que hemos entrenado
 ```{r}
-print(getwd())
-pasado_f <- read.csv('input_features.csv')
-pasado_t <- read.csv('input_targets.csv')
-pasado_vf <- read.csv('input_validation_features.csv')
-```
-
-## ANALISIS PRELIMINAR DE DATOS
-```{r}
-#Juntar FEATURES y TARGET
-pasado_ft <- cbind(pasado_f, pasado_t)
-
-head(pasado_ft)
-boxplot(pasado_ft, cex.axis=0.5) 
+#head(pasado_ft)
+#boxplot(pasado_ft, cex.axis = 0.5) 
 ```
 Vemos que hay variables con outliers y otras leptocúrticas (apretadas en torno a la media).
 ```{r}
 #summary(pasado_ft)
-lapply(pasado_ft, summary)
+#lapply(pasado_ft, summary)
 ```
-
-Creamos un modelo para cada tipo de DISTANCIA, para usar sólo las columnas útiles para esa distancia:
-```{r}
-
-
-
-#Para quitar las COLUMNAS que no son UTILES para esa DISTANCIA
-col_cortas <- c("vel_real_cortas_mediana_norm", "vel_real_cortas_max_norm", "vel_going_cortas_mediana_norm", "vel_going_cortas_max_norm")
-col_medias <- c("vel_real_longmedias_mediana_norm", "vel_real_longmedias_max_norm", "vel_going_longmedias_mediana_norm", "vel_going_longmedias_max_norm")
-col_largas <- c("vel_real_largas_mediana_norm", "vel_real_largas_max_norm", "vel_going_largas_mediana_norm", "vel_going_largas_max_norm")
-
-
-# --------------------- TRAIN (+test interno) -------------------
-pasado_ft_cortas <- na.omit( pasado_ft[, !(names(pasado_ft) %in% col_medias | names(pasado_ft) %in% col_largas)] ) #quitar columnas innecesarias
-indices_sin_na_cortas <- as.numeric( na.action(pasado_ft_cortas) ) #Indices en los que habia NAs
-if (sum( colSums(is.na(pasado_ft_cortas)) ) != 0){ print('ERROR: Hay columnas con missing data!') } #comprobamos que no hay missing data
-
-pasado_ft_medias <- na.omit( pasado_ft[, !(names(pasado_ft) %in% col_cortas | names(pasado_ft) %in% col_largas)] )
-indices_sin_na_medias <- as.numeric( na.action(pasado_ft_medias) ) #Indices en los que habia NAs
-if (sum( colSums(is.na(pasado_ft_medias)) ) != 0){ print('ERROR: Hay columnas con missing data!') } #comprobamos que no hay missing data
-
-pasado_ft_largas <- na.omit( pasado_ft[, !(names(pasado_ft) %in% col_cortas | names(pasado_ft) %in% col_medias)] )
-indices_sin_na_largas <- as.numeric( na.action(pasado_ft_largas) ) #Indices en los que habia NAs
-if (sum( colSums(is.na(pasado_ft_largas)) ) != 0){ print('ERROR: Hay columnas con missing data!') } #comprobamos que no hay missing data
-
-
-paste("CORTAS (train+test):", nrow(pasado_ft_cortas), "x", ncol(pasado_ft_cortas))
-paste("MEDIAS (train+test):", nrow(pasado_ft_medias), "x", ncol(pasado_ft_medias))
-paste("LARGAS (train+test):", nrow(pasado_ft_largas), "x", ncol(pasado_ft_largas))
-```
-
-Analisis de modelos usando SuperLearner:
-```{r}
-############### Para cada distancia, obtengo el mejor modelo #################
-out_cortas <- analisis_modelos_superlearner(pasado_ft_cortas, "CORTAS", FALSE)
-out_medias <- analisis_modelos_superlearner(pasado_ft_medias, "MEDIAS", FALSE)
-out_largas <- analisis_modelos_superlearner(pasado_ft_largas, "LARGAS", FALSE)
-
-modelo_cortas <- out_cortas[[1]]
-modelo_medias <- out_medias[[1]]
-modelo_largas <- out_largas[[1]]
-```
-
-Guardando los modelos a ficheros:
-```{r}
-save(modelo_cortas, file = paste('/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/modelo_cortas_',tag,sep=''))
-save(modelo_medias, file = paste('/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/modelo_medias_',tag,sep=''))
-save(modelo_largas, file = paste('/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/modelo_largas_',tag,sep=''))
-
-rm(modelo_cortas)
-rm(modelo_medias)
-rm(modelo_largas)
-ls() # Compruebo que se han borrado
-
-```
-
-#### VALIDATION (pasado, pero saco el target predicho a un fichero, para enriquecerlo con campos de dinero y comprobar la RENTABILIDAD por fuera)
-```{r}
-calcular_validation_file("TOTAL")
-```
-
-#### PREDICCION del FUTURO usando los modelos ganadores:
-
-```{r}
-print('Implementar la prediccion sobre el dataset X futuro (del que no conocemos target)...')
-
-```
-
