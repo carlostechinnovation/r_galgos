@@ -422,9 +422,10 @@ calcular_y_guardar_validation_file <- function(tag, pasado_vf){
   print('Fichero de salida...')
   out_validation_target_predicho <- subset(juntos, select = c(TARGET_predicho))
   
-  print(paste('Escribiendo a fichero de VALIDATION (target predicho) con', nrow(out_validation_target_predicho), 'filas...'))
-  path_validation_targets <- paste("/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pasado_validation_targets_predichos_", tag, ".txt", sep = '')
   
+  path_validation_targets <- paste("/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pasado_validation_targets_predichos_", tag, ".txt", sep = '')
+  print(paste('Escribiendo a fichero de VALIDATION (target predicho) con', nrow(out_validation_target_predicho), 'filas...'))
+  print(paste('Ruta resultado:',path_validation_targets, sep = ' '))
   out_validation_target_predicho.df = data.frame(out_validation_target_predicho)
   write.table(out_validation_target_predicho.df , file = path_validation_targets, append = FALSE, quote = TRUE, sep = " ",
               eol = "\n", na = "\\N", dec = ".", row.names = FALSE, col.names = FALSE)
@@ -465,19 +466,20 @@ ejecutarCadenaEntrenamientoValidation <- function(tag, limiteSql){
 ######################################################################################################################################
 print('-------------------- PRINCIPAL --------------------------')
 
-options(echo = TRUE) # En la salida, queremos ver los comandos ejecutados
-print(paste('commandArgs:',commandArgs))
+options(echo = FALSE) # En la salida, queremos ver los comandos ejecutados
 
+entradas <- commandArgs(trailingOnly = TRUE)
 
-if (length(commandArgs) == 0) {
+if (length(entradas) == 0) {
   print("Necesario indicar parametros de entrada")
   
-} else if (length(commandArgs) >= 1) {
+} else if (length(entradas) >= 1) {
   
-  print( paste('Numero de parametros: ', length(commandArgs)) )
-  modo <- commandArgs[1];  print( paste( 'modo=', modo, sep = '' )   ) # 1=train+test+validation, 2=train+test (ttv), 3=prediccion_futuro
-  tag <- commandArgs[2];  print( paste( 'tag=', tag, sep = '' )   )
-  limiteSql <- commandArgs[3];  print( paste( 'limiteSql=', limiteSql, sep = '' ) )
+  print( paste('Numero de parametros: ', length(entradas)) )
+  
+  modo <- entradas[1];  print( paste( 'modo=', modo, sep = '' )   ) # 1=train+test+validation, 2=train+test (ttv), 3=prediccion_futuro
+  tag <- entradas[2];  print( paste( 'tag=', tag, sep = '' )   )
+  limiteSql <- entradas[3];  print( paste( 'limiteSql=', limiteSql, sep = '' ) )
   
   #Para quitar las COLUMNAS que no son UTILES para esa DISTANCIA
   col_cortas <- c("vel_real_cortas_mediana_norm", "vel_real_cortas_max_norm", "vel_going_cortas_mediana_norm", "vel_going_cortas_max_norm")
@@ -490,7 +492,7 @@ if (length(commandArgs) == 0) {
   }
   
   #Borramos array de parametros, para evitar confusiones
-  rm(commandArgs)
+  rm(entradas)
   
 }
 ######################################################################################################################################

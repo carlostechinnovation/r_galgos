@@ -12,10 +12,9 @@ Analisis de datasets en proyecto GALGOS.
 ```{r}
 modo <- 1 # 1=train+test+validation
 tag <- "DOW_LAB"
-limiteSql <- "1000"
-commandArgs <- c(modo, tag, limiteSql)
+limiteSql <- "100"
 
-source("/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_regresion_train_test.R", echo = FALSE)
+system(paste("Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_regresion_train_test.R", modo, tag, limiteSql, sep = ' '))
 ```
 
 ## ANALISIS PRELIMINAR DE DATOS con los que hemos entrenado

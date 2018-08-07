@@ -31,31 +31,44 @@ ejecutarCadenaEntrenamientoTTV <- function(tag, limiteSql){
   obtenerModelosParaDistancias(lista_ft_cortasmediaslargas)
 }
 
-#---------------------- CUERPO de este SCRIPT -------------
 
+######################################################################################################################################
+######################################################################################################################################
+######################################################################################################################################
+print('-------------------- PRINCIPAL --------------------------')
 
+options(echo = FALSE) # En la salida, queremos ver los comandos ejecutados
 
-# PARAMETROS
-# 1 TAG (subgrupo)
+entradas <- commandArgs(trailingOnly = TRUE)
 
-options(echo = TRUE) # En la salida, queremos ver los comandos ejecutados
-
-args <- commandArgs(trailingOnly = TRUE) #devolver solo los argumentos, pero no el comando (nombre del script)
-print(args)
-
-if (length(args) == 0) {
+if (length(entradas) == 0) {
   print("Necesario indicar parametros de entrada")
   
-} else if (length(args) >= 1) {
-  print( paste('Numero de parametros: ', length(args)) )
-  tag <- args[1];  print( paste( 'tag=', tag, sep = '' ) )
-  limiteSql <- args[2];  print( paste( 'limiteSql=', tag, sep = '' ) )
+} else if (length(entradas) >= 1) {
+  
+  print( paste('Numero de parametros: ', length(entradas)) )
+  modo <- entradas[1];  print( paste( 'modo=', modo, sep = '' )   ) # 1=train+test+validation, 2=train+test (ttv), 3=prediccion_futuro
+  tag <- entradas[2];  print( paste( 'tag=', tag, sep = '' )   )
+  limiteSql <- entradas[3];  print( paste( 'limiteSql=', limiteSql, sep = '' ) )
+  
+  #Para quitar las COLUMNAS que no son UTILES para esa DISTANCIA
+  col_cortas <- c("vel_real_cortas_mediana_norm", "vel_real_cortas_max_norm", "vel_going_cortas_mediana_norm", "vel_going_cortas_max_norm")
+  col_medias <- c("vel_real_longmedias_mediana_norm", "vel_real_longmedias_max_norm", "vel_going_longmedias_mediana_norm", "vel_going_longmedias_max_norm")
+  col_largas <- c("vel_real_largas_mediana_norm", "vel_real_largas_max_norm", "vel_going_largas_mediana_norm", "vel_going_largas_max_norm")
+  
+  ############ LLAMADA PRINCIPAL ##########
+  if (modo == 2) {
+    ejecutarCadenaEntrenamientoTTV(tag, limiteSql)
+  }
   
   #Borramos array de parametros, para evitar confusiones
-  rm(args)
+  rm(entradas)
+  
 }
+######################################################################################################################################
+######################################################################################################################################
+######################################################################################################################################
 
-ejecutarCadenaEntrenamientoTTV(tag, limiteSql)
 
 
 
