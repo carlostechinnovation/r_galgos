@@ -2,6 +2,9 @@
 
 # --------- FUNCIONES -----------------------------------------
 
+
+
+
 #' Configuraciones generales
 #'
 #' @return
@@ -188,13 +191,6 @@ analisis_modelos_superlearner <- function(matrizentrada, distancia_str, ejecutar
   
   print(paste("******************", distancia_str, "******************"))
   
-  library(SuperLearner)
-  library(nnls)
-  library(nnet)
-  library(randomForest)
-  library(glmnet)
-  library(ggplot2)
-  library(parallel)
   
   #Crear datasets features+target para train y test
   index     <- 1:nrow(matrizentrada)
@@ -217,35 +213,37 @@ analisis_modelos_superlearner <- function(matrizentrada, distancia_str, ejecutar
   print( paste( "x_test=",nrow(x_test), "x", ncol(x_test) ) )
   print( paste( "y_test=",length(y_test) ) )
   
-  #listWrappers()  #MODELOS DISPONIBLES en libreria SuperLearner:
-  
+  #MODELOS DISPONIBLES en libreria SuperLearner:
+  #listWrappers(what = "both")
+
   set.seed(150)
   
-  algoritmosPredictivosTodos <- list("SL.bartMachine", "SL.bayesglm",  "SL.biglasso",  "SL.caret",
-                                     "SL.caret.rpart",  "SL.cforest", "SL.dbarts",  "SL.earth",
-                                     "SL.extraTrees",  "SL.gam",  "SL.gbm",  "SL.glm",  "SL.glm.interaction",
-                                     "SL.glmnet",  "SL.ipredbagg",   "SL.kernelKnn",  "SL.knn",
-                                     "SL.ksvm",  "SL.lda",  "SL.leekasso",  "SL.lm",  "SL.loess",
-                                     "SL.logreg",  "SL.mean",  "SL.nnet",  "SL.nnls",  "SL.polymars",
-                                     "SL.qda",  "SL.randomForest",  "SL.ranger",  "SL.ridge",  "SL.rpart",
-                                     "SL.rpartPrune",  "SL.speedglm",  "SL.speedlm",  "SL.step",
-                                     "SL.stepAIC",  "SL.step.forward",  "SL.step.interaction",  "SL.svm",
-                                     "SL.template",  "SL.xgboost")
-    
-  print('---------------------HYPERPARAMETROS--------------')
-  #Explicacion: override default parameters of some functions to fit better
-  mtry_seq <- floor(sqrt(ncol(x_train)) * c(1,3,5,8,13)) #MTRY: how many features are randomly chosen within each decision tree node
-  learners_rf <- create.Learner(base_learner = "SL.randomForest", params = list(), tune = list(mtry = mtry_seq), verbose = TRUE)
-  #print(learners_rf)
-  
+  # # print('---------------------HYPERPARAMETROS--------------')
+  # alpha_seq <- seq(from = 0, to = 1, by = 0.2) #0=ridge regression and 1=lasso
+  # nfolds_num <- 3
+  # glmnet_bis <- create.Learner("SL.glmnet",
+  #                              params = list(nfolds = nfolds_num),
+  #                              tune = list(alpha = alpha_seq),
+  #                              detailed_names = T, verbose = TRUE)
+  # glmnet_bis
+  # print(glmnet_bis$grid)
+  # 
+  # mtry_seq <- floor( ncol(30) / c(2,3,4) ) #MTRY: how many features are randomly chosen within each decision tree node
+  # ntree_seq <- seq(from = 100, to = 1000, by = 300)
+  # rf_bis <- create.Learner("SL.randomForest", tune = list(mtry = mtry_seq, ntree = ntree_seq), detailed_names = T, verbose = TRUE, name_prefix = "rf")
+  # rf_bis
+  # print(rf_bis$grid)
+  # # -------------------------------------------------------------
   
   print('------- Algoritmos usados -------')
   algoritmosPredictivosUsados <- list( 
-    #learners_rf$names, 
-    "SL.randomForest", "SL.bayesglm", "SL.caret.rpart", "SL.glm", "SL.glmnet", "SL.nnet", "SL.polymars")
-  print(algoritmosPredictivosUsados)
+    # rf_bis$names,
+    # glmnet_bis$names,
+    "SL.glmnet","SL.bayesglm", "SL.caret.rpart", "SL.glm", "SL.nnet", "SL.polymars"
+    )
+  # print(algoritmosPredictivosUsados)
   
-
+  
   internal_v <- 2 #inner cross-validation process (replicated across all folds)  
   print( paste('Cross-validation (INTERNA, dentro de cada algoritmo):', toString(internal_v) ) )
   num_v <- 2
@@ -256,11 +254,15 @@ analisis_modelos_superlearner <- function(matrizentrada, distancia_str, ejecutar
   
   
   print('-------- UNICORE (con cross validation) ----------')
-  modelo_unicore <- SuperLearner(Y = y_train, X = x_train, family = gaussian(), 
+  modelo_unicore <- SuperLearner(Y = y_train, X = x_train,
+                                 family = gaussian(), # describe the error distribution
                                  SL.library = algoritmosPredictivosUsados, method = "method.NNLS",
                                  id = NULL, verbose = TRUE,
-                                 control = list(), cvControl = list(V = num_v, shuffle = FALSE), obsWeights = NULL, env = parent.frame())
+                                 control = list(), cvControl = list(V = num_v, shuffle = FALSE))
+  
+  modelo_unicore
   summary(modelo_unicore)
+  
   
   if (ejecutarMulticore) {
     
@@ -327,18 +329,18 @@ obtenerModelosParaDistancias <- function(lista){
   pasado_ft_medias <- lista[[2]]
   pasado_ft_largas <- lista[[3]]
   
-  out_cortas <- analisis_modelos_superlearner(pasado_ft_cortas, "CORTAS", FALSE)
-  out_medias <- analisis_modelos_superlearner(pasado_ft_medias, "MEDIAS", FALSE)
-  out_largas <- analisis_modelos_superlearner(pasado_ft_largas, "LARGAS", FALSE)
+  out_cortas <- analisis_modelos_superlearner(pasado_ft_cortas, "CORTAS", TRUE)
+  out_medias <- analisis_modelos_superlearner(pasado_ft_medias, "MEDIAS", TRUE)
+  out_largas <- analisis_modelos_superlearner(pasado_ft_largas, "LARGAS", TRUE)
   
   modelo_cortas <- out_cortas[[1]]
   modelo_medias <- out_medias[[1]]
   modelo_largas <- out_largas[[1]]
   
   #Guardando los modelos a ficheros:
-  save(modelo_cortas, file = paste('/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/modelo_cortas_',tag, sep=''))
-  save(modelo_medias, file = paste('/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/modelo_medias_',tag, sep=''))
-  save(modelo_largas, file = paste('/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/modelo_largas_',tag, sep=''))
+  save(modelo_cortas, file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_cortas_',tag, sep=''))
+  save(modelo_medias, file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_medias_',tag, sep=''))
+  save(modelo_largas, file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_largas_',tag, sep=''))
   
   rm(modelo_cortas)
   rm(modelo_medias)
@@ -361,9 +363,9 @@ calcular_y_guardar_validation_file <- function(tag, pasado_vf){
   print(getwd())
   
   # ----------- Modelos ENTRENADOS----------
-  load(file = paste('/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/modelo_cortas_',tag, sep=''))
-  load(file = paste('/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/modelo_medias_',tag, sep=''))
-  load(file = paste('/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/modelo_largas_',tag, sep=''))
+  load(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_cortas_',tag, sep=''))
+  load(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_medias_',tag, sep=''))
+  load(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_largas_',tag, sep=''))
   ls() # Compruebo que se han cargado
   
   # Las entradas (validation-features) estan divididas en en 3 subsets segun DISTANCIA. Predecimos cada una por separado con su modelo adecuado. Luego juntamos resultados en un solo dataset de salida, pero manteniendo el ORDEN!!!!!!!!!
@@ -467,6 +469,22 @@ ejecutarCadenaEntrenamientoValidation <- function(tag, limiteSql){
 print('-------------------- PRINCIPAL --------------------------')
 
 options(echo = FALSE) # En la salida, queremos ver los comandos ejecutados
+
+
+library(SuperLearner)
+library(nnls)
+library(nnet)
+library(randomForest)
+library(glmnet)
+library(ggplot2)
+library(parallel)
+library(Matrix)
+library(foreach)
+library(arm)
+library(MASS)
+library(lme4)
+library(polspline)
+
 
 entradas <- commandArgs(trailingOnly = TRUE)
 

@@ -26,3 +26,5 @@
 # install.packages("mlbench")
 # install.packages("RhpcBLASctl")
 
+# install.packages("igraph")
+
