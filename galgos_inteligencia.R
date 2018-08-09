@@ -2,9 +2,6 @@
 
 # --------- FUNCIONES -----------------------------------------
 
-
-
-
 #' Configuraciones generales
 #'
 #' @return
@@ -25,13 +22,14 @@ establecerConfigGeneral <- function(){
 #' @param nombre_tabla_f 
 #' @param nombre_tabla_t 
 #' @param nombre_tabla_v 
+#' @param incluyeTargets 
 #' @param incluyeValidation BOOLEAN Indica si incluye validation
 #'
 #' @return
 #' @export
 #'
 #' @examples
-leerDesdeBaseDatosYEscribirCSV <- function(modo, nombre_tabla_f, nombre_tabla_t, nombre_tabla_v, tag, limiteSql, incluyeValidation){
+leerDesdeBaseDatosYEscribirCSV <- function(modo, nombre_tabla_f, nombre_tabla_t, nombre_tabla_v, tag, limiteSql, incluyeTargets, incluyeValidation){
   
   print(paste('modo=',modo))
   print(paste('tag=',tag))
@@ -52,7 +50,7 @@ leerDesdeBaseDatosYEscribirCSV <- function(modo, nombre_tabla_f, nombre_tabla_t,
     on.exit(dbDisconnect(mydb))
     #dbListTables(mydb)  #Todas las tablas que tengo
     
-    print('------------- TRAIN-Features (INPUT) -----------------------')
+    print('------------- Features (INPUT) -----------------------')
     consulta_train_f <- paste('SELECT * FROM ', nombre_tabla_f, tag, ' LIMIT ', limiteSql, ';', sep = '')
     print(consulta_train_f)
     pasado_f_rs <- dbSendQuery(mydb,  consulta_train_f)
@@ -66,17 +64,19 @@ leerDesdeBaseDatosYEscribirCSV <- function(modo, nombre_tabla_f, nombre_tabla_t,
     print(paste("TRAIN-F: ", nrow(pasado_f), "x", ncol(pasado_f)))
     print(typeof(pasado_f)) #Formato: lista
     
-    print('------------------- TRAIN-Targets (INPUT) -----------------')
-    consulta_train_t <- paste("SELECT * FROM ", nombre_tabla_t, tag, " LIMIT ", limiteSql, ';', sep = '')
-    print(consulta_train_t)
-    pasado_t_rs <- dbSendQuery(mydb, consulta_train_t)
-    typeof(pasado_t_rs)
-    pasado_t <- dbFetch(pasado_t_rs, n = -1) 
-    #dbClearResult(pasado_t_rs)
-    attach(pasado_t)
-    names(pasado_t)
-    print(paste("TRAIN-T: ", nrow(pasado_t), "x", ncol(pasado_t)))
-    print(typeof(pasado_t))
+    if (incluyeTargets == TRUE) {
+      print('------------------- Targets (INPUT) -----------------')
+      consulta_train_t <- paste("SELECT * FROM ", nombre_tabla_t, tag, " LIMIT ", limiteSql, ';', sep = '')
+      print(consulta_train_t)
+      pasado_t_rs <- dbSendQuery(mydb, consulta_train_t)
+      typeof(pasado_t_rs)
+      pasado_t <- dbFetch(pasado_t_rs, n = -1) 
+      #dbClearResult(pasado_t_rs)
+      attach(pasado_t)
+      names(pasado_t)    
+      print(paste("TRAIN-T: ", nrow(pasado_t), "x", ncol(pasado_t)))
+      print(typeof(pasado_t))
+    }
     
     if (incluyeValidation == TRUE ) {
       print('------------- VALIDATION-Features (INPUT) -----------------------')
@@ -218,27 +218,36 @@ analisis_modelos_superlearner <- function(matrizentrada, distancia_str, ejecutar
 
   set.seed(150)
   
-  # # print('---------------------HYPERPARAMETROS--------------')
-  # alpha_seq <- seq(from = 0, to = 1, by = 0.2) #0=ridge regression and 1=lasso
-  # nfolds_num <- 3
-  # glmnet_bis <- create.Learner("SL.glmnet",
-  #                              params = list(nfolds = nfolds_num),
-  #                              tune = list(alpha = alpha_seq),
-  #                              detailed_names = T, verbose = TRUE)
-  # glmnet_bis
-  # print(glmnet_bis$grid)
-  # 
+  # print('---------------------HYPERPARAMETROS--------------')
+  alpha_seq <- seq(from = 0, to = 1, by = 0.2) #0=ridge regression and 1=lasso
+  nfolds_num <- 3
+  glmnet_bis <- create.Learner("SL.glmnet",
+                               params = list(nfolds = nfolds_num),
+                               # tune = list(alpha = alpha_seq),
+                               detailed_names = T, verbose = TRUE)
+  glmnet_bis
+  print(glmnet_bis$grid)
+  
+  alpha_seq <- seq(from = 0, to = 1, by = 0.2) #0=ridge regression and 1=lasso
+  nfolds_num <- 3
+  bayesglm_bis <- create.Learner("SL.bayesglm",
+                               params = list(nfolds = nfolds_num),
+                               detailed_names = T, verbose = TRUE)
+  bayesglm_bis
+  print(bayesglm_bis$grid)
+   
   # mtry_seq <- floor( ncol(30) / c(2,3,4) ) #MTRY: how many features are randomly chosen within each decision tree node
   # ntree_seq <- seq(from = 100, to = 1000, by = 300)
   # rf_bis <- create.Learner("SL.randomForest", tune = list(mtry = mtry_seq, ntree = ntree_seq), detailed_names = T, verbose = TRUE, name_prefix = "rf")
   # rf_bis
   # print(rf_bis$grid)
-  # # -------------------------------------------------------------
+  # -------------------------------------------------------------
   
   print('------- Algoritmos usados -------')
   algoritmosPredictivosUsados <- list( 
     # rf_bis$names,
-    # glmnet_bis$names,
+    glmnet_bis$names,
+    bayesglm_bis$names,
     "SL.glmnet","SL.bayesglm", "SL.caret.rpart", "SL.glm", "SL.nnet", "SL.polymars"
     )
   # print(algoritmosPredictivosUsados)
@@ -329,9 +338,9 @@ obtenerModelosParaDistancias <- function(lista){
   pasado_ft_medias <- lista[[2]]
   pasado_ft_largas <- lista[[3]]
   
-  out_cortas <- analisis_modelos_superlearner(pasado_ft_cortas, "CORTAS", TRUE)
-  out_medias <- analisis_modelos_superlearner(pasado_ft_medias, "MEDIAS", TRUE)
-  out_largas <- analisis_modelos_superlearner(pasado_ft_largas, "LARGAS", TRUE)
+  out_cortas <- analisis_modelos_superlearner(pasado_ft_cortas, "CORTAS", FALSE)
+  out_medias <- analisis_modelos_superlearner(pasado_ft_medias, "MEDIAS", FALSE)
+  out_largas <- analisis_modelos_superlearner(pasado_ft_largas, "LARGAS", FALSE)
   
   modelo_cortas <- out_cortas[[1]]
   modelo_medias <- out_medias[[1]]
@@ -348,7 +357,7 @@ obtenerModelosParaDistancias <- function(lista){
   ls() # Compruebo que se han borrado
   }
 
-#' Calcular VALIDATION para un subgrupo TAG.
+#' Calcular PREDICCION para un subgrupo TAG.
 #'
 #' @param tag 
 #'
@@ -356,7 +365,9 @@ obtenerModelosParaDistancias <- function(lista){
 #' @export
 #'
 #' @examples
-calcular_y_guardar_validation_file <- function(tag, pasado_vf){
+predecir <- function(tag, input_f, output_file_prefijo, tipo){
+  
+  print(paste('--------------- predecir() ->',tipo, '-----------------'))
   
   library("SuperLearner")
   
@@ -368,71 +379,73 @@ calcular_y_guardar_validation_file <- function(tag, pasado_vf){
   load(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_largas_',tag, sep=''))
   ls() # Compruebo que se han cargado
   
-  # Las entradas (validation-features) estan divididas en en 3 subsets segun DISTANCIA. Predecimos cada una por separado con su modelo adecuado. Luego juntamos resultados en un solo dataset de salida, pero manteniendo el ORDEN!!!!!!!!!
+  # Las entradas estan divididas en en 3 subsets segun DISTANCIA. Predecimos cada una por separado con su modelo adecuado.
+  # Luego juntamos resultados en un solo dataset de salida, pero manteniendo el ORDEN!!!!!!!!!
   
   
-  # ---------------Entradas (validation features: mantener el ORDEN)-----------
+  # ---------------Entradas (features: mantener el ORDEN)-----------
   #anhado un indice, para poder recuperar el ORDEN al final
-  pasado_vf$INDICE_ORDEN <- seq.int(nrow(pasado_vf))
+  input_f$INDICE_ORDEN <- seq.int(nrow(input_f))
   
-  pasado_vf_cortas <- na.omit( subset(pasado_vf[, !(names(pasado_vf) %in% col_medias | names(pasado_vf) %in% col_largas)], distancia_norm <= 0.33) )
-  pasado_vf_medias <- na.omit( subset(pasado_vf[, !(names(pasado_vf) %in% col_cortas | names(pasado_vf) %in% col_largas)], distancia_norm > 0.33 & distancia_norm <= 0.66) )
-  pasado_vf_largas <- na.omit( subset(pasado_vf[, !(names(pasado_vf) %in% col_cortas | names(pasado_vf) %in% col_medias)], distancia_norm > 0.66) )
+  pasado_f_cortas <- na.omit( subset(input_f[, !(names(input_f) %in% col_medias | names(input_f) %in% col_largas)], distancia_norm <= 0.33) )
+  pasado_f_medias <- na.omit( subset(input_f[, !(names(input_f) %in% col_cortas | names(input_f) %in% col_largas)], distancia_norm > 0.33 & distancia_norm <= 0.66) )
+  pasado_f_largas <- na.omit( subset(input_f[, !(names(input_f) %in% col_cortas | names(input_f) %in% col_medias)], distancia_norm > 0.66) )
   
-  paste("CORTAS-VF (sin NAs):", nrow(pasado_vf_cortas), "x", ncol(pasado_vf_cortas))
-  paste("MEDIAS-VF (sin NAs):", nrow(pasado_vf_medias), "x", ncol(pasado_vf_medias))
-  paste("LARGAS-VF (sin NAs):", nrow(pasado_vf_largas), "x", ncol(pasado_vf_largas))
+  paste("CORTAS-F (sin NAs):", nrow(pasado_f_cortas), "x", ncol(pasado_f_cortas))
+  paste("MEDIAS-F (sin NAs):", nrow(pasado_f_medias), "x", ncol(pasado_f_medias))
+  paste("LARGAS-F (sin NAs):", nrow(pasado_f_largas), "x", ncol(pasado_f_largas))
   
   
   #Prediccion CORTAS
-  predicciones_vt_model_cortas <- predict.SuperLearner(object = modelo_cortas, newdata = subset(pasado_vf_cortas, select = -c(INDICE_ORDEN)), onlySL = TRUE) #No usa los que tienen peso =0
-  predicciones_vt_cortas <- predicciones_vt_model_cortas$pred #Prediccion
-  print(paste("PREDICCION CORTAS =", length(predicciones_vt_cortas)))
+  predicciones_t_model_cortas <- predict.SuperLearner(object = modelo_cortas, newdata = subset(pasado_f_cortas, select = -c(INDICE_ORDEN)), onlySL = TRUE) #No usa los que tienen peso =0
+  predicciones_t_cortas <- predicciones_t_model_cortas$pred #Prediccion
+  print(paste("PREDICCION CORTAS =", length(predicciones_t_cortas)))
   
   #Prediccion MEDIAS
-  predicciones_vt_model_medias <- predict.SuperLearner(object = modelo_medias, newdata = subset(pasado_vf_medias, select = -c(INDICE_ORDEN)), onlySL = TRUE) #No usa los que tienen peso =0
-  predicciones_vt_medias <- predicciones_vt_model_medias$pred #Prediccion
-  print(paste("PREDICCION MEDIAS =", length(predicciones_vt_medias)))
+  predicciones_t_model_medias <- predict.SuperLearner(object = modelo_medias, newdata = subset(pasado_f_medias, select = -c(INDICE_ORDEN)), onlySL = TRUE) #No usa los que tienen peso =0
+  predicciones_t_medias <- predicciones_t_model_medias$pred #Prediccion
+  print(paste("PREDICCION MEDIAS =", length(predicciones_t_medias)))
   
   #Prediccion LARGAS
-  predicciones_vt_model_largas <- predict.SuperLearner(object = modelo_largas, newdata = subset(pasado_vf_largas, select = -c(INDICE_ORDEN)), onlySL = TRUE) #No usa los que tienen peso =0
-  predicciones_vt_largas <- predicciones_vt_model_largas$pred #Prediccion
-  print(paste("PREDICCION LARGAS =", length(predicciones_vt_largas)))
+  predicciones_t_model_largas <- predict.SuperLearner(object = modelo_largas, newdata = subset(pasado_f_largas, select = -c(INDICE_ORDEN)), onlySL = TRUE) #No usa los que tienen peso =0
+  predicciones_t_largas <- predicciones_t_model_largas$pred #Prediccion
+  print(paste("PREDICCION LARGAS =", length(predicciones_t_largas)))
   
   
   library(plyr)
   print('CBIND: entrada(con orden) + salida...')
-  pasado_vft_cortas <- rename( cbind(pasado_vf_cortas, predicciones_vt_cortas) , c("predicciones_vt_cortas"="TARGET_predicho"))
-  pasado_vft_medias <- rename( cbind(pasado_vf_medias, predicciones_vt_medias) , c("predicciones_vt_medias"="TARGET_predicho"))
-  pasado_vft_largas <- rename( cbind(pasado_vf_largas, predicciones_vt_largas) , c("predicciones_vt_largas"="TARGET_predicho"))
+  pasado_ft_cortas <- rename( cbind(pasado_f_cortas, predicciones_t_cortas) , c("predicciones_t_cortas"="TARGET_predicho"))
+  pasado_ft_medias <- rename( cbind(pasado_f_medias, predicciones_t_medias) , c("predicciones_t_medias"="TARGET_predicho"))
+  pasado_ft_largas <- rename( cbind(pasado_f_largas, predicciones_t_largas) , c("predicciones_t_largas"="TARGET_predicho"))
   print('Cogemos solo las columnas que queremos (indice y target)...')
-  pasado_v_it_cortas <- subset(pasado_vft_cortas, select = c(INDICE_ORDEN, TARGET_predicho))
-  pasado_v_it_medias <- subset(pasado_vft_medias, select = c(INDICE_ORDEN, TARGET_predicho))
-  pasado_v_it_largas <- subset(pasado_vft_largas, select = c(INDICE_ORDEN, TARGET_predicho))
+  pasado_it_cortas <- subset(pasado_ft_cortas, select = c(INDICE_ORDEN, TARGET_predicho))
+  pasado_it_medias <- subset(pasado_ft_medias, select = c(INDICE_ORDEN, TARGET_predicho))
+  pasado_it_largas <- subset(pasado_ft_largas, select = c(INDICE_ORDEN, TARGET_predicho))
   print('Juntamos cortas, medias y largas...')
-  pasado_v_it <- rbind( rbind(pasado_v_it_cortas, pasado_v_it_medias), pasado_v_it_largas)
+  pasado_it <- rbind( rbind(pasado_it_cortas, pasado_it_medias), pasado_it_largas)
   
   print('Ordenamos por INDICE_ORDEN...')
-  pasado_v_it_ordenado <- pasado_v_it[order(pasado_v_it$INDICE_ORDEN),] 
+  pasado_it_ordenado <- pasado_it[order(pasado_it$INDICE_ORDEN),] 
   
   print('Rellenamos las  filas que eran NAs (rellenando en los huecos del indice, hasta el numero de elementos de entrada)...')
-  num_input <- nrow(pasado_vf)
+  num_input <- nrow(input_f)
   df_nulos <- data.frame( matrix(NA, nrow = num_input, ncol = 1) )
   df_nulos$INDICE_ORDEN <- seq.int(nrow(df_nulos))
-  juntos <- merge(x = df_nulos, y = pasado_v_it_ordenado, by = "INDICE_ORDEN", all = TRUE) #LEFT OUTER JOIN
+  juntos <- merge(x = df_nulos, y = pasado_it_ordenado, by = "INDICE_ORDEN", all = TRUE) #LEFT OUTER JOIN
   
   print('Fichero de salida...')
-  out_validation_target_predicho <- subset(juntos, select = c(TARGET_predicho))
+  out_target_predicho <- subset(juntos, select = c(TARGET_predicho))
   
   
-  path_validation_targets <- paste("/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pasado_validation_targets_predichos_", tag, ".txt", sep = '')
-  print(paste('Escribiendo a fichero de VALIDATION (target predicho) con', nrow(out_validation_target_predicho), 'filas...'))
-  print(paste('Ruta resultado:',path_validation_targets, sep = ' '))
-  out_validation_target_predicho.df = data.frame(out_validation_target_predicho)
-  write.table(out_validation_target_predicho.df , file = path_validation_targets, append = FALSE, quote = TRUE, sep = " ",
+  path_output_file <- paste(output_file_prefijo, tag, ".txt", sep = '')
+  print(paste('Escribiendo a fichero (target predicho) con', nrow(out_target_predicho), 'filas...'))
+  print(paste('Ruta resultado:',path_output_file, sep = ' '))
+  out_target_predicho = data.frame(out_target_predicho)
+  write.table(out_target_predicho , file = path_output_file, append = FALSE, quote = TRUE, sep = " ",
               eol = "\n", na = "\\N", dec = ".", row.names = FALSE, col.names = FALSE)
   
 }
+
 
 
 #' CADENA de ENTRENAMIENTO (train+test) y VALIDATION (rentabilidad externa).
@@ -456,10 +469,13 @@ ejecutarCadenaEntrenamientoValidation <- function(tag, limiteSql){
                                                'datos_desa.tb_ds_pasado_validation_features_', 
                                                tag, 
                                                format(limiteSql, scientific = FALSE), 
-                                               TRUE)
-  lista_ft_cortasmediaslargas <- crearFeaturesyTargetDelPasadoParaDistancias(listaDatos[[1]])
+                                               TRUE, TRUE)
+  pasado_train_ft <- listaDatos[[1]]
+  pasado_validation_f <- listaDatos[[2]]
+  
+  lista_ft_cortasmediaslargas <- crearFeaturesyTargetDelPasadoParaDistancias(pasado_train_ft)
   obtenerModelosParaDistancias(lista_ft_cortasmediaslargas)
-  calcular_y_guardar_validation_file(tag, listaDatos[[2]])
+  predecir(tag, pasado_validation_f, "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pasado_validation_targets_predichos_", "VALIDATION")
 }
 
 

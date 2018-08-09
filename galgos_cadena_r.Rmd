@@ -14,7 +14,7 @@ modo <- 1 # 1=train+test+validation
 tag <- "DOW_LAB"
 limiteSql <- "100"
 
-system(paste("Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_regresion_train_test.R", modo, tag, limiteSql, sep = ' '))
+system(paste("Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_inteligencia.R", modo, tag, limiteSql, sep = ' '))
 ```
 
 ## ANALISIS PRELIMINAR DE DATOS con los que hemos entrenado
@@ -27,3 +27,29 @@ Vemos que hay variables con outliers y otras leptocúrticas (apretadas en torno 
 #summary(pasado_ft)
 #lapply(pasado_ft, summary)
 ```
+
+
+#### CADENA COMPLETA para ENTRENAMIENTO-PASADO TTV
+```{r}
+modo <- 2 # 2=train+test
+tag <- "DOW_LAB"
+limiteSql <- "100"
+
+system(paste("Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_regresion_ttv_pasado.R", modo, tag, limiteSql, sep = ' '))
+```
+
+
+#### CADENA COMPLETA para PREDICTOR del FUTURO
+```{r}
+modo <- 2 # 2=train+test
+tag <- "DOW_LAB"
+limiteSql <- "100"
+
+system(paste("Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_regresion_ttv_pasado.R", modo, tag, limiteSql, sep = ' '))
+```
+
+
+
+
+
+

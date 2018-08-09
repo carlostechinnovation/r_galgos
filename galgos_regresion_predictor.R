@@ -1,10 +1,10 @@
-# Script para TRAIN+TEST sobre PASADO-TTV persistiendo en fichero el mejor modelo entrenado
+# Script para predecir el FUTURO usando el MODELO (YA ENTRENADO sobre datos del pasado-ttv)
 
 source("/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_inteligencia.R") # para reciclar funciones
 
 # --------- FUNCIONES -----------------------------------------
 
-#' CADENA de ENTRENAMIENTO (train+test) con todo el pasado que conocemos (ya sabemos el SUBGRUPO ganador)
+#' CADENA de PREDICCION DEL FUTURO (train+test)
 #'
 #' @param tag 
 #'
@@ -12,23 +12,26 @@ source("/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_intelige
 #' @export
 #'
 #' @examples
-ejecutarCadenaEntrenamientoTTV <- function(tag, limiteSql){
+ejecutarCadenaPredecirFuturo <- function(tag, limiteSql){
   
-  print('--------------- ejecutarCadenaEntrenamientoTTV ------------')
+  print('--------------- ejecutarCadenaPredecirFuturo ------------')
   
   tag <- args[1];  print( paste( 'tag=', tag, sep = '' ) )
   limiteSql <- args[2];  print( paste( 'limiteSql=', tag, sep = '' ) )
   
   establecerConfigGeneral()
   listaDatos <- leerDesdeBaseDatosYEscribirCSV(1, 
-                                               'datos_desa.tb_ds_pasado_ttv_features_', 
-                                               'datos_desa.tb_ds_pasado_ttv_targets_',
+                                               'datos_desa.tb_ds_futuro_features_', 
+                                               'NO SABEMOS TARGETS DEL FUTURO',
                                                'NO_HACEMOS_VALIDATION', 
                                                tag, 
                                                format(limiteSql, scientific = FALSE),
-                                               TRUE, FALSE)
-  lista_ft_cortasmediaslargas <- crearFeaturesyTargetDelPasadoParaDistancias(listaDatos[[1]])
-  obtenerModelosParaDistancias(lista_ft_cortasmediaslargas)
+                                               FALSE, FALSE)
+  
+  futuro_f <- listaDatos[[1]]
+  
+  predecir(tag, futuro_f, "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/FILELOAD_ds_futuro_targets_2_", "FUTURO")
+  
 }
 
 
@@ -57,8 +60,8 @@ if (length(entradas) == 0) {
   col_largas <- c("vel_real_largas_mediana_norm", "vel_real_largas_max_norm", "vel_going_largas_mediana_norm", "vel_going_largas_max_norm")
   
   ############ LLAMADA PRINCIPAL ##########
-  if (modo == 2) {
-    ejecutarCadenaEntrenamientoTTV(tag, limiteSql)
+  if (modo == 3) {
+    ejecutarCadenaPredecirFuturo(tag, limiteSql)
   }
   
   #Borramos array de parametros, para evitar confusiones
