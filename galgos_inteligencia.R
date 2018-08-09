@@ -31,12 +31,16 @@ establecerConfigGeneral <- function(){
 #' @examples
 leerDesdeBaseDatosYEscribirCSV <- function(modo, nombre_tabla_f, nombre_tabla_t, nombre_tabla_v, tag, limiteSql, incluyeTargets, incluyeValidation){
   
-  print(paste('modo=',modo))
+  print('--------------- leerDesdeBaseDatosYEscribirCSV ------------')
+  print(paste('modo (bbdd y CSV)=',modo))
   print(paste('tag=',tag))
   print(paste('limiteSql=',limiteSql))
+  print(paste('incluyeTargets=',incluyeTargets))
+  print(paste('incluyeValidation=',incluyeValidation))
   
   library(RMySQL)
   library(DBI)
+  
   
   if (modo == 1 || modo == 2) {
     print('---------------Conexion a BBDD ------------')
@@ -53,16 +57,16 @@ leerDesdeBaseDatosYEscribirCSV <- function(modo, nombre_tabla_f, nombre_tabla_t,
     print('------------- Features (INPUT) -----------------------')
     consulta_train_f <- paste('SELECT * FROM ', nombre_tabla_f, tag, ' LIMIT ', limiteSql, ';', sep = '')
     print(consulta_train_f)
-    pasado_f_rs <- dbSendQuery(mydb,  consulta_train_f)
-    typeof(pasado_f_rs)
-    pasado_f <- dbFetch(pasado_f_rs, n = -1)
-    #dbClearResult(pasado_f_rs)
-    mes_indice <- which( colnames(pasado_f) == "mes_norm" ) #EXCEPCION Quito columna mes
-    pasado_f <- pasado_f[, -mes_indice]
-    attach(pasado_f)
-    names(pasado_f)
-    print(paste("TRAIN-F: ", nrow(pasado_f), "x", ncol(pasado_f)))
-    print(typeof(pasado_f)) #Formato: lista
+    leido_f_rs <- dbSendQuery(mydb,  consulta_train_f)
+    typeof(leido_f_rs)
+    leido_f <- dbFetch(leido_f_rs, n = -1)
+    #dbClearResult(leido_f_rs)
+    mes_indice <- which( colnames(leido_f) == "mes_norm" ) #EXCEPCION Quito columna mes
+    leido_f <- leido_f[, -mes_indice]
+    attach(leido_f)
+    names(leido_f)
+    print(paste("FEATURES (train o futuro): ", nrow(leido_f), "x", ncol(leido_f)))
+    print(typeof(leido_f)) #Formato: lista
     
     if (incluyeTargets == TRUE) {
       print('------------------- Targets (INPUT) -----------------')
@@ -70,12 +74,12 @@ leerDesdeBaseDatosYEscribirCSV <- function(modo, nombre_tabla_f, nombre_tabla_t,
       print(consulta_train_t)
       pasado_t_rs <- dbSendQuery(mydb, consulta_train_t)
       typeof(pasado_t_rs)
-      pasado_t <- dbFetch(pasado_t_rs, n = -1) 
+      leido_t <- dbFetch(pasado_t_rs, n = -1) 
       #dbClearResult(pasado_t_rs)
-      attach(pasado_t)
-      names(pasado_t)    
-      print(paste("TRAIN-T: ", nrow(pasado_t), "x", ncol(pasado_t)))
-      print(typeof(pasado_t))
+      attach(leido_t)
+      names(leido_t)    
+      print(paste("TRAIN-T: ", nrow(leido_t), "x", ncol(leido_t)))
+      print(typeof(leido_t))
     }
     
     if (incluyeValidation == TRUE ) {
@@ -96,33 +100,55 @@ leerDesdeBaseDatosYEscribirCSV <- function(modo, nombre_tabla_f, nombre_tabla_t,
     
     }
   
+  
   if (modo == 2) {
     print('----- Escritura a fichero CSV (para poder trabajar en PCs donde no tengo montada la BBDD con datos) ----')
     print(getwd())
-    write.csv(x = pasado_f, file = 'input_features.csv', append = FALSE, quote = TRUE, sep = '|', eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names = TRUE, qmethod = c("escape", "double"), fileEncoding = "UTF-8")
-    write.csv(x = pasado_t, file = 'input_targets.csv', append = FALSE, quote = TRUE, sep = '|', eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names = TRUE, qmethod = c("escape", "double"), fileEncoding = "UTF-8")
-    if (incluyeValidation == TRUE ) {
-      write.csv(x = pasado_vf, file = 'input_validation_features.csv', append = FALSE, quote = TRUE, sep = '|', eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names = TRUE, qmethod = c("escape", "double"), fileEncoding = "UTF-8")
+    write.csv(x = leido_f, file = 'input_features.csv', append = FALSE, quote = TRUE, sep = '|', eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names = TRUE, qmethod = c("escape", "double"), fileEncoding = "UTF-8")
+    if (incluyeTargets == TRUE) {
+      write.csv(x = leido_t, file = 'input_targets.csv', append = FALSE, quote = TRUE, sep = '|', eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names = TRUE, qmethod = c("escape", "double"), fileEncoding = "UTF-8")
       }
-    
+    if (incluyeValidation == TRUE ) {
+      write.csv(x = pasado_vf, file = 'input_validation_features.csv', append = FALSE, quote = TRUE, sep = '|', eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names = TRUE, qmethod = c("escape", "double"), fileEncoding = "UTF-8")  
     }
+  }
+  
   
   if (modo == 2 || modo == 3) {
     print('----- Lectura desde fichero CSV (para poder trabajar en PCs donde no tengo montada la BBDD con datos) ----')
     print(getwd())
-    pasado_f <- read.csv('input_features.csv')
-    pasado_t <- read.csv('input_targets.csv')
+    leido_f <- read.csv('input_features.csv')
+    
+    if (incluyeTargets == TRUE) {
+      leido_t <- read.csv('input_targets.csv')
+      #Juntar FEATURES y TARGET
+      leido_ft <- cbind(leido_f, leido_t)
+      print(paste("leido_ft: ", nrow(leido_ft), "x", ncol(leido_ft)))
+    }
     if (incluyeValidation == TRUE ) {
       pasado_vf <- read.csv('input_validation_features.csv')
-      }
+    }
   }
   
-  #Juntar FEATURES y TARGET
-  pasado_ft <- cbind(pasado_f, pasado_t)
-  print(paste("pasado_ft: ", nrow(pasado_ft), "x", ncol(pasado_ft)))
   
+  ############ SALIDAS ########
+  salida_1 <- "" #default
+  salida_2 <- "" #default
   
-  return(list(pasado_ft, pasado_vf))
+  if (incluyeTargets == TRUE) {
+    #Juntar FEATURES y TARGET
+    leido_ft <- cbind(leido_f, leido_t)
+    print(paste("leido_ft: ", nrow(leido_ft), "x", ncol(leido_ft)))
+    salida_1 <- leido_ft
+  }else{
+    salida_1 <- leido_f
+  }
+  
+  if (incluyeValidation == TRUE ) {
+    salida_2 <- pasado_vf
+  }
+  
+  return(list(salida_1, salida_2))
 }
 
 #' Creamos un modelo para cada tipo de DISTANCIA, para usar sólo las columnas útiles para esa distancia
@@ -131,9 +157,10 @@ leerDesdeBaseDatosYEscribirCSV <- function(modo, nombre_tabla_f, nombre_tabla_t,
 #' @export
 #'
 #' @examples
-crearFeaturesyTargetDelPasadoParaDistancias <- function(pasado_ft) {
+crearFeaturesyTargetDelPasadoParaDistancias <- function(pasado_ft, col_cortas,col_medias,col_largas) {
   
-  print('crearFeaturesyTargetDelPasadoParaDistancias...')
+  print('--------------- crearFeaturesyTargetDelPasadoParaDistancias ------------')
+  
   print(paste("pasado_ft: ", nrow(pasado_ft), "x", ncol(pasado_ft)))
   
   print('--------------------- TRAIN (+test interno) -------------------')
@@ -360,30 +387,43 @@ obtenerModelosParaDistancias <- function(lista){
 #' Calcular PREDICCION para un subgrupo TAG.
 #'
 #' @param tag 
+#' @param input_f 
+#' @param output_file_prefijo 
+#' @param tipo 
+#' @param col_cortas 
+#' @param col_medias 
+#' @param col_largas 
 #'
 #' @return
 #' @export
 #'
 #' @examples
-predecir <- function(tag, input_f, output_file_prefijo, tipo){
+predecir <- function(tag, input_f, output_file_prefijo, tipo, col_cortas,col_medias,col_largas){
   
   print(paste('--------------- predecir() ->',tipo, '-----------------'))
+  print(paste('tag=',tag))
+  print(paste("input_f: ", nrow(input_f), "x", ncol(input_f)))
+  print(paste('output_file_prefijo=',output_file_prefijo))
+  # print(paste("col_cortas: ", col_cortas))
+  # print(paste("col_medias: ", col_medias))
+  # print(paste("col_largas: ", col_largas))
   
   library("SuperLearner")
   
   print(getwd())
   
-  # ----------- Modelos ENTRENADOS----------
+  print("Cargando modelos ENTRENADOS...")
   load(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_cortas_',tag, sep=''))
   load(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_medias_',tag, sep=''))
   load(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_largas_',tag, sep=''))
-  ls() # Compruebo que se han cargado
+  # print("Compruebo que se han cargado...")
+  # print(ls())
   
   # Las entradas estan divididas en en 3 subsets segun DISTANCIA. Predecimos cada una por separado con su modelo adecuado.
   # Luego juntamos resultados en un solo dataset de salida, pero manteniendo el ORDEN!!!!!!!!!
   
   
-  # ---------------Entradas (features: mantener el ORDEN)-----------
+  print(' ---------------Entradas (features: mantener el ORDEN)-----------')
   #anhado un indice, para poder recuperar el ORDEN al final
   input_f$INDICE_ORDEN <- seq.int(nrow(input_f))
   
@@ -462,6 +502,11 @@ ejecutarCadenaEntrenamientoValidation <- function(tag, limiteSql){
   print( paste( 'tag=', tag, sep = '' ) )
   print( paste( 'limiteSql=', tag, sep = '' ) )
   
+  #Para quitar las COLUMNAS que no son UTILES para esa DISTANCIA
+  col_cortas <- c("vel_real_cortas_mediana_norm", "vel_real_cortas_max_norm", "vel_going_cortas_mediana_norm", "vel_going_cortas_max_norm")
+  col_medias <- c("vel_real_longmedias_mediana_norm", "vel_real_longmedias_max_norm", "vel_going_longmedias_mediana_norm", "vel_going_longmedias_max_norm")
+  col_largas <- c("vel_real_largas_mediana_norm", "vel_real_largas_max_norm", "vel_going_largas_mediana_norm", "vel_going_largas_max_norm")
+  
   establecerConfigGeneral()
   listaDatos <- leerDesdeBaseDatosYEscribirCSV(1, 
                                                'datos_desa.tb_ds_pasado_train_features_', 
@@ -473,9 +518,9 @@ ejecutarCadenaEntrenamientoValidation <- function(tag, limiteSql){
   pasado_train_ft <- listaDatos[[1]]
   pasado_validation_f <- listaDatos[[2]]
   
-  lista_ft_cortasmediaslargas <- crearFeaturesyTargetDelPasadoParaDistancias(pasado_train_ft)
+  lista_ft_cortasmediaslargas <- crearFeaturesyTargetDelPasadoParaDistancias(pasado_train_ft, col_cortas,col_medias,col_largas)
   obtenerModelosParaDistancias(lista_ft_cortasmediaslargas)
-  predecir(tag, pasado_validation_f, "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pasado_validation_targets_predichos_", "VALIDATION")
+  predecir(tag, pasado_validation_f, "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pasado_validation_targets_predichos_", "VALIDATION", col_cortas,col_medias,col_largas)
 }
 
 
@@ -484,7 +529,7 @@ ejecutarCadenaEntrenamientoValidation <- function(tag, limiteSql){
 ######################################################################################################################################
 print('-------------------- PRINCIPAL --------------------------')
 
-options(echo = FALSE) # En la salida, queremos ver los comandos ejecutados
+options(echo = TRUE) # En la salida, queremos ver los comandos ejecutados
 
 
 library(SuperLearner)
@@ -515,11 +560,6 @@ if (length(entradas) == 0) {
   tag <- entradas[2];  print( paste( 'tag=', tag, sep = '' )   )
   limiteSql <- entradas[3];  print( paste( 'limiteSql=', limiteSql, sep = '' ) )
   
-  #Para quitar las COLUMNAS que no son UTILES para esa DISTANCIA
-  col_cortas <- c("vel_real_cortas_mediana_norm", "vel_real_cortas_max_norm", "vel_going_cortas_mediana_norm", "vel_going_cortas_max_norm")
-  col_medias <- c("vel_real_longmedias_mediana_norm", "vel_real_longmedias_max_norm", "vel_going_longmedias_mediana_norm", "vel_going_longmedias_max_norm")
-  col_largas <- c("vel_real_largas_mediana_norm", "vel_real_largas_max_norm", "vel_going_largas_mediana_norm", "vel_going_largas_max_norm")
-  
   ############ LLAMADA PRINCIPAL ##########
   if (modo == 1) {
     ejecutarCadenaEntrenamientoValidation(tag, limiteSql)
@@ -532,5 +572,6 @@ if (length(entradas) == 0) {
 ######################################################################################################################################
 ######################################################################################################################################
 ######################################################################################################################################
+
 
 

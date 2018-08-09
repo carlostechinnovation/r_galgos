@@ -14,10 +14,14 @@ source("/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_intelige
 #' @examples
 ejecutarCadenaEntrenamientoTTV <- function(tag, limiteSql){
   
-  print('--------------- ejecutarCadenaEntrenamientoTTV ------------')
+  print('--------------- ejecutarCadenaEntrenamientoTTV: INICIO ------------')
+  print( paste( 'tag=', tag, sep = '' ) )
+  print( paste( 'limiteSql=', tag, sep = '' ) )
   
-  tag <- args[1];  print( paste( 'tag=', tag, sep = '' ) )
-  limiteSql <- args[2];  print( paste( 'limiteSql=', tag, sep = '' ) )
+  #Para quitar las COLUMNAS que no son UTILES para esa DISTANCIA
+  col_cortas <- c("vel_real_cortas_mediana_norm", "vel_real_cortas_max_norm", "vel_going_cortas_mediana_norm", "vel_going_cortas_max_norm")
+  col_medias <- c("vel_real_longmedias_mediana_norm", "vel_real_longmedias_max_norm", "vel_going_longmedias_mediana_norm", "vel_going_longmedias_max_norm")
+  col_largas <- c("vel_real_largas_mediana_norm", "vel_real_largas_max_norm", "vel_going_largas_mediana_norm", "vel_going_largas_max_norm")
   
   establecerConfigGeneral()
   listaDatos <- leerDesdeBaseDatosYEscribirCSV(1, 
@@ -27,8 +31,10 @@ ejecutarCadenaEntrenamientoTTV <- function(tag, limiteSql){
                                                tag, 
                                                format(limiteSql, scientific = FALSE),
                                                TRUE, FALSE)
-  lista_ft_cortasmediaslargas <- crearFeaturesyTargetDelPasadoParaDistancias(listaDatos[[1]])
+  lista_ft_cortasmediaslargas <- crearFeaturesyTargetDelPasadoParaDistancias(listaDatos[[1]], col_cortas,col_medias,col_largas)
   obtenerModelosParaDistancias(lista_ft_cortasmediaslargas)
+  
+  print('--------------- ejecutarCadenaEntrenamientoTTV: FIN ------------')
 }
 
 
@@ -50,11 +56,6 @@ if (length(entradas) == 0) {
   modo <- entradas[1];  print( paste( 'modo=', modo, sep = '' )   ) # 1=train+test+validation, 2=train+test (ttv), 3=prediccion_futuro
   tag <- entradas[2];  print( paste( 'tag=', tag, sep = '' )   )
   limiteSql <- entradas[3];  print( paste( 'limiteSql=', limiteSql, sep = '' ) )
-  
-  #Para quitar las COLUMNAS que no son UTILES para esa DISTANCIA
-  col_cortas <- c("vel_real_cortas_mediana_norm", "vel_real_cortas_max_norm", "vel_going_cortas_mediana_norm", "vel_going_cortas_max_norm")
-  col_medias <- c("vel_real_longmedias_mediana_norm", "vel_real_longmedias_max_norm", "vel_going_longmedias_mediana_norm", "vel_going_longmedias_max_norm")
-  col_largas <- c("vel_real_largas_mediana_norm", "vel_real_largas_max_norm", "vel_going_largas_mediana_norm", "vel_going_largas_max_norm")
   
   ############ LLAMADA PRINCIPAL ##########
   if (modo == 2) {

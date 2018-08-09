@@ -179,443 +179,13 @@ $(document).ready(function () {
 <h4>CADENA COMPLETA para ENTRENAMIENTO</h4>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kbyA8LSAxICMgMT10cmFpbit0ZXN0K3ZhbGlkYXRpb25cbnRhZyA8LSBcIkRPV19MQUJcIlxubGltaXRlU3FsIDwtIFwiMTAwXCJcbnN5c3RlbShwYXN0ZShcIlJzY3JpcHQgL2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9XT1JLU1BBQ0VTL3drc3BfZm9yX3Ivcl9nYWxnb3MvZ2FsZ29zX3JlZ3Jlc2lvbl90cmFpbl90ZXN0LlJcIiwgbW9kbywgdGFnLCBsaW1pdGVTcWwsIHNlcCA9ICcgJykpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kbyA8LSAxICMgMT10cmFpbit0ZXN0K3ZhbGlkYXRpb25cbnRhZyA8LSBcIkRPV19MQUJcIlxubGltaXRlU3FsIDwtIFwiMTAwXCJcblxuc3lzdGVtKHBhc3RlKFwiUnNjcmlwdCAvaG9tZS9jYXJsb3NsaW51eC9EZXNrdG9wL1dPUktTUEFDRVMvd2tzcF9mb3Jfci9yX2dhbGdvcy9nYWxnb3NfaW50ZWxpZ2VuY2lhLlJcIiwgbW9kbywgdGFnLCBsaW1pdGVTcWwsIHNlcCA9ICcgJykpXG5gYGAifQ== -->
 <pre class="r"><code>modo &lt;- 1 # 1=train+test+validation
 tag &lt;- &quot;DOW_LAB&quot;
 limiteSql &lt;- &quot;100&quot;
-system(paste(&quot;Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_regresion_train_test.R&quot;, modo, tag, limiteSql, sep = ' '))</code></pre>
+
+system(paste(&quot;Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_inteligencia.R&quot;, modo, tag, limiteSql, sep = ' '))</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiLS0tLS0tLS0tLS0tLS0tLS0tLS0gUFJJTkNJUEFMIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXCJcbiJ9 -->
-<pre><code>[1] &quot;-------------------- PRINCIPAL --------------------------&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBubmxzXG5TdXBlciBMZWFybmVyXG5WZXJzaW9uOiAyLjAtMjNcblBhY2thZ2UgY3JlYXRlZCBvbiAyMDE4LTAzLTA5XG5cbnJhbmRvbUZvcmVzdCA0LjYtMTRcblR5cGUgcmZOZXdzKCkgdG8gc2VlIG5ldyBmZWF0dXJlcy9jaGFuZ2VzL2J1ZyBmaXhlcy5cbkxvYWRpbmcgcmVxdWlyZWQgcGFja2FnZTogTWF0cml4XG5Mb2FkaW5nIHJlcXVpcmVkIHBhY2thZ2U6IGZvcmVhY2hcbkxvYWRlZCBnbG1uZXQgMi4wLTE2XG5cblxuQXR0YWNoaW5nIHBhY2thZ2U6IOKAmGdncGxvdDLigJlcblxuVGhlIGZvbGxvd2luZyBvYmplY3QgaXMgbWFza2VkIGZyb20g4oCYcGFja2FnZTpyYW5kb21Gb3Jlc3TigJk6XG5cbiAgICBtYXJnaW5cblxuTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBNQVNTXG5Mb2FkaW5nIHJlcXVpcmVkIHBhY2thZ2U6IGxtZTRcbkxvYWRpbmcgcmVxdWlyZWQgcGFja2FnZTogbWV0aG9kc1xuXG5hcm0gKFZlcnNpb24gMS4xMC0xLCBidWlsdDogMjAxOC00LTEyKVxuXG5Xb3JraW5nIGRpcmVjdG9yeSBpcyAvaG9tZS9jYXJsb3NsaW51eC9EZXNrdG9wL1dPUktTUEFDRVMvd2tzcF9mb3Jfci9yX2dhbGdvc1xuIn0= -->
-<pre><code>Loading required package: nnls
-Super Learner
-Version: 2.0-23
-Package created on 2018-03-09
-
-randomForest 4.6-14
-Type rfNews() to see new features/changes/bug fixes.
-Loading required package: Matrix
-Loading required package: foreach
-Loaded glmnet 2.0-16
-
-
-Attaching package: ‘ggplot2’
-
-The following object is masked from ‘package:randomForest’:
-
-    margin
-
-Loading required package: MASS
-Loading required package: lme4
-Loading required package: methods
-
-arm (Version 1.10-1, built: 2018-4-12)
-
-Working directory is /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiTnVtZXJvIGRlIHBhcmFtZXRyb3M6ICAzXCJcblsxXSBcIm1vZG89MVwiXG5bMV0gXCJ0YWc9RE9XX0xBQlwiXG5bMV0gXCJsaW1pdGVTcWw9MTAwXCJcblsxXSBcIi0tLS0tLS0tLS0tLS0tLSBlamVjdXRhckNhZGVuYUVudHJlbmFtaWVudG9WYWxpZGF0aW9uIC0tLS0tLS0tLS0tLVwiXG5bMV0gXCJ0YWc9RE9XX0xBQlwiXG5bMV0gXCJsaW1pdGVTcWw9RE9XX0xBQlwiXG5bMV0gXCItLS0tLS0tLS0tLS0tLS0gZXN0YWJsZWNlckNvbmZpZ0dlbmVyYWwgLS0tLS0tLS0tLS0tXCJcblsxXSBcIm1vZG89IDFcIlxuWzFdIFwidGFnPSBET1dfTEFCXCJcblsxXSBcImxpbWl0ZVNxbD0gMTAwXCJcbiJ9 -->
-<pre><code>[1] &quot;Numero de parametros:  3&quot;
-[1] &quot;modo=1&quot;
-[1] &quot;tag=DOW_LAB&quot;
-[1] &quot;limiteSql=100&quot;
-[1] &quot;--------------- ejecutarCadenaEntrenamientoValidation ------------&quot;
-[1] &quot;tag=DOW_LAB&quot;
-[1] &quot;limiteSql=DOW_LAB&quot;
-[1] &quot;--------------- establecerConfigGeneral ------------&quot;
-[1] &quot;modo= 1&quot;
-[1] &quot;tag= DOW_LAB&quot;
-[1] &quot;limiteSql= 100&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBEQklcbiJ9 -->
-<pre><code>Loading required package: DBI</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiLS0tLS0tLS0tLS0tLS0tQ29uZXhpb24gYSBCQkREIC0tLS0tLS0tLS0tLVwiXG5bMV0gXCJDb25lY3RhbmRvLi4uXCJcblsxXSBcIi0tLS0tLS0tLS0tLS0gVFJBSU4tRmVhdHVyZXMgKElOUFVUKSAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVwiXG5bMV0gXCJTRUxFQ1QgKiBGUk9NIGRhdG9zX2Rlc2EudGJfZHNfcGFzYWRvX3RyYWluX2ZlYXR1cmVzX0RPV19MQUIgTElNSVQgMTAwO1wiXG5bMV0gXCJUUkFJTi1GOiAgMTAwIHggMzlcIlxuWzFdIFwibGlzdFwiXG5bMV0gXCItLS0tLS0tLS0tLS0tLS0tLS0tIFRSQUlOLVRhcmdldHMgKElOUFVUKSAtLS0tLS0tLS0tLS0tLS0tLVwiXG5bMV0gXCJTRUxFQ1QgKiBGUk9NIGRhdG9zX2Rlc2EudGJfZHNfcGFzYWRvX3RyYWluX3RhcmdldHNfRE9XX0xBQiBMSU1JVCAxMDA7XCJcblsxXSBcIlRSQUlOLVQ6ICAxMDAgeCAxXCJcblsxXSBcImxpc3RcIlxuWzFdIFwiLS0tLS0tLS0tLS0tLSBWQUxJREFUSU9OLUZlYXR1cmVzIChJTlBVVCkgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cIlxuWzFdIFwiU0VMRUNUICogRlJPTSBkYXRvc19kZXNhLnRiX2RzX3Bhc2Fkb192YWxpZGF0aW9uX2ZlYXR1cmVzX0RPV19MQUIgTElNSVQgMTAwO1wiXG4ifQ== -->
-<pre><code>[1] &quot;---------------Conexion a BBDD ------------&quot;
-[1] &quot;Conectando...&quot;
-[1] &quot;------------- TRAIN-Features (INPUT) -----------------------&quot;
-[1] &quot;SELECT * FROM datos_desa.tb_ds_pasado_train_features_DOW_LAB LIMIT 100;&quot;
-[1] &quot;TRAIN-F:  100 x 39&quot;
-[1] &quot;list&quot;
-[1] &quot;------------------- TRAIN-Targets (INPUT) -----------------&quot;
-[1] &quot;SELECT * FROM datos_desa.tb_ds_pasado_train_targets_DOW_LAB LIMIT 100;&quot;
-[1] &quot;TRAIN-T:  100 x 1&quot;
-[1] &quot;list&quot;
-[1] &quot;------------- VALIDATION-Features (INPUT) -----------------------&quot;
-[1] &quot;SELECT * FROM datos_desa.tb_ds_pasado_validation_features_DOW_LAB LIMIT 100;&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiVGhlIGZvbGxvd2luZyBvYmplY3RzIGFyZSBtYXNrZWQgZnJvbSBwYXNhZG9fZjpcblxuICAgIGRpZl9wZXNvLCBkaXN0YW5jaWFfbm9ybSwgZG93X2QsIGRvd19maW5kZSwgZG93X2osIGRvd19sLFxuICAgIGRvd19sYWJvcmFibGUsIGRvd19tLCBkb3dfcywgZG93X3YsIGRvd194LCBlZWRfbm9ybSxcbiAgICBlbnRyZW5hZG9yX3Bvc2ljaW9uX25vcm0sIGV4cGVyaWVuY2lhLCBleHBlcmllbmNpYV9lbl9jbGFzZSxcbiAgICBob3JhX25vcm0sIG51bV9nYWxnb3Nfbm9ybSwgcGVzb19nYWxnb19ub3JtLFxuICAgIHBvc2ljaW9uX21lZGlhX2VuX2NsYXNlX3Bvcl9leHBlcmllbmNpYSwgcmVtYXJrc19wdW50b3NfaGlzdG9yaWNvLFxuICAgIHJlbWFya3NfcHVudG9zX2hpc3Rvcmljb18xMGQsIHJlbWFya3NfcHVudG9zX2hpc3Rvcmljb18yMGQsXG4gICAgcmVtYXJrc19wdW50b3NfaGlzdG9yaWNvXzUwZCwgdHJhcF9mYWN0b3IsIHRyYXBfbm9ybSxcbiAgICB2ZWxfZ29pbmdfY29ydGFzX21heF9ub3JtLCB2ZWxfZ29pbmdfY29ydGFzX21lZGlhbmFfbm9ybSxcbiAgICB2ZWxfZ29pbmdfbGFyZ2FzX21heF9ub3JtLCB2ZWxfZ29pbmdfbGFyZ2FzX21lZGlhbmFfbm9ybSxcbiAgICB2ZWxfZ29pbmdfbG9uZ21lZGlhc19tYXhfbm9ybSwgdmVsX2dvaW5nX2xvbmdtZWRpYXNfbWVkaWFuYV9ub3JtLFxuICAgIHZlbF9yZWFsX2NvcnRhc19tYXhfbm9ybSwgdmVsX3JlYWxfY29ydGFzX21lZGlhbmFfbm9ybSxcbiAgICB2ZWxfcmVhbF9sYXJnYXNfbWF4X25vcm0sIHZlbF9yZWFsX2xhcmdhc19tZWRpYW5hX25vcm0sXG4gICAgdmVsX3JlYWxfbG9uZ21lZGlhc19tYXhfbm9ybSwgdmVsX3JlYWxfbG9uZ21lZGlhc19tZWRpYW5hX25vcm0sXG4gICAgdmVudWVfZ29pbmdfYXZnLCB2ZW51ZV9nb2luZ19zdGRcbiJ9 -->
-<pre><code>The following objects are masked from pasado_f:
-
-    dif_peso, distancia_norm, dow_d, dow_finde, dow_j, dow_l,
-    dow_laborable, dow_m, dow_s, dow_v, dow_x, eed_norm,
-    entrenador_posicion_norm, experiencia, experiencia_en_clase,
-    hora_norm, num_galgos_norm, peso_galgo_norm,
-    posicion_media_en_clase_por_experiencia, remarks_puntos_historico,
-    remarks_puntos_historico_10d, remarks_puntos_historico_20d,
-    remarks_puntos_historico_50d, trap_factor, trap_norm,
-    vel_going_cortas_max_norm, vel_going_cortas_mediana_norm,
-    vel_going_largas_max_norm, vel_going_largas_mediana_norm,
-    vel_going_longmedias_max_norm, vel_going_longmedias_mediana_norm,
-    vel_real_cortas_max_norm, vel_real_cortas_mediana_norm,
-    vel_real_largas_max_norm, vel_real_largas_mediana_norm,
-    vel_real_longmedias_max_norm, vel_real_longmedias_mediana_norm,
-    venue_going_avg, venue_going_std</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiVkFMSURBVElPTi1GOiAgMTAwIHggMzlcIlxuWzFdIFwibGlzdFwiXG5bMV0gXCJwYXNhZG9fZnQ6ICAxMDAgeCA0MFwiXG5bMV0gXCJjcmVhckZlYXR1cmVzeVRhcmdldERlbFBhc2Fkb1BhcmFEaXN0YW5jaWFzLi4uXCJcblsxXSBcInBhc2Fkb19mdDogIDEwMCB4IDQwXCJcblsxXSBcIi0tLS0tLS0tLS0tLS0tLS0tLS0tLSBUUkFJTiAoK3Rlc3QgaW50ZXJubykgLS0tLS0tLS0tLS0tLS0tLS0tLVwiXG5bMV0gXCIqKioqKioqKioqKioqKioqKiogQ09SVEFTICoqKioqKioqKioqKioqKioqKlwiXG5bMV0gXCJtYXRyaXplbnRyYWRhPSAxNSB4IDMyXCJcblsxXSBcInRlc3RzZXQ9IDQgeCAzMlwiXG5bMV0gXCJ0cmFpbnNldD0gMTEgeCAzMlwiXG5bMV0gXCJ4X3RyYWluPSAxMSB4IDMxXCJcblsxXSBcInlfdHJhaW49IDExXCJcblsxXSBcInhfdGVzdD0gNCB4IDMxXCJcblsxXSBcInlfdGVzdD0gNFwiXG5TTC5nbG1uZXRfMSA8LSBmdW5jdGlvbiguLi4pIFNMLmdsbW5ldCguLi4sIG5mb2xkcz0zKSBcbk5VTExcblNMLmJheWVzZ2xtXzEgPC0gZnVuY3Rpb24oLi4uKSBTTC5iYXllc2dsbSguLi4sIG5mb2xkcz0zKSBcbk5VTExcblsxXSBcIi0tLS0tLS0gQWxnb3JpdG1vcyB1c2Fkb3MgLS0tLS0tLVwiXG5bMV0gXCJDcm9zcy12YWxpZGF0aW9uIChJTlRFUk5BLCBkZW50cm8gZGUgY2FkYSBhbGdvcml0bW8pOiAyXCJcblsxXSBcIkNyb3NzLXZhbGlkYXRpb24gKEVYVEVSTkEpOiAyXCJcblsxXSBcIi0tLS0tLS0tIFVOSUNPUkUgKGNvbiBjcm9zcyB2YWxpZGF0aW9uKSAtLS0tLS0tLS0tXCJcbiJ9 -->
-<pre><code>[1] &quot;VALIDATION-F:  100 x 39&quot;
-[1] &quot;list&quot;
-[1] &quot;pasado_ft:  100 x 40&quot;
-[1] &quot;crearFeaturesyTargetDelPasadoParaDistancias...&quot;
-[1] &quot;pasado_ft:  100 x 40&quot;
-[1] &quot;--------------------- TRAIN (+test interno) -------------------&quot;
-[1] &quot;****************** CORTAS ******************&quot;
-[1] &quot;matrizentrada= 15 x 32&quot;
-[1] &quot;testset= 4 x 32&quot;
-[1] &quot;trainset= 11 x 32&quot;
-[1] &quot;x_train= 11 x 31&quot;
-[1] &quot;y_train= 11&quot;
-[1] &quot;x_test= 4 x 31&quot;
-[1] &quot;y_test= 4&quot;
-SL.glmnet_1 &lt;- function(...) SL.glmnet(..., nfolds=3) 
-NULL
-SL.bayesglm_1 &lt;- function(...) SL.bayesglm(..., nfolds=3) 
-NULL
-[1] &quot;------- Algoritmos usados -------&quot;
-[1] &quot;Cross-validation (INTERNA, dentro de cada algoritmo): 2&quot;
-[1] &quot;Cross-validation (EXTERNA): 2&quot;
-[1] &quot;-------- UNICORE (con cross validation) ----------&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiTnVtYmVyIG9mIGNvdmFyaWF0ZXMgaW4gQWxsIGlzOiAzMVxuQ1YgU0wuZ2xtbmV0XzFfQWxsXG5DViBTTC5iYXllc2dsbV8xX0FsbFxuQ1YgU0wuZ2xtbmV0X0FsbFxuQ1YgU0wuYmF5ZXNnbG1fQWxsXG5Mb2FkaW5nIHJlcXVpcmVkIHBhY2thZ2U6IGNhcmV0XG5Mb2FkaW5nIHJlcXVpcmVkIHBhY2thZ2U6IGxhdHRpY2VcbiJ9 -->
-<pre><code>Number of covariates in All is: 31
-CV SL.glmnet_1_All
-CV SL.bayesglm_1_All
-CV SL.glmnet_All
-CV SL.bayesglm_All
-Loading required package: caret
-Loading required package: lattice</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiKyBGb2xkMTogY3A9MCBcbi0gRm9sZDE6IGNwPTAgXG4rIEZvbGQyOiBjcD0wIFxuLSBGb2xkMjogY3A9MCBcbisgRm9sZDM6IGNwPTAgXG4tIEZvbGQzOiBjcD0wIFxuKyBGb2xkNDogY3A9MCBcbi0gRm9sZDQ6IGNwPTAgXG4rIEZvbGQ1OiBjcD0wIFxuLSBGb2xkNTogY3A9MCBcbkFnZ3JlZ2F0aW5nIHJlc3VsdHNcbkZpdHRpbmcgZmluYWwgbW9kZWwgb24gZnVsbCB0cmFpbmluZyBzZXRcbiJ9 -->
-<pre><code>+ Fold1: cp=0 
-- Fold1: cp=0 
-+ Fold2: cp=0 
-- Fold2: cp=0 
-+ Fold3: cp=0 
-- Fold3: cp=0 
-+ Fold4: cp=0 
-- Fold4: cp=0 
-+ Fold5: cp=0 
-- Fold5: cp=0 
-Aggregating results
-Fitting final model on full training set</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiQ1YgU0wuY2FyZXQucnBhcnRfQWxsXG5DViBTTC5nbG1fQWxsXG5DViBTTC5ubmV0X0FsbFxuQ1YgU0wucG9seW1hcnNfQWxsXG5OdW1iZXIgb2YgY292YXJpYXRlcyBpbiBBbGwgaXM6IDMxXG5DViBTTC5nbG1uZXRfMV9BbGxcbkNWIFNMLmJheWVzZ2xtXzFfQWxsXG5DViBTTC5nbG1uZXRfQWxsXG5DViBTTC5iYXllc2dsbV9BbGxcbiJ9 -->
-<pre><code>CV SL.caret.rpart_All
-CV SL.glm_All
-CV SL.nnet_All
-CV SL.polymars_All
-Number of covariates in All is: 31
-CV SL.glmnet_1_All
-CV SL.bayesglm_1_All
-CV SL.glmnet_All
-CV SL.bayesglm_All</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiKyBGb2xkMTogY3A9MCBcbi0gRm9sZDE6IGNwPTAgXG4rIEZvbGQyOiBjcD0wIFxuLSBGb2xkMjogY3A9MCBcbisgRm9sZDM6IGNwPTAgXG4tIEZvbGQzOiBjcD0wIFxuKyBGb2xkNDogY3A9MCBcbi0gRm9sZDQ6IGNwPTAgXG4rIEZvbGQ1OiBjcD0wIFxuLSBGb2xkNTogY3A9MCBcbisgRm9sZDY6IGNwPTAgXG4tIEZvbGQ2OiBjcD0wIFxuQWdncmVnYXRpbmcgcmVzdWx0c1xuRml0dGluZyBmaW5hbCBtb2RlbCBvbiBmdWxsIHRyYWluaW5nIHNldFxuIn0= -->
-<pre><code>+ Fold1: cp=0 
-- Fold1: cp=0 
-+ Fold2: cp=0 
-- Fold2: cp=0 
-+ Fold3: cp=0 
-- Fold3: cp=0 
-+ Fold4: cp=0 
-- Fold4: cp=0 
-+ Fold5: cp=0 
-- Fold5: cp=0 
-+ Fold6: cp=0 
-- Fold6: cp=0 
-Aggregating results
-Fitting final model on full training set</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiQ1YgU0wuY2FyZXQucnBhcnRfQWxsXG5DViBTTC5nbG1fQWxsXG5DViBTTC5ubmV0X0FsbFxuQ1YgU0wucG9seW1hcnNfQWxsXG5Ob24tTmVnYXRpdmUgbGVhc3Qgc3F1YXJlcyBjb252ZXJnZW5jZTogVFJVRVxuZnVsbCBTTC5nbG1uZXRfMV9BbGxcbmZ1bGwgU0wuYmF5ZXNnbG1fMV9BbGxcbmZ1bGwgU0wuZ2xtbmV0X0FsbFxuZnVsbCBTTC5iYXllc2dsbV9BbGxcbiJ9 -->
-<pre><code>CV SL.caret.rpart_All
-CV SL.glm_All
-CV SL.nnet_All
-CV SL.polymars_All
-Non-Negative least squares convergence: TRUE
-full SL.glmnet_1_All
-full SL.bayesglm_1_All
-full SL.glmnet_All
-full SL.bayesglm_All</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiKyBGb2xkMDE6IGNwPTAgXG4tIEZvbGQwMTogY3A9MCBcbisgRm9sZDAyOiBjcD0wIFxuLSBGb2xkMDI6IGNwPTAgXG4rIEZvbGQwMzogY3A9MCBcbi0gRm9sZDAzOiBjcD0wIFxuKyBGb2xkMDQ6IGNwPTAgXG4tIEZvbGQwNDogY3A9MCBcbisgRm9sZDA1OiBjcD0wIFxuLSBGb2xkMDU6IGNwPTAgXG4rIEZvbGQwNjogY3A9MCBcbi0gRm9sZDA2OiBjcD0wIFxuKyBGb2xkMDc6IGNwPTAgXG4tIEZvbGQwNzogY3A9MCBcbisgRm9sZDA4OiBjcD0wIFxuLSBGb2xkMDg6IGNwPTAgXG4rIEZvbGQwOTogY3A9MCBcbi0gRm9sZDA5OiBjcD0wIFxuKyBGb2xkMTA6IGNwPTAgXG4tIEZvbGQxMDogY3A9MCBcbkFnZ3JlZ2F0aW5nIHJlc3VsdHNcbkZpdHRpbmcgZmluYWwgbW9kZWwgb24gZnVsbCB0cmFpbmluZyBzZXRcbiJ9 -->
-<pre><code>+ Fold01: cp=0 
-- Fold01: cp=0 
-+ Fold02: cp=0 
-- Fold02: cp=0 
-+ Fold03: cp=0 
-- Fold03: cp=0 
-+ Fold04: cp=0 
-- Fold04: cp=0 
-+ Fold05: cp=0 
-- Fold05: cp=0 
-+ Fold06: cp=0 
-- Fold06: cp=0 
-+ Fold07: cp=0 
-- Fold07: cp=0 
-+ Fold08: cp=0 
-- Fold08: cp=0 
-+ Fold09: cp=0 
-- Fold09: cp=0 
-+ Fold10: cp=0 
-- Fold10: cp=0 
-Aggregating results
-Fitting final model on full training set</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiZnVsbCBTTC5jYXJldC5ycGFydF9BbGxcbmZ1bGwgU0wuZ2xtX0FsbFxuZnVsbCBTTC5ubmV0X0FsbFxuZnVsbCBTTC5wb2x5bWFyc19BbGxcbiJ9 -->
-<pre><code>full SL.caret.rpart_All
-full SL.glm_All
-full SL.nnet_All
-full SL.polymars_All</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiKioqKioqKioqKioqKioqKioqIE1FRElBUyAqKioqKioqKioqKioqKioqKipcIlxuWzFdIFwibWF0cml6ZW50cmFkYT0gOTAgeCAzMlwiXG5bMV0gXCJ0ZXN0c2V0PSAyNyB4IDMyXCJcblsxXSBcInRyYWluc2V0PSA2MyB4IDMyXCJcblsxXSBcInhfdHJhaW49IDYzIHggMzFcIlxuWzFdIFwieV90cmFpbj0gNjNcIlxuWzFdIFwieF90ZXN0PSAyNyB4IDMxXCJcblsxXSBcInlfdGVzdD0gMjdcIlxuU0wuZ2xtbmV0XzEgPC0gZnVuY3Rpb24oLi4uKSBTTC5nbG1uZXQoLi4uLCBuZm9sZHM9MykgXG5OVUxMXG5TTC5iYXllc2dsbV8xIDwtIGZ1bmN0aW9uKC4uLikgU0wuYmF5ZXNnbG0oLi4uLCBuZm9sZHM9MykgXG5OVUxMXG5bMV0gXCItLS0tLS0tIEFsZ29yaXRtb3MgdXNhZG9zIC0tLS0tLS1cIlxuWzFdIFwiQ3Jvc3MtdmFsaWRhdGlvbiAoSU5URVJOQSwgZGVudHJvIGRlIGNhZGEgYWxnb3JpdG1vKTogMlwiXG5bMV0gXCJDcm9zcy12YWxpZGF0aW9uIChFWFRFUk5BKTogMlwiXG5bMV0gXCItLS0tLS0tLSBVTklDT1JFIChjb24gY3Jvc3MgdmFsaWRhdGlvbikgLS0tLS0tLS0tLVwiXG4ifQ== -->
-<pre><code>[1] &quot;****************** MEDIAS ******************&quot;
-[1] &quot;matrizentrada= 90 x 32&quot;
-[1] &quot;testset= 27 x 32&quot;
-[1] &quot;trainset= 63 x 32&quot;
-[1] &quot;x_train= 63 x 31&quot;
-[1] &quot;y_train= 63&quot;
-[1] &quot;x_test= 27 x 31&quot;
-[1] &quot;y_test= 27&quot;
-SL.glmnet_1 &lt;- function(...) SL.glmnet(..., nfolds=3) 
-NULL
-SL.bayesglm_1 &lt;- function(...) SL.bayesglm(..., nfolds=3) 
-NULL
-[1] &quot;------- Algoritmos usados -------&quot;
-[1] &quot;Cross-validation (INTERNA, dentro de cada algoritmo): 2&quot;
-[1] &quot;Cross-validation (EXTERNA): 2&quot;
-[1] &quot;-------- UNICORE (con cross validation) ----------&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiTnVtYmVyIG9mIGNvdmFyaWF0ZXMgaW4gQWxsIGlzOiAzMVxuQ1YgU0wuZ2xtbmV0XzFfQWxsXG5DViBTTC5iYXllc2dsbV8xX0FsbFxuQ1YgU0wuZ2xtbmV0X0FsbFxuQ1YgU0wuYmF5ZXNnbG1fQWxsXG4ifQ== -->
-<pre><code>Number of covariates in All is: 31
-CV SL.glmnet_1_All
-CV SL.bayesglm_1_All
-CV SL.glmnet_All
-CV SL.bayesglm_All</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiKyBGb2xkMDE6IGNwPTAgXG4tIEZvbGQwMTogY3A9MCBcbisgRm9sZDAyOiBjcD0wIFxuLSBGb2xkMDI6IGNwPTAgXG4rIEZvbGQwMzogY3A9MCBcbi0gRm9sZDAzOiBjcD0wIFxuKyBGb2xkMDQ6IGNwPTAgXG4tIEZvbGQwNDogY3A9MCBcbisgRm9sZDA1OiBjcD0wIFxuLSBGb2xkMDU6IGNwPTAgXG4rIEZvbGQwNjogY3A9MCBcbi0gRm9sZDA2OiBjcD0wIFxuKyBGb2xkMDc6IGNwPTAgXG4tIEZvbGQwNzogY3A9MCBcbisgRm9sZDA4OiBjcD0wIFxuLSBGb2xkMDg6IGNwPTAgXG4rIEZvbGQwOTogY3A9MCBcbi0gRm9sZDA5OiBjcD0wIFxuKyBGb2xkMTA6IGNwPTAgXG4tIEZvbGQxMDogY3A9MCBcbkFnZ3JlZ2F0aW5nIHJlc3VsdHNcblNlbGVjdGluZyB0dW5pbmcgcGFyYW1ldGVyc1xuRml0dGluZyBjcCA9IDAuMzY2IG9uIGZ1bGwgdHJhaW5pbmcgc2V0XG4ifQ== -->
-<pre><code>+ Fold01: cp=0 
-- Fold01: cp=0 
-+ Fold02: cp=0 
-- Fold02: cp=0 
-+ Fold03: cp=0 
-- Fold03: cp=0 
-+ Fold04: cp=0 
-- Fold04: cp=0 
-+ Fold05: cp=0 
-- Fold05: cp=0 
-+ Fold06: cp=0 
-- Fold06: cp=0 
-+ Fold07: cp=0 
-- Fold07: cp=0 
-+ Fold08: cp=0 
-- Fold08: cp=0 
-+ Fold09: cp=0 
-- Fold09: cp=0 
-+ Fold10: cp=0 
-- Fold10: cp=0 
-Aggregating results
-Selecting tuning parameters
-Fitting cp = 0.366 on full training set</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiQ1YgU0wuY2FyZXQucnBhcnRfQWxsXG5DViBTTC5nbG1fQWxsXG5DViBTTC5ubmV0X0FsbFxuQ1YgU0wucG9seW1hcnNfQWxsXG5OdW1iZXIgb2YgY292YXJpYXRlcyBpbiBBbGwgaXM6IDMxXG5DViBTTC5nbG1uZXRfMV9BbGxcbkNWIFNMLmJheWVzZ2xtXzFfQWxsXG5DViBTTC5nbG1uZXRfQWxsXG5DViBTTC5iYXllc2dsbV9BbGxcbiJ9 -->
-<pre><code>CV SL.caret.rpart_All
-CV SL.glm_All
-CV SL.nnet_All
-CV SL.polymars_All
-Number of covariates in All is: 31
-CV SL.glmnet_1_All
-CV SL.bayesglm_1_All
-CV SL.glmnet_All
-CV SL.bayesglm_All</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiKyBGb2xkMDE6IGNwPTAgXG4tIEZvbGQwMTogY3A9MCBcbisgRm9sZDAyOiBjcD0wIFxuLSBGb2xkMDI6IGNwPTAgXG4rIEZvbGQwMzogY3A9MCBcbi0gRm9sZDAzOiBjcD0wIFxuKyBGb2xkMDQ6IGNwPTAgXG4tIEZvbGQwNDogY3A9MCBcbisgRm9sZDA1OiBjcD0wIFxuLSBGb2xkMDU6IGNwPTAgXG4rIEZvbGQwNjogY3A9MCBcbi0gRm9sZDA2OiBjcD0wIFxuKyBGb2xkMDc6IGNwPTAgXG4tIEZvbGQwNzogY3A9MCBcbisgRm9sZDA4OiBjcD0wIFxuLSBGb2xkMDg6IGNwPTAgXG4rIEZvbGQwOTogY3A9MCBcbi0gRm9sZDA5OiBjcD0wIFxuKyBGb2xkMTA6IGNwPTAgXG4tIEZvbGQxMDogY3A9MCBcbkFnZ3JlZ2F0aW5nIHJlc3VsdHNcblNlbGVjdGluZyB0dW5pbmcgcGFyYW1ldGVyc1xuRml0dGluZyBjcCA9IDAuMzkyIG9uIGZ1bGwgdHJhaW5pbmcgc2V0XG4ifQ== -->
-<pre><code>+ Fold01: cp=0 
-- Fold01: cp=0 
-+ Fold02: cp=0 
-- Fold02: cp=0 
-+ Fold03: cp=0 
-- Fold03: cp=0 
-+ Fold04: cp=0 
-- Fold04: cp=0 
-+ Fold05: cp=0 
-- Fold05: cp=0 
-+ Fold06: cp=0 
-- Fold06: cp=0 
-+ Fold07: cp=0 
-- Fold07: cp=0 
-+ Fold08: cp=0 
-- Fold08: cp=0 
-+ Fold09: cp=0 
-- Fold09: cp=0 
-+ Fold10: cp=0 
-- Fold10: cp=0 
-Aggregating results
-Selecting tuning parameters
-Fitting cp = 0.392 on full training set</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiQ1YgU0wuY2FyZXQucnBhcnRfQWxsXG5DViBTTC5nbG1fQWxsXG5DViBTTC5ubmV0X0FsbFxuQ1YgU0wucG9seW1hcnNfQWxsXG5Ob24tTmVnYXRpdmUgbGVhc3Qgc3F1YXJlcyBjb252ZXJnZW5jZTogVFJVRVxuZnVsbCBTTC5nbG1uZXRfMV9BbGxcbmZ1bGwgU0wuYmF5ZXNnbG1fMV9BbGxcbmZ1bGwgU0wuZ2xtbmV0X0FsbFxuZnVsbCBTTC5iYXllc2dsbV9BbGxcbiJ9 -->
-<pre><code>CV SL.caret.rpart_All
-CV SL.glm_All
-CV SL.nnet_All
-CV SL.polymars_All
-Non-Negative least squares convergence: TRUE
-full SL.glmnet_1_All
-full SL.bayesglm_1_All
-full SL.glmnet_All
-full SL.bayesglm_All</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiKyBGb2xkMDE6IGNwPTAuMDYyNzggXG4tIEZvbGQwMTogY3A9MC4wNjI3OCBcbisgRm9sZDAyOiBjcD0wLjA2Mjc4IFxuLSBGb2xkMDI6IGNwPTAuMDYyNzggXG4rIEZvbGQwMzogY3A9MC4wNjI3OCBcbi0gRm9sZDAzOiBjcD0wLjA2Mjc4IFxuKyBGb2xkMDQ6IGNwPTAuMDYyNzggXG4tIEZvbGQwNDogY3A9MC4wNjI3OCBcbisgRm9sZDA1OiBjcD0wLjA2Mjc4IFxuLSBGb2xkMDU6IGNwPTAuMDYyNzggXG4rIEZvbGQwNjogY3A9MC4wNjI3OCBcbi0gRm9sZDA2OiBjcD0wLjA2Mjc4IFxuKyBGb2xkMDc6IGNwPTAuMDYyNzggXG4tIEZvbGQwNzogY3A9MC4wNjI3OCBcbisgRm9sZDA4OiBjcD0wLjA2Mjc4IFxuLSBGb2xkMDg6IGNwPTAuMDYyNzggXG4rIEZvbGQwOTogY3A9MC4wNjI3OCBcbi0gRm9sZDA5OiBjcD0wLjA2Mjc4IFxuKyBGb2xkMTA6IGNwPTAuMDYyNzggXG4tIEZvbGQxMDogY3A9MC4wNjI3OCBcbkFnZ3JlZ2F0aW5nIHJlc3VsdHNcblNlbGVjdGluZyB0dW5pbmcgcGFyYW1ldGVyc1xuRml0dGluZyBjcCA9IDAuMDYyOCBvbiBmdWxsIHRyYWluaW5nIHNldFxuIn0= -->
-<pre><code>+ Fold01: cp=0.06278 
-- Fold01: cp=0.06278 
-+ Fold02: cp=0.06278 
-- Fold02: cp=0.06278 
-+ Fold03: cp=0.06278 
-- Fold03: cp=0.06278 
-+ Fold04: cp=0.06278 
-- Fold04: cp=0.06278 
-+ Fold05: cp=0.06278 
-- Fold05: cp=0.06278 
-+ Fold06: cp=0.06278 
-- Fold06: cp=0.06278 
-+ Fold07: cp=0.06278 
-- Fold07: cp=0.06278 
-+ Fold08: cp=0.06278 
-- Fold08: cp=0.06278 
-+ Fold09: cp=0.06278 
-- Fold09: cp=0.06278 
-+ Fold10: cp=0.06278 
-- Fold10: cp=0.06278 
-Aggregating results
-Selecting tuning parameters
-Fitting cp = 0.0628 on full training set</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiZnVsbCBTTC5jYXJldC5ycGFydF9BbGxcbmZ1bGwgU0wuZ2xtX0FsbFxuZnVsbCBTTC5ubmV0X0FsbFxuZnVsbCBTTC5wb2x5bWFyc19BbGxcbiJ9 -->
-<pre><code>full SL.caret.rpart_All
-full SL.glm_All
-full SL.nnet_All
-full SL.polymars_All</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiKioqKioqKioqKioqKioqKioqIExBUkdBUyAqKioqKioqKioqKioqKioqKipcIlxuWzFdIFwibWF0cml6ZW50cmFkYT0gMTAgeCAzMlwiXG5bMV0gXCJ0ZXN0c2V0PSAzIHggMzJcIlxuWzFdIFwidHJhaW5zZXQ9IDcgeCAzMlwiXG5bMV0gXCJ4X3RyYWluPSA3IHggMzFcIlxuWzFdIFwieV90cmFpbj0gN1wiXG5bMV0gXCJ4X3Rlc3Q9IDMgeCAzMVwiXG5bMV0gXCJ5X3Rlc3Q9IDNcIlxuU0wuZ2xtbmV0XzEgPC0gZnVuY3Rpb24oLi4uKSBTTC5nbG1uZXQoLi4uLCBuZm9sZHM9MykgXG5OVUxMXG5TTC5iYXllc2dsbV8xIDwtIGZ1bmN0aW9uKC4uLikgU0wuYmF5ZXNnbG0oLi4uLCBuZm9sZHM9MykgXG5OVUxMXG5bMV0gXCItLS0tLS0tIEFsZ29yaXRtb3MgdXNhZG9zIC0tLS0tLS1cIlxuWzFdIFwiQ3Jvc3MtdmFsaWRhdGlvbiAoSU5URVJOQSwgZGVudHJvIGRlIGNhZGEgYWxnb3JpdG1vKTogMlwiXG5bMV0gXCJDcm9zcy12YWxpZGF0aW9uIChFWFRFUk5BKTogMlwiXG5bMV0gXCItLS0tLS0tLSBVTklDT1JFIChjb24gY3Jvc3MgdmFsaWRhdGlvbikgLS0tLS0tLS0tLVwiXG4ifQ== -->
-<pre><code>[1] &quot;****************** LARGAS ******************&quot;
-[1] &quot;matrizentrada= 10 x 32&quot;
-[1] &quot;testset= 3 x 32&quot;
-[1] &quot;trainset= 7 x 32&quot;
-[1] &quot;x_train= 7 x 31&quot;
-[1] &quot;y_train= 7&quot;
-[1] &quot;x_test= 3 x 31&quot;
-[1] &quot;y_test= 3&quot;
-SL.glmnet_1 &lt;- function(...) SL.glmnet(..., nfolds=3) 
-NULL
-SL.bayesglm_1 &lt;- function(...) SL.bayesglm(..., nfolds=3) 
-NULL
-[1] &quot;------- Algoritmos usados -------&quot;
-[1] &quot;Cross-validation (INTERNA, dentro de cada algoritmo): 2&quot;
-[1] &quot;Cross-validation (EXTERNA): 2&quot;
-[1] &quot;-------- UNICORE (con cross validation) ----------&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiTnVtYmVyIG9mIGNvdmFyaWF0ZXMgaW4gQWxsIGlzOiAzMVxuQ1YgU0wuZ2xtbmV0XzFfQWxsXG5DViBTTC5iYXllc2dsbV8xX0FsbFxuQ1YgU0wuZ2xtbmV0X0FsbFxuQ1YgU0wuYmF5ZXNnbG1fQWxsXG4ifQ== -->
-<pre><code>Number of covariates in All is: 31
-CV SL.glmnet_1_All
-CV SL.bayesglm_1_All
-CV SL.glmnet_All
-CV SL.bayesglm_All</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiKyBGb2xkMTogY3A9MCBcbi0gRm9sZDE6IGNwPTAgXG4rIEZvbGQyOiBjcD0wIFxuLSBGb2xkMjogY3A9MCBcbisgRm9sZDM6IGNwPTAgXG4tIEZvbGQzOiBjcD0wIFxuQWdncmVnYXRpbmcgcmVzdWx0c1xuRml0dGluZyBmaW5hbCBtb2RlbCBvbiBmdWxsIHRyYWluaW5nIHNldFxuIn0= -->
-<pre><code>+ Fold1: cp=0 
-- Fold1: cp=0 
-+ Fold2: cp=0 
-- Fold2: cp=0 
-+ Fold3: cp=0 
-- Fold3: cp=0 
-Aggregating results
-Fitting final model on full training set</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiQ1YgU0wuY2FyZXQucnBhcnRfQWxsXG5DViBTTC5nbG1fQWxsXG5DViBTTC5ubmV0X0FsbFxuQ1YgU0wucG9seW1hcnNfQWxsXG5OdW1iZXIgb2YgY292YXJpYXRlcyBpbiBBbGwgaXM6IDMxXG5DViBTTC5nbG1uZXRfMV9BbGxcbkNWIFNMLmJheWVzZ2xtXzFfQWxsXG5DViBTTC5nbG1uZXRfQWxsXG5DViBTTC5iYXllc2dsbV9BbGxcbiJ9 -->
-<pre><code>CV SL.caret.rpart_All
-CV SL.glm_All
-CV SL.nnet_All
-CV SL.polymars_All
-Number of covariates in All is: 31
-CV SL.glmnet_1_All
-CV SL.bayesglm_1_All
-CV SL.glmnet_All
-CV SL.bayesglm_All</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiKyBGb2xkMTogY3A9MCBcbi0gRm9sZDE6IGNwPTAgXG4rIEZvbGQyOiBjcD0wIFxuLSBGb2xkMjogY3A9MCBcbisgRm9sZDM6IGNwPTAgXG4tIEZvbGQzOiBjcD0wIFxuKyBGb2xkNDogY3A9MCBcbi0gRm9sZDQ6IGNwPTAgXG5BZ2dyZWdhdGluZyByZXN1bHRzXG5GaXR0aW5nIGZpbmFsIG1vZGVsIG9uIGZ1bGwgdHJhaW5pbmcgc2V0XG4ifQ== -->
-<pre><code>+ Fold1: cp=0 
-- Fold1: cp=0 
-+ Fold2: cp=0 
-- Fold2: cp=0 
-+ Fold3: cp=0 
-- Fold3: cp=0 
-+ Fold4: cp=0 
-- Fold4: cp=0 
-Aggregating results
-Fitting final model on full training set</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiQ1YgU0wuY2FyZXQucnBhcnRfQWxsXG5DViBTTC5nbG1fQWxsXG5DViBTTC5ubmV0X0FsbFxuQ1YgU0wucG9seW1hcnNfQWxsXG5Ob24tTmVnYXRpdmUgbGVhc3Qgc3F1YXJlcyBjb252ZXJnZW5jZTogVFJVRVxuZnVsbCBTTC5nbG1uZXRfMV9BbGxcbmZ1bGwgU0wuYmF5ZXNnbG1fMV9BbGxcbmZ1bGwgU0wuZ2xtbmV0X0FsbFxuZnVsbCBTTC5iYXllc2dsbV9BbGxcbiJ9 -->
-<pre><code>CV SL.caret.rpart_All
-CV SL.glm_All
-CV SL.nnet_All
-CV SL.polymars_All
-Non-Negative least squares convergence: TRUE
-full SL.glmnet_1_All
-full SL.bayesglm_1_All
-full SL.glmnet_All
-full SL.bayesglm_All</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiKyBGb2xkMTogY3A9MCBcbi0gRm9sZDE6IGNwPTAgXG4rIEZvbGQyOiBjcD0wIFxuLSBGb2xkMjogY3A9MCBcbisgRm9sZDM6IGNwPTAgXG4tIEZvbGQzOiBjcD0wIFxuKyBGb2xkNDogY3A9MCBcbi0gRm9sZDQ6IGNwPTAgXG4rIEZvbGQ1OiBjcD0wIFxuLSBGb2xkNTogY3A9MCBcbisgRm9sZDY6IGNwPTAgXG4tIEZvbGQ2OiBjcD0wIFxuKyBGb2xkNzogY3A9MCBcbi0gRm9sZDc6IGNwPTAgXG5BZ2dyZWdhdGluZyByZXN1bHRzXG5GaXR0aW5nIGZpbmFsIG1vZGVsIG9uIGZ1bGwgdHJhaW5pbmcgc2V0XG4ifQ== -->
-<pre><code>+ Fold1: cp=0 
-- Fold1: cp=0 
-+ Fold2: cp=0 
-- Fold2: cp=0 
-+ Fold3: cp=0 
-- Fold3: cp=0 
-+ Fold4: cp=0 
-- Fold4: cp=0 
-+ Fold5: cp=0 
-- Fold5: cp=0 
-+ Fold6: cp=0 
-- Fold6: cp=0 
-+ Fold7: cp=0 
-- Fold7: cp=0 
-Aggregating results
-Fitting final model on full training set</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiZnVsbCBTTC5jYXJldC5ycGFydF9BbGxcbmZ1bGwgU0wuZ2xtX0FsbFxuZnVsbCBTTC5ubmV0X0FsbFxuZnVsbCBTTC5wb2x5bWFyc19BbGxcbiJ9 -->
-<pre><code>full SL.caret.rpart_All
-full SL.glm_All
-full SL.nnet_All
-full SL.polymars_All</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiL2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9XT1JLU1BBQ0VTL3drc3BfZm9yX3Ivcl9nYWxnb3NcIlxuWzFdIFwiUFJFRElDQ0lPTiBDT1JUQVMgPSAzNFwiXG5bMV0gXCJQUkVESUNDSU9OIE1FRElBUyA9IDYyXCJcblsxXSBcIlBSRURJQ0NJT04gTEFSR0FTID0gMFwiXG5bMV0gXCJDQklORDogZW50cmFkYShjb24gb3JkZW4pICsgc2FsaWRhLi4uXCJcblsxXSBcIkNvZ2Vtb3Mgc29sbyBsYXMgY29sdW1uYXMgcXVlIHF1ZXJlbW9zIChpbmRpY2UgeSB0YXJnZXQpLi4uXCJcblsxXSBcIkp1bnRhbW9zIGNvcnRhcywgbWVkaWFzIHkgbGFyZ2FzLi4uXCJcblsxXSBcIk9yZGVuYW1vcyBwb3IgSU5ESUNFX09SREVOLi4uXCJcblsxXSBcIlJlbGxlbmFtb3MgbGFzICBmaWxhcyBxdWUgZXJhbiBOQXMgKHJlbGxlbmFuZG8gZW4gbG9zIGh1ZWNvcyBkZWwgaW5kaWNlLCBoYXN0YSBlbCBudW1lcm8gZGUgZWxlbWVudG9zIGRlIGVudHJhZGEpLi4uXCJcblsxXSBcIkZpY2hlcm8gZGUgc2FsaWRhLi4uXCJcblsxXSBcIkVzY3JpYmllbmRvIGEgZmljaGVybyBkZSBWQUxJREFUSU9OICh0YXJnZXQgcHJlZGljaG8pIGNvbiAxMDAgZmlsYXMuLi5cIlxuWzFdIFwiUnV0YSByZXN1bHRhZG86IC9ob21lL2Nhcmxvc2xpbnV4L0Rlc2t0b3AvREFUT1NfTElNUElPL2dhbGdvcy9wYXNhZG9fdmFsaWRhdGlvbl90YXJnZXRzX3ByZWRpY2hvc19ET1dfTEFCLnR4dFwiXG4ifQ== -->
-<pre><code>[1] &quot;/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos&quot;
-[1] &quot;PREDICCION CORTAS = 34&quot;
-[1] &quot;PREDICCION MEDIAS = 62&quot;
-[1] &quot;PREDICCION LARGAS = 0&quot;
-[1] &quot;CBIND: entrada(con orden) + salida...&quot;
-[1] &quot;Cogemos solo las columnas que queremos (indice y target)...&quot;
-[1] &quot;Juntamos cortas, medias y largas...&quot;
-[1] &quot;Ordenamos por INDICE_ORDEN...&quot;
-[1] &quot;Rellenamos las  filas que eran NAs (rellenando en los huecos del indice, hasta el numero de elementos de entrada)...&quot;
-[1] &quot;Fichero de salida...&quot;
-[1] &quot;Escribiendo a fichero de VALIDATION (target predicho) con 100 filas...&quot;
-[1] &quot;Ruta resultado: /home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pasado_validation_targets_predichos_DOW_LAB.txt&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiVGhlcmUgd2VyZSA1MCBvciBtb3JlIHdhcm5pbmdzICh1c2Ugd2FybmluZ3MoKSB0byBzZWUgdGhlIGZpcnN0IDUwKVxuIn0= -->
-<pre><code>There were 50 or more warnings (use warnings() to see the first 50)</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -637,9 +207,39 @@ full SL.polymars_All</code></pre>
 #lapply(pasado_ft, summary)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<div id="cadena-completa-para-entrenamiento-con-dataset-pasado-ttv" class="section level4">
+<h4>CADENA COMPLETA para ENTRENAMIENTO con dataset PASADO TTV</h4>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kbyA8LSAyICMgMj10cmFpbit0ZXN0XG50YWcgPC0gXCJET1dfTEFCXCJcbmxpbWl0ZVNxbCA8LSBcIjEwMFwiXG5cbnN5c3RlbShwYXN0ZShcIlJzY3JpcHQgL2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9XT1JLU1BBQ0VTL3drc3BfZm9yX3Ivcl9nYWxnb3MvZ2FsZ29zX3JlZ3Jlc2lvbl90dHZfcGFzYWRvLlJcIiwgbW9kbywgdGFnLCBsaW1pdGVTcWwsIHNlcCA9ICcgJykpXG5gYGAifQ== -->
+<pre class="r"><code>modo &lt;- 2 # 2=train+test
+tag &lt;- &quot;DOW_LAB&quot;
+limiteSql &lt;- &quot;100&quot;
+
+system(paste(&quot;Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_regresion_ttv_pasado.R&quot;, modo, tag, limiteSql, sep = ' '))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="cadena-completa-para-predictor-del-futuro" class="section level4">
+<h4>CADENA COMPLETA para PREDICTOR del FUTURO</h4>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kbyA8LSAzICMgMz1wcmVkaWNjaW9uX2Z1dHVyb1xudGFnIDwtIFwiRE9XX0xBQlwiXG5saW1pdGVTcWwgPC0gXCIxMDBcIlxuXG5zeXN0ZW0ocGFzdGUoXCJSc2NyaXB0IC9ob21lL2Nhcmxvc2xpbnV4L0Rlc2t0b3AvV09SS1NQQUNFUy93a3NwX2Zvcl9yL3JfZ2FsZ29zL2dhbGdvc19yZWdyZXNpb25fcHJlZGljdG9yLlJcIiwgbW9kbywgdGFnLCBsaW1pdGVTcWwsIHNlcCA9ICcgJykpXG5gYGAifQ== -->
+<pre class="r"><code>modo &lt;- 3 # 3=prediccion_futuro
+tag &lt;- &quot;DOW_LAB&quot;
+limiteSql &lt;- &quot;100&quot;
+
+system(paste(&quot;Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_regresion_predictor.R&quot;, modo, tag, limiteSql, sep = ' '))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+</div>
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiR0FMR09TIENhZGVuYSBlbiBSIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgpJTlBVVDogZGF0YXNldHMgcHJlcGFyYWRvcyAodGFibGFzIE15U1FMKS4KT1VUUFVUOiBhbsOhbGlzaXMsIGRhdGFzZXRzIGVsYWJvcmFkb3MgeSBtb2RlbG9zCgpBbmFsaXNpcyBkZSBkYXRhc2V0cyBlbiBwcm95ZWN0byBHQUxHT1MuCgojIyMjIENBREVOQSBDT01QTEVUQSBwYXJhIEVOVFJFTkFNSUVOVE8KYGBge3J9Cm1vZG8gPC0gMSAjIDE9dHJhaW4rdGVzdCt2YWxpZGF0aW9uCnRhZyA8LSAiRE9XX0xBQiIKbGltaXRlU3FsIDwtICIxMDAiCgpzeXN0ZW0ocGFzdGUoIlJzY3JpcHQgL2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9XT1JLU1BBQ0VTL3drc3BfZm9yX3Ivcl9nYWxnb3MvZ2FsZ29zX3JlZ3Jlc2lvbl90cmFpbl90ZXN0LlIiLCBtb2RvLCB0YWcsIGxpbWl0ZVNxbCwgc2VwID0gJyAnKSkKYGBgCgojIyBBTkFMSVNJUyBQUkVMSU1JTkFSIERFIERBVE9TIGNvbiBsb3MgcXVlIGhlbW9zIGVudHJlbmFkbwpgYGB7cn0KI2hlYWQocGFzYWRvX2Z0KQojYm94cGxvdChwYXNhZG9fZnQsIGNleC5heGlzID0gMC41KSAKYGBgClZlbW9zIHF1ZSBoYXkgdmFyaWFibGVzIGNvbiBvdXRsaWVycyB5IG90cmFzIGxlcHRvY8O6cnRpY2FzIChhcHJldGFkYXMgZW4gdG9ybm8gYSBsYSBtZWRpYSkuCmBgYHtyfQojc3VtbWFyeShwYXNhZG9fZnQpCiNsYXBwbHkocGFzYWRvX2Z0LCBzdW1tYXJ5KQpgYGAK</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiR0FMR09TIENhZGVuYSBlbiBSIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgpJTlBVVDogZGF0YXNldHMgcHJlcGFyYWRvcyAodGFibGFzIE15U1FMKS4KT1VUUFVUOiBhbsOhbGlzaXMsIGRhdGFzZXRzIGVsYWJvcmFkb3MgeSBtb2RlbG9zCgpBbmFsaXNpcyBkZSBkYXRhc2V0cyBlbiBwcm95ZWN0byBHQUxHT1MuCgojIyMjIENBREVOQSBDT01QTEVUQSBwYXJhIEVOVFJFTkFNSUVOVE8KYGBge3J9Cm1vZG8gPC0gMSAjIDE9dHJhaW4rdGVzdCt2YWxpZGF0aW9uCnRhZyA8LSAiRE9XX0xBQiIKbGltaXRlU3FsIDwtICIxMDAiCgpzeXN0ZW0ocGFzdGUoIlJzY3JpcHQgL2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9XT1JLU1BBQ0VTL3drc3BfZm9yX3Ivcl9nYWxnb3MvZ2FsZ29zX2ludGVsaWdlbmNpYS5SIiwgbW9kbywgdGFnLCBsaW1pdGVTcWwsIHNlcCA9ICcgJykpCmBgYAoKIyMgQU5BTElTSVMgUFJFTElNSU5BUiBERSBEQVRPUyBjb24gbG9zIHF1ZSBoZW1vcyBlbnRyZW5hZG8KYGBge3J9CiNoZWFkKHBhc2Fkb19mdCkKI2JveHBsb3QocGFzYWRvX2Z0LCBjZXguYXhpcyA9IDAuNSkgCmBgYApWZW1vcyBxdWUgaGF5IHZhcmlhYmxlcyBjb24gb3V0bGllcnMgeSBvdHJhcyBsZXB0b2PDunJ0aWNhcyAoYXByZXRhZGFzIGVuIHRvcm5vIGEgbGEgbWVkaWEpLgpgYGB7cn0KI3N1bW1hcnkocGFzYWRvX2Z0KQojbGFwcGx5KHBhc2Fkb19mdCwgc3VtbWFyeSkKYGBgCgoKIyMjIyBDQURFTkEgQ09NUExFVEEgcGFyYSBFTlRSRU5BTUlFTlRPIGNvbiBkYXRhc2V0IFBBU0FETyBUVFYKYGBge3J9Cm1vZG8gPC0gMiAjIDI9dHJhaW4rdGVzdAp0YWcgPC0gIkRPV19MQUIiCmxpbWl0ZVNxbCA8LSAiMTAwIgoKc3lzdGVtKHBhc3RlKCJSc2NyaXB0IC9ob21lL2Nhcmxvc2xpbnV4L0Rlc2t0b3AvV09SS1NQQUNFUy93a3NwX2Zvcl9yL3JfZ2FsZ29zL2dhbGdvc19yZWdyZXNpb25fdHR2X3Bhc2Fkby5SIiwgbW9kbywgdGFnLCBsaW1pdGVTcWwsIHNlcCA9ICcgJykpCmBgYAoKCiMjIyMgQ0FERU5BIENPTVBMRVRBIHBhcmEgUFJFRElDVE9SIGRlbCBGVVRVUk8KYGBge3J9Cm1vZG8gPC0gMyAjIDM9cHJlZGljY2lvbl9mdXR1cm8KdGFnIDwtICJET1dfTEFCIgpsaW1pdGVTcWwgPC0gIjEwMCIKCnN5c3RlbShwYXN0ZSgiUnNjcmlwdCAvaG9tZS9jYXJsb3NsaW51eC9EZXNrdG9wL1dPUktTUEFDRVMvd2tzcF9mb3Jfci9yX2dhbGdvcy9nYWxnb3NfcmVncmVzaW9uX3ByZWRpY3Rvci5SIiwgbW9kbywgdGFnLCBsaW1pdGVTcWwsIHNlcCA9ICcgJykpCmBgYAoKCgoKCgo=</div>
 
 
 

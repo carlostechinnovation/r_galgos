@@ -29,7 +29,7 @@ Vemos que hay variables con outliers y otras leptocúrticas (apretadas en torno 
 ```
 
 
-#### CADENA COMPLETA para ENTRENAMIENTO-PASADO TTV
+#### CADENA COMPLETA para ENTRENAMIENTO con dataset PASADO TTV
 ```{r}
 modo <- 2 # 2=train+test
 tag <- "DOW_LAB"
@@ -41,11 +41,11 @@ system(paste("Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/g
 
 #### CADENA COMPLETA para PREDICTOR del FUTURO
 ```{r}
-modo <- 2 # 2=train+test
+modo <- 3 # 3=prediccion_futuro
 tag <- "DOW_LAB"
 limiteSql <- "100"
 
-system(paste("Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_regresion_ttv_pasado.R", modo, tag, limiteSql, sep = ' '))
+system(paste("Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_regresion_predictor.R", modo, tag, limiteSql, sep = ' '))
 ```
 
 
