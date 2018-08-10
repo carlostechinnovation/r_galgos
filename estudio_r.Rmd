@@ -103,6 +103,52 @@ Vemos también los pesos que tienen las variables de entrada (features) dentro d
 - PC2 (eje vertical): está afectada por mag y accel, principalmente.
 
 
+### Reduccion de dimensiones, mediante Ensembling (alternativa a PCA)
+Tengo muchos features y quiero reducirlos a k.
+
+```{r}
+library(tsne)
+
+colors = rainbow(length(unique(iris$Species)))
+names(colors) = unique(iris$Species)
+
+ecb <- function(x,y){
+  plot(x,t='n');
+  text(x,labels=iris$Species, col=colors[iris$Species])
+  }
+
+# Tabla inicial: 4 columnas ==> Tabla final: 2 columnas
+
+tsne_iris = tsne(X=iris[,1:4], initial_config = NULL, k = 2, initial_dims = 30, perplexity = 100,
+                 max_iter = 1000, min_cost = 0, epoch_callback = ecb, whiten = TRUE,
+                 epoch=500)
+
+
+print('Comparandolo con PCA...')
+dev.new()
+pca_iris = princomp(iris[,1:4])$scores[,1:2]
+plot(pca_iris, t='n')
+text(pca_iris, labels=iris$Species,col=colors[iris$Species])
+```
+Usando un wrapper por encima: <https://cran.r-project.org/web/packages/Rtsne/index.html>
+```{r}
+# iris_unique <- unique(iris) # Remove duplicates
+# iris_matrix <- as.matrix(iris_unique[,1:4])
+# set.seed(42) # Set a seed if you want reproducible results
+# tsne_out <- Rtsne(iris_matrix) # Run TSNE
+# # Show the objects in the 2D tsne representation
+# plot(tsne_out$Y,col=iris_unique$Species)
+# # Using a dist object
+# tsne_out <- Rtsne(dist(iris_matrix))
+# plot(tsne_out$Y,col=iris_unique$Species)
+# # Use a given initialization of the locations of the points
+# tsne_part1 <- Rtsne(iris_unique[,1:4], theta=0.0, pca=FALSE,max_iter=350)
+# tsne_part2 <- Rtsne(iris_unique[,1:4], theta=0.0, pca=FALSE, max_iter=150,Y_init=tsne_part1$Y)
+```
+
+
+
+
 ### CLUSTERING (habiendo hecho PCA antes)
 Vamos a mostrar un subtipo de "clustering jerárquico" llamado *Agglomerative Nesting (AGNES)*.
 
@@ -950,5 +996,4 @@ Se divide la entrada en subsets y después, se aplica un ensemble en cada uno de
 ```{r}
 
 ```
-
 

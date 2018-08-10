@@ -1,5 +1,5 @@
 ---
-title: "GALGOS Cadena en R"
+title: "Cadena con datos de pruebas en R"
 output: html_notebook
 ---
 
@@ -7,6 +7,29 @@ INPUT: datasets preparados (tablas MySQL).
 OUTPUT: análisis, datasets elaborados y modelos
 
 Analisis de datasets en proyecto GALGOS.
+
+#### Reducción de dimensiones
+Si queremos entrenar un modelo con 30 variables, deberíamos tener millones de filas. Incluso así, la complejidad lo hace imposible y se sobreentrenaría.
+Por tanto, queremos reducir las dimensiones.
+
+Usando PCA:
+```{r}
+modo <- 0 # 0=reduccion_dimensiones
+tag <- "DOW_LAB"
+limiteSql <- "1000"
+tipoReduccion <- "PCA"
+
+system(paste("Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_dim_reduction.R", modo, tag, limiteSql, tipoReduccion, sep = ' '))
+```
+Usando tSNE:
+```{r}
+modo <- 0 # 0=reduccion_dimensiones
+tag <- "DOW_LAB"
+limiteSql <- "1000"
+tipoReduccion <- "TSNE"
+
+system(paste("Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_dim_reduction.R", modo, tag, limiteSql, tipoReduccion, sep = ' '))
+```
 
 #### CADENA COMPLETA para ENTRENAMIENTO
 ```{r}

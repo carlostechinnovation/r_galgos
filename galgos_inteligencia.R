@@ -436,17 +436,17 @@ predecir <- function(tag, input_f, output_file_prefijo, tipo, col_cortas,col_med
   paste("LARGAS-F (sin NAs):", nrow(pasado_f_largas), "x", ncol(pasado_f_largas))
   
   
-  #Prediccion CORTAS
+  #Prediccion CORTAS (sin la columna indice_orden)
   predicciones_t_model_cortas <- predict.SuperLearner(object = modelo_cortas, newdata = subset(pasado_f_cortas, select = -c(INDICE_ORDEN)), onlySL = TRUE) #No usa los que tienen peso =0
   predicciones_t_cortas <- predicciones_t_model_cortas$pred #Prediccion
   print(paste("PREDICCION CORTAS =", length(predicciones_t_cortas)))
   
-  #Prediccion MEDIAS
+  #Prediccion MEDIAS (sin la columna indice_orden)
   predicciones_t_model_medias <- predict.SuperLearner(object = modelo_medias, newdata = subset(pasado_f_medias, select = -c(INDICE_ORDEN)), onlySL = TRUE) #No usa los que tienen peso =0
   predicciones_t_medias <- predicciones_t_model_medias$pred #Prediccion
   print(paste("PREDICCION MEDIAS =", length(predicciones_t_medias)))
   
-  #Prediccion LARGAS
+  #Prediccion LARGAS (sin la columna indice_orden)
   predicciones_t_model_largas <- predict.SuperLearner(object = modelo_largas, newdata = subset(pasado_f_largas, select = -c(INDICE_ORDEN)), onlySL = TRUE) #No usa los que tienen peso =0
   predicciones_t_largas <- predicciones_t_model_largas$pred #Prediccion
   print(paste("PREDICCION LARGAS =", length(predicciones_t_largas)))
@@ -467,7 +467,7 @@ predecir <- function(tag, input_f, output_file_prefijo, tipo, col_cortas,col_med
   print('Ordenamos por INDICE_ORDEN...')
   pasado_it_ordenado <- pasado_it[order(pasado_it$INDICE_ORDEN),] 
   
-  print('Rellenamos las  filas que eran NAs (rellenando en los huecos del indice, hasta el numero de elementos de entrada)...')
+  print('Rellenamos las filas que eran NAs (rellenando en los huecos del indice, hasta el numero de elementos de entrada)...')
   num_input <- nrow(input_f)
   df_nulos <- data.frame( matrix(NA, nrow = num_input, ncol = 1) )
   df_nulos$INDICE_ORDEN <- seq.int(nrow(df_nulos))
@@ -529,7 +529,7 @@ ejecutarCadenaEntrenamientoValidation <- function(tag, limiteSql){
 ######################################################################################################################################
 print('-------------------- PRINCIPAL --------------------------')
 
-options(echo = TRUE) # En la salida, queremos ver los comandos ejecutados
+options(echo = FALSE) # En la salida, queremos ver los comandos ejecutados
 
 
 library(SuperLearner)

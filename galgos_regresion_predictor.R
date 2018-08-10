@@ -45,7 +45,7 @@ ejecutarCadenaPredecirFuturo <- function(tag, limiteSql){
 ######################################################################################################################################
 print('-------------------- PRINCIPAL --------------------------')
 
-options(echo = TRUE) # En la salida, queremos ver los comandos ejecutados
+options(echo = FALSE) # En la salida, queremos ver los comandos ejecutados
 
 entradas <- commandArgs(trailingOnly = TRUE)
 
