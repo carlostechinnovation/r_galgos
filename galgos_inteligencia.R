@@ -199,6 +199,27 @@ crearFeaturesyTargetDelPasadoParaDistancias <- function(pasado_ft, col_cortas,co
 }
 
 
+#' Title
+#'
+#' @param pca_modelo_sdev 
+#' @param umbral_varianza 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+aplicarUmbralVarianza <- function(pca_modelo_sdev, umbral_varianza) {
+  
+  # VARIANZA ACUMULADA: aplico el umbral para coger sólo las variables PCx mas importantes
+  var_acum <- cumsum(pca_modelo_sdev^2 / sum(pca_modelo_sdev^2))
+  indice_umbral <- min( which(var_acum >= umbral_varianza) )
+  print(paste("Umbral deseado de varianza acumulada:", umbral_varianza))
+  print(paste("Por tanto, necesitamos coger", indice_umbral, "variables transformadas PCx..."))
+  
+  return(indice_umbral)
+}
+
+
 #' Reducir dimensiones usando PCA (no supervisado).
 #' Calcula los eigenvectores que definen las correlaciones entre features.
 #'
@@ -224,11 +245,8 @@ reducirConPCA <- function(input_ft, path_modelo_pca, umbral_varianza){
   pca_modelo <- princomp(x = input_f_full, cor = FALSE, scores = T)
   print("summary:"); print( summary(pca_modelo) )
   
-  # VARIANZA ACUMULADA: aplico el umbral para coger sólo las variables PCx mas importantes
-  var_acum <- cumsum(pca_modelo$sdev^2 / sum(pca_modelo$sdev^2))
-  indice_umbral <- min( which(var_acum >= umbral_varianza) )
-  print(paste("Umbral deseado de varianza acumulada:", umbral_varianza))
-  print(paste("Por tanto, necesitamos coger", indice_umbral, "variables transformadas PCx..."))
+  #Coger solo las features que mas impacto tengan en la varianza
+  indice_umbral <- aplicarUmbralVarianza(pca_modelo$sdev, umbral_varianza)
   
   #TABLON ANALITICO TRANSFORMADO con los pesos de las componentes (PCx) para cada individuo (fila), solo con las variables que mas peso tienen:
   input_f_transformado <- pca_modelo$scores[, 1:indice_umbral]
@@ -602,9 +620,10 @@ predecir <- function(tag, input_f_transformadas, output_file_prefijo, tipo, col_
   
   #Prediccion CORTAS (sin la columna indice_orden)
   print("Names de CORTAS-F (sin NAs):"); print(names(pasado_f_cortas))
-  pasado_f_cortas_sinindice <- subset(pasado_f_cortas, select = -c(INDICE_ORDEN));
+  pasado_f_cortas_sinindice <- as.data.frame( subset(pasado_f_cortas, select = -c(INDICE_ORDEN)) );
   print(paste("pasado_f_cortas_sinindice:", nrow(pasado_f_cortas_sinindice), "x", ncol(pasado_f_cortas_sinindice)))
   print("Names de pasado_f_cortas_sinindice:"); print(names(pasado_f_cortas_sinindice))
+  print("Prediciendo usando un modelo ya entrenado y un nuevo dataset...")
   predicciones_t_model_cortas <- predict.SuperLearner(object = modelo_cortas, newdata = pasado_f_cortas_sinindice, onlySL = TRUE) #No usa los que tienen peso =0
   print(paste("predicciones_t_model_cortas:", nrow(predicciones_t_model_cortas), "x", ncol(predicciones_t_model_cortas)))
   print("Names de predicciones_t_model_cortas:"); print(names(predicciones_t_model_cortas))
@@ -761,12 +780,14 @@ ejecutarReduccionDimensiones <- function(tag, limiteSql, tipoReduccion, path_mod
 #'
 #' @param input_f 
 #' @param lista_modelos_pca 
+#' @param tipo 
+#' @param umbral_varianza 
 #'
 #' @return
 #' @export
 #'
 #' @examples
-aplicarReductores <- function(input_f, lista_modelos_pca, tipo) {
+aplicarReductores <- function(input_f, lista_modelos_pca, tipo, umbral_varianza) {
   
   modelo_pca_cortas <- lista_modelos_pca[[1]]
   modelo_pca_medias <- lista_modelos_pca[[2]]
@@ -792,8 +813,19 @@ aplicarReductores <- function(input_f, lista_modelos_pca, tipo) {
   input_f_transformada_medias <- predict(modelo_pca_medias, input_f_medias)
   input_f_transformada_largas <- predict(modelo_pca_largas, input_f_largas)
   
+  
+  #Coger solo las features que mas impacto tengan en la varianza
+  indice_umbral_cortas <- aplicarUmbralVarianza(modelo_pca_cortas$sdev, umbral_varianza)
+  indice_umbral_medias <- aplicarUmbralVarianza(modelo_pca_medias$sdev, umbral_varianza)
+  indice_umbral_largas <- aplicarUmbralVarianza(modelo_pca_largas$sdev, umbral_varianza)
+  
+  #TABLON ANALITICO TRANSFORMADO con los pesos de las componentes (PCx) para cada individuo (fila), solo con las variables que mas peso tienen:
+  input_f_transformada_cortas_conumbral <- input_f_transformada_cortas[, 1:indice_umbral_cortas]
+  input_f_transformada_medias_conumbral <- input_f_transformada_medias[, 1:indice_umbral_medias]
+  input_f_transformada_largas_conumbral <- input_f_transformada_largas[, 1:indice_umbral_largas]
+  
   print('Salida...')
-  lista_f_transformadas <- list(input_f_transformada_cortas, input_f_transformada_medias, input_f_transformada_largas)
+  lista_f_transformadas <- list(input_f_transformada_cortas_conumbral, input_f_transformada_medias_conumbral, input_f_transformada_largas_conumbral)
     
   return(lista_f_transformadas)
   
@@ -849,7 +881,7 @@ ejecutarCadenaEntrenamientoValidation <- function(tag, limiteSql, tipoReduccion,
   
   print('----- VALIDATION: Aplicando reduccion PCA y modelos predictivos para adivinar el target ---')
   print('Aplicando PCA sobre Validation-F...')
-  validation_f_transformadas <- aplicarReductores(pasado_validation_f, lista_modelos_pca, "validation")
+  validation_f_transformadas <- aplicarReductores(pasado_validation_f, lista_modelos_pca, "validation", pca_umbral_varianza)
   print('Predeciendo el target sobre el validation, usando modelos predictivos...')
   predecir(tag, validation_f_transformadas, "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pasado_validation_targets_predichos_", "VALIDATION", col_cortas,col_medias,col_largas)
   
