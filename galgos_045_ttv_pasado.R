@@ -24,14 +24,14 @@ ejecutarCadenaEntrenamientoTTV <- function(tag, limiteSql){
   col_largas <- c("vel_real_largas_mediana_norm", "vel_real_largas_max_norm", "vel_going_largas_mediana_norm", "vel_going_largas_max_norm")
   
   establecerConfigGeneral()
-  listaDatos <- leerDesdeBaseDatosYEscribirCSV(1, 
-                                               'datos_desa.tb_ds_pasado_ttv_features_', 
+  listaDatos <- leerDesdeBaseDatosYEscribirCSV('datos_desa.tb_ds_pasado_ttv_features_', 
                                                'datos_desa.tb_ds_pasado_ttv_targets_',
                                                'NO_HACEMOS_VALIDATION', 
                                                tag, 
                                                format(limiteSql, scientific = FALSE),
                                                TRUE, FALSE)
-  lista_ft_cortasmediaslargas <- crearFeaturesyTargetDelPasadoParaDistancias(listaDatos[[1]], col_cortas,col_medias,col_largas)
+  
+  lista_ft_cortasmediaslargas <- crearFeaturesyTargetDelPasadoParaDistancias(listaDatos[[1]], col_cortas,col_medias,col_largas, TRUE, TRUE)
   obtenerModelosParaDistancias(lista_ft_cortasmediaslargas)
   
   print('--------------- ejecutarCadenaEntrenamientoTTV: FIN ------------')

@@ -18,8 +18,12 @@ modo <- 0 # 0=reduccion_dimensiones
 tag <- "DOW_LAB"
 limiteSql <- "1000"
 tipoReduccion <- "PCA"
+path_modelo_pca_prefijo <- "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_"
+pca_umbral_varianza <- 0.95
+tsne_num_features_output <- 12
 
-system(paste("Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_dim_reduction.R", modo, tag, limiteSql, tipoReduccion, sep = ' '))
+system(paste("Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_dim_reduction.R", modo, tag, limiteSql, tipoReduccion,
+             pca_umbral_varianza, tsne_num_features_output, sep = ' '))
 ```
 Usando tSNE:
 ```{r}
@@ -28,7 +32,7 @@ tag <- "DOW_LAB"
 limiteSql <- "1000"
 tipoReduccion <- "TSNE"
 
-system(paste("Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_dim_reduction.R", modo, tag, limiteSql, tipoReduccion, sep = ' '))
+system(paste("Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_dim_reduction.R", modo, tag, limiteSql, tipoReduccion,  sep = ' '))
 ```
 
 #### CADENA COMPLETA para ENTRENAMIENTO
@@ -37,7 +41,7 @@ modo <- 1 # 1=train+test+validation
 tag <- "DOW_LAB"
 limiteSql <- "100"
 
-system(paste("Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_inteligencia.R", modo, tag, limiteSql, sep = ' '))
+system(paste("Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_040_ttv_por_tag_pasado.R", modo, tag, limiteSql, sep = ' '))
 ```
 
 ## ANALISIS PRELIMINAR DE DATOS con los que hemos entrenado
@@ -58,7 +62,7 @@ modo <- 2 # 2=train+test
 tag <- "DOW_LAB"
 limiteSql <- "100"
 
-system(paste("Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_regresion_ttv_pasado.R", modo, tag, limiteSql, sep = ' '))
+system(paste("Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_045_ttv_pasado.R", modo, tag, limiteSql, sep = ' '))
 ```
 
 
@@ -68,7 +72,7 @@ modo <- 3 # 3=prediccion_futuro
 tag <- "DOW_LAB"
 limiteSql <- "100"
 
-system(paste("Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_regresion_predictor.R", modo, tag, limiteSql, sep = ' '))
+system(paste("Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_050_predictor_futuro.R", modo, tag, limiteSql, sep = ' '))
 ```
 
 
