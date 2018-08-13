@@ -181,124 +181,25 @@ $(document).ready(function () {
 <p>Usando PCA:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kbyA8LSAwICMgMD1yZWR1Y2Npb25fZGltZW5zaW9uZXNcbnRhZyA8LSBcIkRPV19MQUJcIlxubGltaXRlU3FsIDwtIFwiMTAwMFwiXG50aXBvUmVkdWNjaW9uIDwtIFwiUENBXCJcbnN5c3RlbShwYXN0ZShcIlJzY3JpcHQgL2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9XT1JLU1BBQ0VTL3drc3BfZm9yX3Ivcl9nYWxnb3MvZ2FsZ29zX2RpbV9yZWR1Y3Rpb24uUlwiLCBtb2RvLCB0YWcsIGxpbWl0ZVNxbCwgdGlwb1JlZHVjY2lvbiwgc2VwID0gJyAnKSlcbmBgYCJ9 -->
-<pre class="r"><code>modo &lt;- 0 # 0=reduccion_dimensiones
-tag &lt;- &quot;DOW_LAB&quot;
-limiteSql &lt;- &quot;1000&quot;
-tipoReduccion &lt;- &quot;PCA&quot;
-system(paste(&quot;Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_dim_reduction.R&quot;, modo, tag, limiteSql, tipoReduccion, sep = ' '))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiLS0tLS0tLS0tLS0tLS0tLS0tLS0gUFJJTkNJUEFMIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXCJcbiJ9 -->
-<pre><code>[1] &quot;-------------------- PRINCIPAL --------------------------&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBubmxzXG5TdXBlciBMZWFybmVyXG5WZXJzaW9uOiAyLjAtMjNcblBhY2thZ2UgY3JlYXRlZCBvbiAyMDE4LTAzLTA5XG5cbnJhbmRvbUZvcmVzdCA0LjYtMTRcblR5cGUgcmZOZXdzKCkgdG8gc2VlIG5ldyBmZWF0dXJlcy9jaGFuZ2VzL2J1ZyBmaXhlcy5cbkxvYWRpbmcgcmVxdWlyZWQgcGFja2FnZTogTWF0cml4XG5Mb2FkaW5nIHJlcXVpcmVkIHBhY2thZ2U6IGZvcmVhY2hcbkxvYWRlZCBnbG1uZXQgMi4wLTE2XG5cblxuQXR0YWNoaW5nIHBhY2thZ2U6IOKAmGdncGxvdDLigJlcblxuVGhlIGZvbGxvd2luZyBvYmplY3QgaXMgbWFza2VkIGZyb20g4oCYcGFja2FnZTpyYW5kb21Gb3Jlc3TigJk6XG5cbiAgICBtYXJnaW5cblxuTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBNQVNTXG5Mb2FkaW5nIHJlcXVpcmVkIHBhY2thZ2U6IGxtZTRcbkxvYWRpbmcgcmVxdWlyZWQgcGFja2FnZTogbWV0aG9kc1xuXG5hcm0gKFZlcnNpb24gMS4xMC0xLCBidWlsdDogMjAxOC00LTEyKVxuXG5Xb3JraW5nIGRpcmVjdG9yeSBpcyAvaG9tZS9jYXJsb3NsaW51eC9EZXNrdG9wL1dPUktTUEFDRVMvd2tzcF9mb3Jfci9yX2dhbGdvc1xuIn0= -->
-<pre><code>Loading required package: nnls
-Super Learner
-Version: 2.0-23
-Package created on 2018-03-09
-
-randomForest 4.6-14
-Type rfNews() to see new features/changes/bug fixes.
-Loading required package: Matrix
-Loading required package: foreach
-Loaded glmnet 2.0-16
-
-
-Attaching package: ‘ggplot2’
-
-The following object is masked from ‘package:randomForest’:
-
-    margin
-
-Loading required package: MASS
-Loading required package: lme4
-Loading required package: methods
-
-arm (Version 1.10-1, built: 2018-4-12)
-
-Working directory is /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiTnVtZXJvIGRlIHBhcmFtZXRyb3M6ICA0XCJcblsxXSBcIm1vZG89MFwiXG5bMV0gXCJ0YWc9RE9XX0xBQlwiXG5bMV0gXCJsaW1pdGVTcWw9MTAwMFwiXG5bMV0gXCItLS0tLS0tLS0tLS0tLS0tLS0tLSBQUklOQ0lQQUwgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cIlxuPiBcbj4gZW50cmFkYXMgPC0gY29tbWFuZEFyZ3ModHJhaWxpbmdPbmx5ID0gVFJVRSlcbj4gXG4+ICMjIyMjIFRFTVBcbj4gbW9kbyA8LSAwICMgMD1yZWR1Y2Npb25fZGltZW5zaW9uZXNcbj4gdGFnIDwtIFwiRE9XX0xBQlwiXG4+IGxpbWl0ZVNxbCA8LSBcIjEwMDBcIlxuPiB0aXBvUmVkdWNjaW9uIDwtIFwiUENBXCJcbj4gXG4+IGVudHJhZGFzIDwtIGMobW9kbyx0YWcsIGxpbWl0ZVNxbCwgdGlwb1JlZHVjY2lvbilcbj4gIyMjIyMjI1xuPiBcbj4gXG4+IFxuPiBcbj4gXG4+IFxuPiBpZiAobGVuZ3RoKGVudHJhZGFzKSA9PSAwKSB7XG4rICAgcHJpbnQoXCJOZWNlc2FyaW8gaW5kaWNhciBwYXJhbWV0cm9zIGRlIGVudHJhZGFcIilcbisgICBcbisgfSBlbHNlIGlmIChsZW5ndGgoZW50cmFkYXMpID49IDEpIHtcbisgICBcbisgICBwcmludCggcGFzdGUoJ051bWVybyBkZSBwYXJhbWV0cm9zOiAnLCBsZW5ndGgoZW50cmFkYXMpKSApXG4rICAgbW9kbyA8LSBlbnRyYWRhc1sxXTsgIHByaW50KCBwYXN0ZSggJ21vZG89JywgbW9kbywgc2VwID0gJycgKSAgICkgIyAwPWRpbV9yZWR1Y3Rpb24gMT10cmFpbit0ZXN0K3ZhbGlkYXRpb24sIDI9dHJhaW4rdGVzdCAodHR2KSwgMz1wcmVkaWNjaW9uX2Z1dHVyb1xuKyAgIHRhZyA8LSBlbnRyYWRhc1syXTsgIHByaW50KCBwYXN0ZSggJ3RhZz0nLCB0YWcsIHNlcCA9ICcnICkgICApXG4rICAgbGltaXRlU3FsIDwtIGVudHJhZGFzWzNdOyAgcHJpbnQoIHBhc3RlKCAnbGltaXRlU3FsPScsIGxpbWl0ZVNxbCwgc2VwID0gJycgKSApXG4rICAgdGlwb1JlZHVjY2lvbiA8LSBlbnRyYWRhc1s0XTsgIHByaW50KCBwYXN0ZSggJ3RpcG9SZWR1Y2Npb249JywgdGlwb1JlZHVjY2lvbiwgc2VwID0gJycgKSAgIClcbisgICBcbisgICAjIyMjIyMjIyMjIyMgTExBTUFEQSBQUklOQ0lQQUwgIyMjIyMjIyMjI1xuKyAgIGlmIChtb2RvID09IDApIHtcbisgICAgIGVqZWN1dGFyUmVkdWNjaW9uRGltZW5zaW9uZXModGFnLCBsaW1pdGVTcWwsIHRpcG9SZWR1Y2Npb24pXG4rICAgfVxuKyAgIFxuKyAgICNCb3JyYW1vcyBhcnJheSBkZSBwYXJhbWV0cm9zLCBwYXJhIGV2aXRhciBjb25mdXNpb25lc1xuKyAgIHJtKGVudHJhZGFzKVxuKyAgIFxuKyB9XG5bMV0gXCJOdW1lcm8gZGUgcGFyYW1ldHJvczogIDRcIlxuWzFdIFwibW9kbz0wXCJcblsxXSBcInRhZz1ET1dfTEFCXCJcblsxXSBcImxpbWl0ZVNxbD0xMDAwXCJcblsxXSBcInRpcG9SZWR1Y2Npb249UENBXCJcblsxXSBcIi0tLS0tLS0tLS0tLS0tLSBlamVjdXRhclJlZHVjY2lvbkRpbWVuc2lvbmVzOiBJTklDSU8gLS0tLS0tLS0tLS0tXCJcblsxXSBcInRhZz1ET1dfTEFCXCJcblsxXSBcImxpbWl0ZVNxbD1ET1dfTEFCXCJcblsxXSBcInRpcG9SZWR1Y2Npb249UENBXCJcblsxXSBcIi0tLS0tLS0tLS0tLS0tLSBlc3RhYmxlY2VyQ29uZmlnR2VuZXJhbCAtLS0tLS0tLS0tLS1cIlxuWzFdIFwiLS0tLS0tLS0tLS0tLS0tIGxlZXJEZXNkZUJhc2VEYXRvc1lFc2NyaWJpckNTViAtLS0tLS0tLS0tLS1cIlxuWzFdIFwibW9kbyAoYmJkZCB5IENTVik9IDFcIlxuWzFdIFwidGFnPSBET1dfTEFCXCJcblsxXSBcImxpbWl0ZVNxbD0gMTAwMFwiXG5bMV0gXCJpbmNsdXllVGFyZ2V0cz0gVFJVRVwiXG5bMV0gXCJpbmNsdXllVmFsaWRhdGlvbj0gRkFMU0VcIlxuIn0= -->
-<pre><code>[1] &quot;Numero de parametros:  4&quot;
-[1] &quot;modo=0&quot;
-[1] &quot;tag=DOW_LAB&quot;
-[1] &quot;limiteSql=1000&quot;
-[1] &quot;-------------------- PRINCIPAL --------------------------&quot;
-&gt; 
-&gt; entradas &lt;- commandArgs(trailingOnly = TRUE)
-&gt; 
-&gt; ##### TEMP
-&gt; modo &lt;- 0 # 0=reduccion_dimensiones
-&gt; tag &lt;- &quot;DOW_LAB&quot;
-&gt; limiteSql &lt;- &quot;1000&quot;
-&gt; tipoReduccion &lt;- &quot;PCA&quot;
-&gt; 
-&gt; entradas &lt;- c(modo,tag, limiteSql, tipoReduccion)
-&gt; #######
-&gt; 
-&gt; 
-&gt; 
-&gt; 
-&gt; 
-&gt; 
-&gt; if (length(entradas) == 0) {
-+   print(&quot;Necesario indicar parametros de entrada&quot;)
-+   
-+ } else if (length(entradas) &gt;= 1) {
-+   
-+   print( paste('Numero de parametros: ', length(entradas)) )
-+   modo &lt;- entradas[1];  print( paste( 'modo=', modo, sep = '' )   ) # 0=dim_reduction 1=train+test+validation, 2=train+test (ttv), 3=prediccion_futuro
-+   tag &lt;- entradas[2];  print( paste( 'tag=', tag, sep = '' )   )
-+   limiteSql &lt;- entradas[3];  print( paste( 'limiteSql=', limiteSql, sep = '' ) )
-+   tipoReduccion &lt;- entradas[4];  print( paste( 'tipoReduccion=', tipoReduccion, sep = '' )   )
-+   
-+   ############ LLAMADA PRINCIPAL ##########
-+   if (modo == 0) {
-+     ejecutarReduccionDimensiones(tag, limiteSql, tipoReduccion)
-+   }
-+   
-+   #Borramos array de parametros, para evitar confusiones
-+   rm(entradas)
-+   
-+ }
-[1] &quot;Numero de parametros:  4&quot;
-[1] &quot;modo=0&quot;
-[1] &quot;tag=DOW_LAB&quot;
-[1] &quot;limiteSql=1000&quot;
-[1] &quot;tipoReduccion=PCA&quot;
-[1] &quot;--------------- ejecutarReduccionDimensiones: INICIO ------------&quot;
-[1] &quot;tag=DOW_LAB&quot;
-[1] &quot;limiteSql=DOW_LAB&quot;
-[1] &quot;tipoReduccion=PCA&quot;
-[1] &quot;--------------- establecerConfigGeneral ------------&quot;
-[1] &quot;--------------- leerDesdeBaseDatosYEscribirCSV ------------&quot;
-[1] &quot;modo (bbdd y CSV)= 1&quot;
-[1] &quot;tag= DOW_LAB&quot;
-[1] &quot;limiteSql= 1000&quot;
-[1] &quot;incluyeTargets= TRUE&quot;
-[1] &quot;incluyeValidation= FALSE&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBEQklcbiJ9 -->
-<pre><code>Loading required package: DBI</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiLS0tLS0tLS0tLS0tLS0tQ29uZXhpb24gYSBCQkREIC0tLS0tLS0tLS0tLVwiXG5bMV0gXCJDb25lY3RhbmRvLi4uXCJcblsxXSBcIi0tLS0tLS0tLS0tLS0gRmVhdHVyZXMgKElOUFVUKSAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVwiXG5bMV0gXCJTRUxFQ1QgKiBGUk9NIGRhdG9zX2Rlc2EudGJfZHNfcGFzYWRvX3RyYWluX2ZlYXR1cmVzX0RPV19MQUIgTElNSVQgMTAwMDtcIlxuWzFdIFwiRkVBVFVSRVMgKHRyYWluIG8gZnV0dXJvKTogIDEwMDAgeCAzOVwiXG5bMV0gXCJsaXN0XCJcblsxXSBcIi0tLS0tLS0tLS0tLS0tLS0tLS0gVGFyZ2V0cyAoSU5QVVQpIC0tLS0tLS0tLS0tLS0tLS0tXCJcblsxXSBcIlNFTEVDVCAqIEZST00gZGF0b3NfZGVzYS50Yl9kc19wYXNhZG9fdHJhaW5fdGFyZ2V0c19ET1dfTEFCIExJTUlUIDEwMDA7XCJcblsxXSBcIlRSQUlOLVQ6ICAxMDAwIHggMVwiXG5bMV0gXCJsaXN0XCJcblsxXSBcImxlaWRvX2Z0OiAgMTAwMCB4IDQwXCJcblsxXSBcIi0tLS0tLS0tLS0tLS0tLSBjcmVhckZlYXR1cmVzeVRhcmdldERlbFBhc2Fkb1BhcmFEaXN0YW5jaWFzIC0tLS0tLS0tLS0tLVwiXG5bMV0gXCJwYXNhZG9fZnQ6ICAxMDAwIHggNDBcIlxuWzFdIFwiLS0tLS0tLS0tLS0tLS0tLS0tLS0tIFRSQUlOICgrdGVzdCBpbnRlcm5vKSAtLS0tLS0tLS0tLS0tLS0tLS0tXCJcblsxXSBcIiAqKioqIFBDQTogY29ydGFzICoqKiogXCJcblsxXSBcImlucHV0X2ZfZnVsbDogMjMzIHggMzFcIlxuWzFdIFwic3VtbWFyeTpcIlxuSW1wb3J0YW5jZSBvZiBjb21wb25lbnRzOlxuICAgICAgICAgICAgICAgICAgICAgICAgICBDb21wLjEgICAgQ29tcC4yICAgIENvbXAuMyAgICAgQ29tcC40ICAgICBDb21wLjVcblN0YW5kYXJkIGRldmlhdGlvbiAgICAgMC42MDU4MTYzIDAuNDYyMjk2OCAwLjQwOTgyMzIgMC4yOTQwNzc5MiAwLjI3MzMwMTI4XG5Qcm9wb3J0aW9uIG9mIFZhcmlhbmNlIDAuMzI2NjkwMCAwLjE5MDIzNzMgMC4xNDk1MDIwIDAuMDc2OTgwMTYgMC4wNjY0ODcwOVxuQ3VtdWxhdGl2ZSBQcm9wb3J0aW9uICAwLjMyNjY5MDAgMC41MTY5Mjc0IDAuNjY2NDI5NCAwLjc0MzQwOTU4IDAuODA5ODk2NjdcbiAgICAgICAgICAgICAgICAgICAgICAgICAgIENvbXAuNiAgICAgQ29tcC43ICAgICBDb21wLjggICAgIENvbXAuOSAgICBDb21wLjEwXG5TdGFuZGFyZCBkZXZpYXRpb24gICAgIDAuMTk5Nzg0OTUgMC4xODU2NTU4OSAwLjE1NTA3NDM1IDAuMTQwOTQ4NjcgMC4xMzMzOTg3N1xuUHJvcG9ydGlvbiBvZiBWYXJpYW5jZSAwLjAzNTUyODcyIDAuMDMwNjgxMTQgMC4wMjE0MDU5MiAwLjAxNzY4MzgxIDAuMDE1ODQwMDlcbkN1bXVsYXRpdmUgUHJvcG9ydGlvbiAgMC44NDU0MjUzOCAwLjg3NjEwNjUyIDAuODk3NTEyNDQgMC45MTUxOTYyNiAwLjkzMTAzNjM1XG4gICAgICAgICAgICAgICAgICAgICAgICAgIENvbXAuMTEgICAgQ29tcC4xMiAgICBDb21wLjEzICAgIENvbXAuMTQgICAgIENvbXAuMTVcblN0YW5kYXJkIGRldmlhdGlvbiAgICAgMC4xMjg3NzQwNiAwLjExNzIwMjkyIDAuMTE1NjY2NDEgMC4xMTM4NTgxMCAwLjA5NjA1NTg2M1xuUHJvcG9ydGlvbiBvZiBWYXJpYW5jZSAwLjAxNDc2MDgzIDAuMDEyMjI3MzEgMC4wMTE5MDg4MSAwLjAxMTUzOTM2IDAuMDA4MjEyOTk5XG5DdW11bGF0aXZlIFByb3BvcnRpb24gIDAuOTQ1Nzk3MTggMC45NTgwMjQ0OSAwLjk2OTkzMzMwIDAuOTgxNDcyNjcgMC45ODk2ODU2NjRcbiAgICAgICAgICAgICAgICAgICAgICAgICAgIENvbXAuMTYgICAgQ29tcC4xNyAgICAgQ29tcC4xOCAgICAgQ29tcC4xOVxuU3RhbmRhcmQgZGV2aWF0aW9uICAgICAwLjA2NjQ0MTM1OCAwLjA0NzYxNjg0IDAuMDQwNTI2ODE1IDAuMDM3NDI4NjU3XG5Qcm9wb3J0aW9uIG9mIFZhcmlhbmNlIDAuMDAzOTI5NDQzIDAuMDAyMDE4MjUgMC4wMDE0NjE5NzIgMC4wMDEyNDY5ODlcbkN1bXVsYXRpdmUgUHJvcG9ydGlvbiAgMC45OTM2MTUxMDcgMC45OTU2MzMzNiAwLjk5NzA5NTMyOSAwLjk5ODM0MjMxOFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIENvbXAuMjAgICAgICBDb21wLjIxICAgICAgQ29tcC4yMiAgICAgIENvbXAuMjNcblN0YW5kYXJkIGRldmlhdGlvbiAgICAgMC4wMjgzNTk1MDI5IDAuMDIxNDczODEwOCAwLjAxODI5MjE2NTUgMC4wMTQzODQ4NDcwXG5Qcm9wb3J0aW9uIG9mIFZhcmlhbmNlIDAuMDAwNzE1ODk4MSAwLjAwMDQxMDQ2MTMgMC4wMDAyOTc4NDA4IDAuMDAwMTg0MTg5M1xuQ3VtdWxhdGl2ZSBQcm9wb3J0aW9uICAwLjk5OTA1ODIxNTcgMC45OTk0Njg2NzcwIDAuOTk5NzY2NTE3OSAwLjk5OTk1MDcwNzJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICBDb21wLjI0IENvbXAuMjUgQ29tcC4yNiBDb21wLjI3IENvbXAuMjggQ29tcC4yOVxuU3RhbmRhcmQgZGV2aWF0aW9uICAgICA3LjQ0MTU3MmUtMDMgICAgICAgMCAgICAgICAwICAgICAgIDAgICAgICAgMCAgICAgICAwXG5Qcm9wb3J0aW9uIG9mIFZhcmlhbmNlIDQuOTI5Mjc4ZS0wNSAgICAgICAwICAgICAgIDAgICAgICAgMCAgICAgICAwICAgICAgIDBcbkN1bXVsYXRpdmUgUHJvcG9ydGlvbiAgMS4wMDAwMDBlKzAwICAgICAgIDEgICAgICAgMSAgICAgICAxICAgICAgIDEgICAgICAgMVxuICAgICAgICAgICAgICAgICAgICAgICBDb21wLjMwIENvbXAuMzFcblN0YW5kYXJkIGRldmlhdGlvbiAgICAgICAgICAgMCAgICAgICAwXG5Qcm9wb3J0aW9uIG9mIFZhcmlhbmNlICAgICAgIDAgICAgICAgMFxuQ3VtdWxhdGl2ZSBQcm9wb3J0aW9uICAgICAgICAxICAgICAgIDFcbiJ9 -->
-<pre><code>[1] &quot;---------------Conexion a BBDD ------------&quot;
-[1] &quot;Conectando...&quot;
-[1] &quot;------------- Features (INPUT) -----------------------&quot;
-[1] &quot;SELECT * FROM datos_desa.tb_ds_pasado_train_features_DOW_LAB LIMIT 1000;&quot;
-[1] &quot;FEATURES (train o futuro):  1000 x 39&quot;
-[1] &quot;list&quot;
-[1] &quot;------------------- Targets (INPUT) -----------------&quot;
-[1] &quot;SELECT * FROM datos_desa.tb_ds_pasado_train_targets_DOW_LAB LIMIT 1000;&quot;
-[1] &quot;TRAIN-T:  1000 x 1&quot;
-[1] &quot;list&quot;
-[1] &quot;leido_ft:  1000 x 40&quot;
-[1] &quot;--------------- crearFeaturesyTargetDelPasadoParaDistancias ------------&quot;
-[1] &quot;pasado_ft:  1000 x 40&quot;
-[1] &quot;--------------------- TRAIN (+test interno) -------------------&quot;
-[1] &quot; **** PCA: cortas **** &quot;
-[1] &quot;input_f_full: 233 x 31&quot;
-[1] &quot;summary:&quot;
+<!-- rnb-output-begin eyJkYXRhIjoiTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBEQklcblsxXSBcXC0tLS0tLS0tLS0tLS0tLUNvbmV4aW9uIGEgQkJERCAtLS0tLS0tLS0tLS1cXFxuWzFdIFxcQ29uZWN0YW5kby4uLlxcXG5bMV0gXFwtLS0tLS0tLS0tLS0tIEZlYXR1cmVzIChJTlBVVCkgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cXFxuWzFdIFxcU0VMRUNUICogRlJPTSBkYXRvc19kZXNhLnRiX2RzX3Bhc2Fkb190cmFpbl9mZWF0dXJlc19ET1dfTEFCIExJTUlUIDEwMDA7XFxcblsxXSBcXEZFQVRVUkVTICh0cmFpbiBvIGZ1dHVybyk6ICAxMDAwIHggMzlcXFxuWzFdIFxcbGlzdFxcXG5bMV0gXFwtLS0tLS0tLS0tLS0tLS0tLS0tIFRhcmdldHMgKElOUFVUKSAtLS0tLS0tLS0tLS0tLS0tLVxcXG5bMV0gXFxTRUxFQ1QgKiBGUk9NIGRhdG9zX2Rlc2EudGJfZHNfcGFzYWRvX3RyYWluX3RhcmdldHNfRE9XX0xBQiBMSU1JVCAxMDAwO1xcXG5bMV0gXFxUUkFJTi1UOiAgMTAwMCB4IDFcXFxuWzFdIFxcbGlzdFxcXG5bMV0gXFxsZWlkb19mdDogIDEwMDAgeCA0MFxcXG5bMV0gXFwtLS0tLS0tLS0tLS0tLS0gY3JlYXJGZWF0dXJlc3lUYXJnZXREZWxQYXNhZG9QYXJhRGlzdGFuY2lhcyAtLS0tLS0tLS0tLS1cXFxuWzFdIFxccGFzYWRvX2Z0OiAgMTAwMCB4IDQwXFxcblsxXSBcXC0tLS0tLS0tLS0tLS0tLS0tLS0tLSBUUkFJTiAoK3Rlc3QgaW50ZXJubykgLS0tLS0tLS0tLS0tLS0tLS0tLVxcXG5bMV0gXFwgKioqKiBQQ0E6IGNvcnRhcyAqKioqIFxcXG5bMV0gXFxpbnB1dF9mX2Z1bGw6IDIzMyB4IDMxXFxcblsxXSBcXHN1bW1hcnk6XFxcbkltcG9ydGFuY2Ugb2YgY29tcG9uZW50czpcbiAgICAgICAgICAgICAgICAgICAgICAgICAgQ29tcC4xICAgIENvbXAuMiAgICBDb21wLjMgICAgIENvbXAuNCAgICAgQ29tcC41XG5TdGFuZGFyZCBkZXZpYXRpb24gICAgIDAuNjA1ODE2MyAwLjQ2MjI5NjggMC40MDk4MjMyIDAuMjk0MDc3OTIgMC4yNzMzMDEyOFxuUHJvcG9ydGlvbiBvZiBWYXJpYW5jZSAwLjMyNjY5MDAgMC4xOTAyMzczIDAuMTQ5NTAyMCAwLjA3Njk4MDE2IDAuMDY2NDg3MDlcbkN1bXVsYXRpdmUgUHJvcG9ydGlvbiAgMC4zMjY2OTAwIDAuNTE2OTI3NCAwLjY2NjQyOTQgMC43NDM0MDk1OCAwLjgwOTg5NjY3XG4gICAgICAgICAgICAgICAgICAgICAgICAgICBDb21wLjYgICAgIENvbXAuNyAgICAgQ29tcC44ICAgICBDb21wLjkgICAgQ29tcC4xMFxuU3RhbmRhcmQgZGV2aWF0aW9uICAgICAwLjE5OTc4NDk1IDAuMTg1NjU1ODkgMC4xNTUwNzQzNSAwLjE0MDk0ODY3IDAuMTMzMzk4NzdcblByb3BvcnRpb24gb2YgVmFyaWFuY2UgMC4wMzU1Mjg3MiAwLjAzMDY4MTE0IDAuMDIxNDA1OTIgMC4wMTc2ODM4MSAwLjAxNTg0MDA5XG5DdW11bGF0aXZlIFByb3BvcnRpb24gIDAuODQ1NDI1MzggMC44NzYxMDY1MiAwLjg5NzUxMjQ0IDAuOTE1MTk2MjYgMC45MzEwMzYzNVxuICAgICAgICAgICAgICAgICAgICAgICAgICBDb21wLjExICAgIENvbXAuMTIgICAgQ29tcC4xMyAgICBDb21wLjE0ICAgICBDb21wLjE1XG5TdGFuZGFyZCBkZXZpYXRpb24gICAgIDAuMTI4Nzc0MDYgMC4xMTcyMDI5MiAwLjExNTY2NjQxIDAuMTEzODU4MTAgMC4wOTYwNTU4NjNcblByb3BvcnRpb24gb2YgVmFyaWFuY2UgMC4wMTQ3NjA4MyAwLjAxMjIyNzMxIDAuMDExOTA4ODEgMC4wMTE1MzkzNiAwLjAwODIxMjk5OVxuQ3VtdWxhdGl2ZSBQcm9wb3J0aW9uICAwLjk0NTc5NzE4IDAuOTU4MDI0NDkgMC45Njk5MzMzMCAwLjk4MTQ3MjY3IDAuOTg5Njg1NjY0XG4gICAgICAgICAgICAgICAgICAgICAgICAgICBDb21wLjE2ICAgIENvbXAuMTcgICAgIENvbXAuMTggICAgIENvbXAuMTlcblN0YW5kYXJkIGRldmlhdGlvbiAgICAgMC4wNjY0NDEzNTggMC4wNDc2MTY4NCAwLjA0MDUyNjgxNSAwLjAzNzQyODY1N1xuUHJvcG9ydGlvbiBvZiBWYXJpYW5jZSAwLjAwMzkyOTQ0MyAwLjAwMjAxODI1IDAuMDAxNDYxOTcyIDAuMDAxMjQ2OTg5XG5DdW11bGF0aXZlIFByb3BvcnRpb24gIDAuOTkzNjE1MTA3IDAuOTk1NjMzMzYgMC45OTcwOTUzMjkgMC45OTgzNDIzMThcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICBDb21wLjIwICAgICAgQ29tcC4yMSAgICAgIENvbXAuMjIgICAgICBDb21wLjIzXG5TdGFuZGFyZCBkZXZpYXRpb24gICAgIDAuMDI4MzU5NTAyOSAwLjAyMTQ3MzgxMDggMC4wMTgyOTIxNjU1IDAuMDE0Mzg0ODQ3MFxuUHJvcG9ydGlvbiBvZiBWYXJpYW5jZSAwLjAwMDcxNTg5ODEgMC4wMDA0MTA0NjEzIDAuMDAwMjk3ODQwOCAwLjAwMDE4NDE4OTNcbkN1bXVsYXRpdmUgUHJvcG9ydGlvbiAgMC45OTkwNTgyMTU3IDAuOTk5NDY4Njc3MCAwLjk5OTc2NjUxNzkgMC45OTk5NTA3MDcyXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgQ29tcC4yNCBDb21wLjI1IENvbXAuMjYgQ29tcC4yNyBDb21wLjI4IENvbXAuMjlcblN0YW5kYXJkIGRldmlhdGlvbiAgICAgNy40NDE1NzJlLTAzICAgICAgIDAgICAgICAgMCAgICAgICAwICAgICAgIDAgICAgICAgMFxuUHJvcG9ydGlvbiBvZiBWYXJpYW5jZSA0LjkyOTI3OGUtMDUgICAgICAgMCAgICAgICAwICAgICAgIDAgICAgICAgMCAgICAgICAwXG5DdW11bGF0aXZlIFByb3BvcnRpb24gIDEuMDAwMDAwZSswMCAgICAgICAxICAgICAgIDEgICAgICAgMSAgICAgICAxICAgICAgIDFcbiAgICAgICAgICAgICAgICAgICAgICAgQ29tcC4zMCBDb21wLjMxXG5TdGFuZGFyZCBkZXZpYXRpb24gICAgICAgICAgIDAgICAgICAgMFxuUHJvcG9ydGlvbiBvZiBWYXJpYW5jZSAgICAgICAwICAgICAgIDBcbkN1bXVsYXRpdmUgUHJvcG9ydGlvbiAgICAgICAgMSAgICAgICAxXG5FcnJvciBpbiByZWR1Y2lyQ29uUENBKHBhc2Fkb19mdF9jb3J0YXMsIFxcY29ydGFzXFwsIHBhc3RlKFxcL2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9EQVRPU19MSU1QSU8vZ2FsZ29zL3BjYV9jb3J0YXNfXFwsICA6IFxuICBvYmplY3QgJ3BjYV9hdHRlbnUnIG5vdCBmb3VuZFxuQ2FsbHM6IGVqZWN1dGFyUmVkdWNjaW9uRGltZW5zaW9uZXMgLT4gcmVkdWNpckNvblBDQVxuSW4gYWRkaXRpb246IFRoZXJlIHdlcmUgMzEgd2FybmluZ3MgKHVzZSB3YXJuaW5ncygpIHRvIHNlZSB0aGVtKVxuRXhlY3V0aW9uIGhhbHRlZFxuIn0= -->
+<pre><code>Loading required package: DBI
+[1] \---------------Conexion a BBDD ------------\
+[1] \Conectando...\
+[1] \------------- Features (INPUT) -----------------------\
+[1] \SELECT * FROM datos_desa.tb_ds_pasado_train_features_DOW_LAB LIMIT 1000;\
+[1] \FEATURES (train o futuro):  1000 x 39\
+[1] \list\
+[1] \------------------- Targets (INPUT) -----------------\
+[1] \SELECT * FROM datos_desa.tb_ds_pasado_train_targets_DOW_LAB LIMIT 1000;\
+[1] \TRAIN-T:  1000 x 1\
+[1] \list\
+[1] \leido_ft:  1000 x 40\
+[1] \--------------- crearFeaturesyTargetDelPasadoParaDistancias ------------\
+[1] \pasado_ft:  1000 x 40\
+[1] \--------------------- TRAIN (+test interno) -------------------\
+[1] \ **** PCA: cortas **** \
+[1] \input_f_full: 233 x 31\
+[1] \summary:\
 Importance of components:
                           Comp.1    Comp.2    Comp.3     Comp.4     Comp.5
 Standard deviation     0.6058163 0.4622968 0.4098232 0.29407792 0.27330128
@@ -327,10 +228,8 @@ Cumulative Proportion  1.000000e+00       1       1       1       1       1
                        Comp.30 Comp.31
 Standard deviation           0       0
 Proportion of Variance       0       0
-Cumulative Proportion        1       1</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gcmVkdWNpckNvblBDQShwYXNhZG9fZnRfY29ydGFzLCBcImNvcnRhc1wiLCBwYXN0ZShcIi9ob21lL2Nhcmxvc2xpbnV4L0Rlc2t0b3AvREFUT1NfTElNUElPL2dhbGdvcy9wY2FfY29ydGFzX1wiLCAgOiBcbiAgb2JqZWN0ICdwY2FfYXR0ZW51JyBub3QgZm91bmRcbkNhbGxzOiBlamVjdXRhclJlZHVjY2lvbkRpbWVuc2lvbmVzIC0+IHJlZHVjaXJDb25QQ0FcbkluIGFkZGl0aW9uOiBUaGVyZSB3ZXJlIDMxIHdhcm5pbmdzICh1c2Ugd2FybmluZ3MoKSB0byBzZWUgdGhlbSlcbkV4ZWN1dGlvbiBoYWx0ZWRcbiJ9 -->
-<pre><code>Error in reducirConPCA(pasado_ft_cortas, &quot;cortas&quot;, paste(&quot;/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_cortas_&quot;,  : 
+Cumulative Proportion        1       1
+Error in reducirConPCA(pasado_ft_cortas, \cortas\, paste(\/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_cortas_\,  : 
   object 'pca_attenu' not found
 Calls: ejecutarReduccionDimensiones -&gt; reducirConPCA
 In addition: There were 31 warnings (use warnings() to see them)
@@ -341,6 +240,14 @@ Execution halted</code></pre>
 <p>Usando tSNE:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kbyA8LSAwICMgMD1yZWR1Y2Npb25fZGltZW5zaW9uZXNcbnRhZyA8LSBcIkRPV19MQUJcIlxubGltaXRlU3FsIDwtIFwiMTAwMFwiXG50aXBvUmVkdWNjaW9uIDwtIFwiVFNORVwiXG5cbnN5c3RlbShwYXN0ZShcIlJzY3JpcHQgL2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9XT1JLU1BBQ0VTL3drc3BfZm9yX3Ivcl9nYWxnb3MvZ2FsZ29zX2RpbV9yZWR1Y3Rpb24uUlwiLCBtb2RvLCB0YWcsIGxpbWl0ZVNxbCwgdGlwb1JlZHVjY2lvbiwgIHNlcCA9ICcgJykpXG5gYGAifQ== -->
+<pre class="r"><code>modo &lt;- 0 # 0=reduccion_dimensiones
+tag &lt;- &quot;DOW_LAB&quot;
+limiteSql &lt;- &quot;1000&quot;
+tipoReduccion &lt;- &quot;TSNE&quot;
+
+system(paste(&quot;Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_dim_reduction.R&quot;, modo, tag, limiteSql, tipoReduccion,  sep = ' '))</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -348,6 +255,13 @@ Execution halted</code></pre>
 <h4>CADENA COMPLETA para ENTRENAMIENTO</h4>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kbyA8LSAxICMgMT10cmFpbit0ZXN0K3ZhbGlkYXRpb25cbnRhZyA8LSBcIkRPV19MQUJcIlxubGltaXRlU3FsIDwtIFwiMTAwXCJcblxuc3lzdGVtKHBhc3RlKFwiUnNjcmlwdCAvaG9tZS9jYXJsb3NsaW51eC9EZXNrdG9wL1dPUktTUEFDRVMvd2tzcF9mb3Jfci9yX2dhbGdvcy9nYWxnb3NfMDQwX3R0dl9wb3JfdGFnX3Bhc2Fkby5SXCIsIG1vZG8sIHRhZywgbGltaXRlU3FsLCBzZXAgPSAnICcpKVxuYGBgIn0= -->
+<pre class="r"><code>modo &lt;- 1 # 1=train+test+validation
+tag &lt;- &quot;DOW_LAB&quot;
+limiteSql &lt;- &quot;100&quot;
+
+system(paste(&quot;Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_040_ttv_por_tag_pasado.R&quot;, modo, tag, limiteSql, sep = ' '))</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -355,8 +269,10 @@ Execution halted</code></pre>
 <h2>ANALISIS PRELIMINAR DE DATOS con los que hemos entrenado</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI2hlYWQocGFzYWRvX2Z0KVxuI2JveHBsb3QocGFzYWRvX2Z0LCBjZXguYXhpcyA9IDAuNSkgXG5gYGBcbmBgYCJ9 -->
-<p><code>r</code>r #head(pasado_ft) #boxplot(pasado_ft, cex.axis = 0.5)</p>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuYGBgclxuI2hlYWQocGFzYWRvX2Z0KVxuI2JveHBsb3QocGFzYWRvX2Z0LCBjZXguYXhpcyA9IDAuNSkgXG5gYGBcbmBgYFxuYGBgIn0= -->
+<p><code>r</code>r</p>
+<pre class="r"><code>#head(pasado_ft)
+#boxplot(pasado_ft, cex.axis = 0.5) </code></pre>
 <pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
@@ -364,8 +280,10 @@ Execution halted</code></pre>
 <p>Vemos que hay variables con outliers y otras leptocúrticas (apretadas en torno a la media).</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI3N1bW1hcnkocGFzYWRvX2Z0KVxuI2xhcHBseShwYXNhZG9fZnQsIHN1bW1hcnkpXG5gYGBcbmBgYCJ9 -->
-<p><code>r</code>r #summary(pasado_ft) #lapply(pasado_ft, summary)</p>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuYGBgclxuI3N1bW1hcnkocGFzYWRvX2Z0KVxuI2xhcHBseShwYXNhZG9fZnQsIHN1bW1hcnkpXG5gYGBcbmBgYFxuYGBgIn0= -->
+<p><code>r</code>r</p>
+<pre class="r"><code>#summary(pasado_ft)
+#lapply(pasado_ft, summary)</code></pre>
 <pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
@@ -374,6 +292,13 @@ Execution halted</code></pre>
 <h4>CADENA COMPLETA para ENTRENAMIENTO con dataset PASADO TTV</h4>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kbyA8LSAyICMgMj10cmFpbit0ZXN0XG50YWcgPC0gXCJET1dfTEFCXCJcbmxpbWl0ZVNxbCA8LSBcIjEwMFwiXG5cbnN5c3RlbShwYXN0ZShcIlJzY3JpcHQgL2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9XT1JLU1BBQ0VTL3drc3BfZm9yX3Ivcl9nYWxnb3MvZ2FsZ29zXzA0NV90dHZfcGFzYWRvLlJcIiwgbW9kbywgdGFnLCBsaW1pdGVTcWwsIHNlcCA9ICcgJykpXG5gYGAifQ== -->
+<pre class="r"><code>modo &lt;- 2 # 2=train+test
+tag &lt;- &quot;DOW_LAB&quot;
+limiteSql &lt;- &quot;100&quot;
+
+system(paste(&quot;Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_045_ttv_pasado.R&quot;, modo, tag, limiteSql, sep = ' '))</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -381,6 +306,13 @@ Execution halted</code></pre>
 <h4>CADENA COMPLETA para PREDICTOR del FUTURO</h4>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kbyA8LSAzICMgMz1wcmVkaWNjaW9uX2Z1dHVyb1xudGFnIDwtIFwiRE9XX0xBQlwiXG5saW1pdGVTcWwgPC0gXCIxMDBcIlxuXG5zeXN0ZW0ocGFzdGUoXCJSc2NyaXB0IC9ob21lL2Nhcmxvc2xpbnV4L0Rlc2t0b3AvV09SS1NQQUNFUy93a3NwX2Zvcl9yL3JfZ2FsZ29zL2dhbGdvc18wNTBfcHJlZGljdG9yX2Z1dHVyby5SXCIsIG1vZG8sIHRhZywgbGltaXRlU3FsLCBzZXAgPSAnICcpKVxuYGBgIn0= -->
+<pre class="r"><code>modo &lt;- 3 # 3=prediccion_futuro
+tag &lt;- &quot;DOW_LAB&quot;
+limiteSql &lt;- &quot;100&quot;
+
+system(paste(&quot;Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_050_predictor_futuro.R&quot;, modo, tag, limiteSql, sep = ' '))</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->

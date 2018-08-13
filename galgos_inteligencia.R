@@ -11,7 +11,7 @@
 establecerConfigGeneral <- function(){
   print('--------------- establecerConfigGeneral ------------')
   
-  options(echo = FALSE) # En la salida, queremos ver los comandos ejecutados
+  options(echo = TRUE) # En la salida, queremos ver los comandos ejecutados
   
   library(SuperLearner)
   library(nnls)
@@ -47,7 +47,7 @@ establecerConfigGeneral <- function(){
 #' @examples
 leerDesdeBaseDatosYEscribirCSV <- function(nombre_tabla_f, nombre_tabla_t, nombre_tabla_v, tag, limiteSql, incluyeTargets, incluyeValidation){
   
-  print('--------------- leerDesdeBaseDatosYEscribirCSV ------------')
+  print('--------------- leerDesdeBaseDatosYEscribirCSV: INICIO ------------')
   print(paste('tag=',tag))
   print(paste('limiteSql=',limiteSql))
   print(paste('incluyeTargets=',incluyeTargets))
@@ -129,6 +129,8 @@ leerDesdeBaseDatosYEscribirCSV <- function(nombre_tabla_f, nombre_tabla_t, nombr
   #Cerramos las conexiones abiertas
   # dbDisconnect(dbListConnections(MySQL())[[1]])
   
+  print('--------------- leerDesdeBaseDatosYEscribirCSV: FIN ------------')
+  
   return(list(salida_1, salida_2))
 }
 
@@ -198,6 +200,25 @@ crearFeaturesyTargetDelPasadoParaDistancias <- function(pasado_ft, col_cortas,co
   return(list(pasado_ft_cortas, pasado_ft_medias, pasado_ft_largas))
 }
 
+#' Title
+#'
+#' @param tag 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+cargarModelosPCADesdeFicheros <- function(tag){
+  
+  print("Cargando modelos ENTRENADOS (desde fichero)...")
+  modelo_pca_cortas <- readRDS(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_cortas_', tag, sep=''))
+  modelo_pca_medias <- readRDS(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_medias_', tag, sep=''))
+  modelo_pca_largas <- readRDS(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_largas_', tag, sep=''))
+  
+  return(list(modelo_pca_cortas, modelo_pca_medias, modelo_pca_largas))
+}
+
+
 
 #' Title
 #'
@@ -255,7 +276,7 @@ reducirConPCA <- function(input_ft, path_modelo_pca, umbral_varianza){
   print(head(input_f_transformado, n = 5L))
   
   print(paste("Guardando modelo PCA fichero:", path_modelo_pca))
-  save(pca_modelo, file = path_modelo_pca)
+  saveRDS(pca_modelo, file = path_modelo_pca)
   
   return(pca_modelo)
 }
@@ -385,7 +406,7 @@ resumen_pesos <- function(modelo_cv) {
 #' @examples
 analisis_modelos_superlearner <- function(matrizentrada, distancia_str, ejecutarMulticore){
   
-  print(paste("******************", distancia_str, "******************"))
+  print(paste("****************** analisis_modelos_superlearner ==>", distancia_str, "******************"))
   
   
   #Crear datasets features+target para train y test
@@ -478,7 +499,7 @@ analisis_modelos_superlearner <- function(matrizentrada, distancia_str, ejecutar
     num_cores_usados <- (num_cores_disponibles)
     print(paste('Uso ', num_cores_usados, ' cores de ', num_cores_disponibles, ' cores disponibles'))
     options(mc.cores = num_cores_usados) #Uso todas las CPUs (menos una, para dejar libre el PC para trabajar)
-    getOption("mc.cores") #En Linuxsave(out_multicore_simple_predich, comprobamos su estamos usando todos los cores
+    getOption("mc.cores") #En Linux, comprobamos su estamos usando todos los cores
     
     # We need to set a different type of seed that works across cores.
     # Otherwise the other cores will go rogue and we won't get repeatable results.
@@ -530,8 +551,10 @@ analisis_modelos_superlearner <- function(matrizentrada, distancia_str, ejecutar
 #' @export
 #'
 #' @examples
-calcularModelosPredictivosParaDistanciasYGuardarlos <- function(lista){
+calcularModelosPredictivosParaDistanciasYGuardarlos <- function(lista, tag){
   
+  print('----------------------------------------- calcularModelosPredictivosParaDistanciasYGuardarlos ----------------------------')
+  print(paste("tag:", tag))
   pasado_ft_cortas <- lista[[1]]
   pasado_ft_medias <- lista[[2]]
   pasado_ft_largas <- lista[[3]]
@@ -544,10 +567,13 @@ calcularModelosPredictivosParaDistanciasYGuardarlos <- function(lista){
   modelo_medias <- out_medias[[1]]
   modelo_largas <- out_largas[[1]]
   
-  #Guardando los modelos a ficheros:
-  save(modelo_cortas, file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_cortas_',tag, sep=''))
-  save(modelo_medias, file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_medias_',tag, sep=''))
-  save(modelo_largas, file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_largas_',tag, sep=''))
+  print('Guardando los modelos a ficheros...')
+  path_modelo_cortas <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_cortas_', tag, sep = ''); print(path_modelo_cortas)
+  path_modelo_medias <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_medias_', tag, sep = ''); print(path_modelo_medias)
+  path_modelo_largas <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_largas_', tag, sep = ''); print(path_modelo_largas)
+  saveRDS(modelo_cortas, file = path_modelo_cortas)
+  saveRDS(modelo_medias, file = path_modelo_medias)
+  saveRDS(modelo_largas, file = path_modelo_largas)
   
   rm(modelo_cortas)
   rm(modelo_medias)
@@ -560,32 +586,29 @@ calcularModelosPredictivosParaDistanciasYGuardarlos <- function(lista){
 #' @param tag 
 #' @param output_file_prefijo 
 #' @param tipo 
-#' @param col_cortas 
-#' @param col_medias 
-#' @param col_largas 
 #' @param input_f_transformadas 
+#' @param lista_modelos_pca 
 #'
 #' @return
 #' @export
 #'
 #' @examples
-predecir <- function(tag, input_f_transformadas, output_file_prefijo, tipo, col_cortas, col_medias, col_largas){
+predecir <- function(tag, input_f_transformadas, lista_modelos_pca, output_file_prefijo, tipo) {
   
-  print(paste('--------------- predecir() ->',tipo, '-----------------'))
+  print(paste('--------------- predecir(): INICIO -----------------'))
   print(paste('tag=',tag))
   print(paste("input_f_transformadas: ", length(input_f_transformadas)))
   print(paste('output_file_prefijo=',output_file_prefijo))
-  
+  print(paste('tipo=',tipo))
+
+    
   library("SuperLearner")
   
-  print(getwd())
   
-  print("Cargando modelos ENTRENADOS...")
-  modelo_cortas <- load(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_cortas_',tag, sep=''))
-  modelo_medias <- load(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_medias_',tag, sep=''))
-  modelo_largas <- load(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_largas_',tag, sep=''))
-  # print("Compruebo que se han cargado...")
-  # print(ls())
+  modelo_cortas <- lista_modelos_pca[[1]]
+  modelo_medias <- lista_modelos_pca[[2]]
+  modelo_largas <- lista_modelos_pca[[3]]
+  
   
   # Las entradas estan divididas en en 3 subsets segun DISTANCIA. Predecimos cada una por separado con su modelo adecuado.
   # Luego juntamos resultados en un solo dataset de salida, pero manteniendo el ORDEN!!!!!!!!!
@@ -595,6 +618,7 @@ predecir <- function(tag, input_f_transformadas, output_file_prefijo, tipo, col_
   input_f_transformada_cortas <- as.data.frame(input_f_transformadas[[1]])
   input_f_transformada_medias <- as.data.frame(input_f_transformadas[[2]])
   input_f_transformada_largas <- as.data.frame(input_f_transformadas[[3]])
+  
   
   print(paste('input_f_transformada_cortas: ', nrow(input_f_transformada_cortas),'x', ncol(input_f_transformada_cortas)))
   print(paste('input_f_transformada_medias: ', nrow(input_f_transformada_medias),'x', ncol(input_f_transformada_medias)))
@@ -609,60 +633,78 @@ predecir <- function(tag, input_f_transformadas, output_file_prefijo, tipo, col_
   input_f_transformada_medias[,"INDICE_ORDEN"] <- seq.int(from = num_cortas + 1, to = num_cortas + num_medias, by = 1)
   input_f_transformada_largas[,"INDICE_ORDEN"] <- seq.int(from = num_cortas + num_medias + 1, to = num_cortas + num_medias + num_largas, by = 1)
   
-  pasado_f_cortas <- na.omit(input_f_transformada_cortas)
-  pasado_f_medias <- na.omit(input_f_transformada_medias)
-  pasado_f_largas <- na.omit(input_f_transformada_largas)
+  input_f_cortas <- na.omit(input_f_transformada_cortas)
+  input_f_medias <- na.omit(input_f_transformada_medias)
+  input_f_largas <- na.omit(input_f_transformada_largas)
   
-  print(paste("CORTAS-F (sin NAs):", nrow(pasado_f_cortas), "x", ncol(pasado_f_cortas)))
-  print(paste("MEDIAS-F (sin NAs):", nrow(pasado_f_medias), "x", ncol(pasado_f_medias)))
-  print(paste("LARGAS-F (sin NAs):", nrow(pasado_f_largas), "x", ncol(pasado_f_largas)))
-  
+  print(paste("CORTAS-F (sin NAs):", nrow(input_f_cortas), "x", ncol(input_f_cortas)))
+  print(paste("MEDIAS-F (sin NAs):", nrow(input_f_medias), "x", ncol(input_f_medias)))
+  print(paste("LARGAS-F (sin NAs):", nrow(input_f_largas), "x", ncol(input_f_largas)))
   
   #Prediccion CORTAS (sin la columna indice_orden)
-  print("Names de CORTAS-F (sin NAs):"); print(names(pasado_f_cortas))
-  pasado_f_cortas_sinindice <- as.data.frame( subset(pasado_f_cortas, select = -c(INDICE_ORDEN)) );
-  print(paste("pasado_f_cortas_sinindice:", nrow(pasado_f_cortas_sinindice), "x", ncol(pasado_f_cortas_sinindice)))
-  print("Names de pasado_f_cortas_sinindice:"); print(names(pasado_f_cortas_sinindice))
+  print("Names de CORTAS-F (sin NAs):"); print(names(input_f_cortas))
+  indice_de_indiceorden <- which( colnames(input_f_cortas) == "INDICE_ORDEN" )
+  input_f_cortas_sinindice <- as.data.frame( subset(input_f_cortas, select = -indice_de_indiceorden ) );
+  print(paste("input_f_cortas_sinindice:", nrow(input_f_cortas_sinindice), "x", ncol(input_f_cortas_sinindice)))
+  print(head(input_f_cortas_sinindice, n=5L))
   print("Prediciendo usando un modelo ya entrenado y un nuevo dataset...")
-  predicciones_t_model_cortas <- predict.SuperLearner(object = modelo_cortas, newdata = pasado_f_cortas_sinindice, onlySL = TRUE) #No usa los que tienen peso =0
-  print(paste("predicciones_t_model_cortas:", nrow(predicciones_t_model_cortas), "x", ncol(predicciones_t_model_cortas)))
-  print("Names de predicciones_t_model_cortas:"); print(names(predicciones_t_model_cortas))
-  predicciones_t_cortas <- predicciones_t_model_cortas[, "pred"] #Prediccion
-  print(paste("PREDICCION CORTAS =", length(predicciones_t_cortas)))
+  predicciones_t_model_cortas <- predict.SuperLearner(object = modelo_cortas, newdata = input_f_cortas_sinindice, onlySL = TRUE) #No usa los que tienen peso =0
+  predicciones_t_cortas <- predicciones_t_model_cortas$pred #Prediccion
+  print(paste("predicciones_t_cortas:", nrow(predicciones_t_cortas), "x", ncol(predicciones_t_cortas)))
+  print("Names de predicciones_t_cortas:"); 
+  print(names(predicciones_t_cortas))
+  print(head(predicciones_t_cortas, n = 5L))
+  print(paste("predicciones_t_cortas:", nrow(predicciones_t_cortas), "x", ncol(predicciones_t_cortas)))
   
   
   #Prediccion MEDIAS (sin la columna indice_orden)
-  predicciones_t_model_medias <- predict.SuperLearner(object = modelo_medias, newdata = subset(pasado_f_medias, select = -c(INDICE_ORDEN)), onlySL = TRUE) #No usa los que tienen peso =0
-  predicciones_t_medias <- predicciones_t_model_medias[, "pred"] #Prediccion
-  print(paste("PREDICCION MEDIAS =", length(predicciones_t_medias)))
+  input_f_medias_sinindice <- as.data.frame( subset(input_f_medias, select = -c(INDICE_ORDEN)) );
+  predicciones_t_model_medias <- predict.SuperLearner(object = modelo_medias, newdata = input_f_medias_sinindice, onlySL = TRUE) #No usa los que tienen peso =0
+  predicciones_t_medias <- predicciones_t_model_medias$pred #Prediccion
+  print(paste("predicciones_t_medias:", nrow(predicciones_t_medias), "x", ncol(predicciones_t_medias)))
   
   #Prediccion LARGAS (sin la columna indice_orden)
-  predicciones_t_model_largas <- predict.SuperLearner(object = modelo_largas, newdata = subset(pasado_f_largas, select = -c(INDICE_ORDEN)), onlySL = TRUE) #No usa los que tienen peso =0
-  predicciones_t_largas <- predicciones_t_model_largas[, "pred"] #Prediccion
-  print(paste("PREDICCION LARGAS =", length(predicciones_t_largas)))
+  input_f_largas_sinindice <- as.data.frame( subset(input_f_largas, select = -c(INDICE_ORDEN)) );
+  predicciones_t_model_largas <- predict.SuperLearner(object = modelo_largas, newdata = input_f_largas_sinindice, onlySL = TRUE) #No usa los que tienen peso =0
+  predicciones_t_largas <- predicciones_t_model_largas$pred #Prediccion
+  print(paste("predicciones_t_largas:", nrow(predicciones_t_largas), "x", ncol(predicciones_t_largas)))
   
   
   library(plyr)
   print('CBIND: entrada(con orden) + salida...')
-  pasado_ft_cortas <- rename( cbind(pasado_f_cortas, predicciones_t_cortas) , c("predicciones_t_cortas"="TARGET_predicho"))
-  pasado_ft_medias <- rename( cbind(pasado_f_medias, predicciones_t_medias) , c("predicciones_t_medias"="TARGET_predicho"))
-  pasado_ft_largas <- rename( cbind(pasado_f_largas, predicciones_t_largas) , c("predicciones_t_largas"="TARGET_predicho"))
+  output_ft_cortas <- rename( cbind(input_f_cortas, predicciones_t_cortas) , c("predicciones_t_cortas"="TARGET_predicho"))
+  output_ft_medias <- rename( cbind(input_f_medias, predicciones_t_medias) , c("predicciones_t_medias"="TARGET_predicho"))
+  output_ft_largas <- rename( cbind(input_f_largas, predicciones_t_largas) , c("predicciones_t_largas"="TARGET_predicho"))
+  
   print('Cogemos solo las columnas que queremos (indice y target)...')
-  pasado_it_cortas <- subset(pasado_ft_cortas, select = c(INDICE_ORDEN, TARGET_predicho))
-  pasado_it_medias <- subset(pasado_ft_medias, select = c(INDICE_ORDEN, TARGET_predicho))
-  pasado_it_largas <- subset(pasado_ft_largas, select = c(INDICE_ORDEN, TARGET_predicho))
+  output_it_cortas <- subset(output_ft_cortas, select = c(INDICE_ORDEN, TARGET_predicho))
+  output_it_medias <- subset(output_ft_medias, select = c(INDICE_ORDEN, TARGET_predicho))
+  output_it_largas <- subset(output_ft_largas, select = c(INDICE_ORDEN, TARGET_predicho))
+  
   print('Juntamos cortas, medias y largas...')
-  pasado_it <- rbind( rbind(pasado_it_cortas, pasado_it_medias), pasado_it_largas)
+  cortasymedias <- as.data.frame( rbind(output_it_cortas, output_it_medias) )
+  pasado_it <- as.data.frame( rbind( cortasymedias, output_it_largas) )
+  print(paste("Dim de pasado_it:", nrow(pasado_it), "x", ncol(pasado_it)));
+  print(paste("Ejemplos de pasado_it:", head(pasado_it, n=5L)))
   
   print('Ordenamos por INDICE_ORDEN...')
   pasado_it_ordenado <- pasado_it[order(pasado_it$INDICE_ORDEN),] 
+  print(paste("Dim de pasado_it_ordenado:", nrow(pasado_it_ordenado), "x", ncol(pasado_it_ordenado)))
+  print(paste("Ejemplos de pasado_it_ordenado:", head(pasado_it_ordenado, n=5L)))
   
   print('Rellenamos las filas que eran NAs (rellenando en los huecos del indice, hasta el numero de elementos de entrada)...')
-  num_input <- nrow(input_f)
+  num_input <- num_cortas + num_medias + num_largas
   df_nulos <- data.frame( matrix(NA, nrow = num_input, ncol = 1) )
   df_nulos$INDICE_ORDEN <- seq.int(nrow(df_nulos))
-  juntos <- merge(x = df_nulos, y = pasado_it_ordenado, by = "INDICE_ORDEN", all = TRUE) #LEFT OUTER JOIN
+  print(paste("Dim de df_nulos:", nrow(df_nulos), "x", ncol(df_nulos)))
+  print(paste("Ejemplos de df_nulos:", head(df_nulos, n=5L)))
   
+  # rellenos (con huecos) LEFT OUTER JOIN df_nullos
+  juntos <- merge(x = df_nulos, y = pasado_it_ordenado, by = "INDICE_ORDEN", all = TRUE) 
+  print(paste("Dimensiones de juntos:", nrow(juntos), "x", ncol(juntos)))
+  print(paste("Ejemplos de juntos:", head(juntos, n=5L)))
+
+
   print('Fichero de salida...')
   out_target_predicho <- subset(juntos, select = c(TARGET_predicho))
   
@@ -673,6 +715,9 @@ predecir <- function(tag, input_f_transformadas, output_file_prefijo, tipo, col_
   out_target_predicho = data.frame(out_target_predicho)
   write.table(out_target_predicho , file = path_output_file, append = FALSE, quote = TRUE, sep = " ",
               eol = "\n", na = "\\N", dec = ".", row.names = FALSE, col.names = FALSE)
+  
+  
+  print(paste('--------------- predecir(): FIN -----------------'))
   
 }
 
@@ -690,7 +735,7 @@ predecir <- function(tag, input_f_transformadas, output_file_prefijo, tipo, col_
 #' @export
 #'
 #' @examples
-ejecutarReduccionDimensiones <- function(tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output) {
+ejecutarReduccionDimensiones <- function(tabla_train_f, tabla_test_f, tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output) {
   
   print('--------------- ejecutarReduccionDimensiones: INICIO ------------')
   print( paste( 'tag=', tag, sep = '' ) )
@@ -705,9 +750,7 @@ ejecutarReduccionDimensiones <- function(tag, limiteSql, tipoReduccion, path_mod
   col_largas <- c("vel_real_largas_mediana_norm", "vel_real_largas_max_norm", "vel_going_largas_mediana_norm", "vel_going_largas_max_norm")
   
   establecerConfigGeneral()
-  listaDatos <- leerDesdeBaseDatosYEscribirCSV('datos_desa.tb_ds_pasado_train_features_', 
-                                               'datos_desa.tb_ds_pasado_train_targets_',
-                                               'NO_HACEMOS_VALIDATION', 
+  listaDatos <- leerDesdeBaseDatosYEscribirCSV(tabla_train_f, tabla_test_f, "NO USAMOS VALIDATION", 
                                                tag, 
                                                format(limiteSql, scientific = FALSE),
                                                TRUE, FALSE)
@@ -747,25 +790,31 @@ ejecutarReduccionDimensiones <- function(tag, limiteSql, tipoReduccion, path_mod
   modelo_pca_largas <- reductores[[3]]
   
   
+  #Coger solo las features que mas impacto tengan en la varianza
+  indice_umbral_cortas <- aplicarUmbralVarianza(modelo_pca_cortas$sdev, pca_umbral_varianza)
+  indice_umbral_medias <- aplicarUmbralVarianza(modelo_pca_medias$sdev, pca_umbral_varianza)
+  indice_umbral_largas <- aplicarUmbralVarianza(modelo_pca_largas$sdev, pca_umbral_varianza)
+  
+  
   print('CORTAS: separar TARGET, reducir las FEATURES y pegar el TARGET otra vez...')
   pasado_ft_temp <- lista_ft_cortasmediaslargas[[1]]
   indice_t_temp <- which( colnames(pasado_ft_temp) == "TARGET" )
   pasado_f_temp_transformada <- predict(modelo_pca_cortas, subset(pasado_ft_temp, select = -indice_t_temp))  #Reduccion
-  pasado_ft_cortas_transformada <- cbind(pasado_f_temp_transformada, subset(pasado_ft_temp, select = indice_t_temp)) # F (reducidas) + t
+  pasado_ft_cortas_transformada <- cbind(pasado_f_temp_transformada[, 1:indice_umbral_cortas], subset(pasado_ft_temp, select = indice_t_temp)) # F (reducidas) + t
   # detach(pasado_ft_temp); detach(indice_t_temp); detach(pasado_f_temp_transformada)
   
   print('MEDIAS: separar TARGET, reducir las FEATURES y pegar el TARGET otra vez...')
   pasado_ft_temp <- lista_ft_cortasmediaslargas[[2]]
   indice_t_temp <- which( colnames(pasado_ft_temp) == "TARGET" )
   pasado_f_temp_transformada <- predict(modelo_pca_medias, subset(pasado_ft_temp, select = -indice_t_temp))  #Reduccion
-  pasado_ft_medias_transformada <- cbind(pasado_f_temp_transformada, subset(pasado_ft_temp, select = indice_t_temp)) # F (reducidas) + t
+  pasado_ft_medias_transformada <- cbind(pasado_f_temp_transformada[, 1:indice_umbral_medias], subset(pasado_ft_temp, select = indice_t_temp)) # F (reducidas) + t
   # detach(pasado_ft_temp); detach(indice_t_temp); detach(pasado_f_temp_transformada)
   
   print('LARGAS: separar TARGET, reducir las FEATURES y pegar el TARGET otra vez...')
   pasado_ft_temp <- lista_ft_cortasmediaslargas[[3]]
   indice_t_temp <- which( colnames(pasado_ft_temp) == "TARGET" )
   pasado_f_temp_transformada <- predict(modelo_pca_largas, subset(pasado_ft_temp, select = -indice_t_temp))  #Reduccion
-  pasado_ft_largas_transformada <- cbind(pasado_f_temp_transformada, subset(pasado_ft_temp, select = indice_t_temp)) # F (reducidas) + t
+  pasado_ft_largas_transformada <- cbind(pasado_f_temp_transformada[, 1:indice_umbral_largas], subset(pasado_ft_temp, select = indice_t_temp)) # F (reducidas) + t
   # detach(pasado_ft_temp); detach(indice_t_temp); detach(pasado_f_temp_transformada)
   
   
@@ -846,13 +895,14 @@ aplicarReductores <- function(input_f, lista_modelos_pca, tipo, umbral_varianza)
 #' @export
 #'
 #' @examples
-ejecutarCadenaEntrenamientoValidation <- function(tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza){
+ejecutarCadenaEntrenamientoValidation <- function(tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output){
   
   print('--------------- ejecutarCadenaEntrenamientoValidation ------------')
   print( paste( 'tag=', tag, sep = '' ) )
   print( paste( 'limiteSql=', tag, sep = '' ) )
   print( paste( 'tipoReduccion=', tipoReduccion, sep = '' ) )
   print( paste( 'pca_umbral_varianza=', pca_umbral_varianza, sep = '' ) )
+  print( paste( 'tsne_num_features_output=', tsne_num_features_output, sep = '' ) )
   
   #Para quitar las COLUMNAS que no son UTILES para esa DISTANCIA
   col_cortas <- c("vel_real_cortas_mediana_norm", "vel_real_cortas_max_norm", "vel_going_cortas_mediana_norm", "vel_going_cortas_max_norm")
@@ -870,25 +920,163 @@ ejecutarCadenaEntrenamientoValidation <- function(tag, limiteSql, tipoReduccion,
   pasado_validation_f <- listaDatos[[2]]
   
   #Aplico PCA sobre train-FT
-  reduccion_out <- ejecutarReduccionDimensiones(tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output)
+  reduccion_out <- ejecutarReduccionDimensiones('datos_desa.tb_ds_pasado_train_features_', 
+                                                'datos_desa.tb_ds_pasado_train_targets_',
+                                                tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output)
   
   lista_ft_transformadas <- list(reduccion_out[[1]], reduccion_out[[2]], reduccion_out[[3]])
   lista_modelos_pca <- list(reduccion_out[[4]], reduccion_out[[5]], reduccion_out[[6]])
 
-  #Modelos predictivos
-  calcularModelosPredictivosParaDistanciasYGuardarlos(lista_ft_transformadas)
+  # Modelos predictivos (sobre los datos transformados)
+  calcularModelosPredictivosParaDistanciasYGuardarlos(lista_ft_transformadas, tag)
   
   
   print('----- VALIDATION: Aplicando reduccion PCA y modelos predictivos para adivinar el target ---')
   print('Aplicando PCA sobre Validation-F...')
   validation_f_transformadas <- aplicarReductores(pasado_validation_f, lista_modelos_pca, "validation", pca_umbral_varianza)
   print('Predeciendo el target sobre el validation, usando modelos predictivos...')
-  predecir(tag, validation_f_transformadas, "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pasado_validation_targets_predichos_", "VALIDATION", col_cortas,col_medias,col_largas)
+  predecir(tag, validation_f_transformadas, lista_modelos_pca, "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pasado_validation_targets_predichos_", "VALIDATION")
   
   
   print('--------------- ejecutarCadenaEntrenamientoValidation: FIN ------------')
 }
 
 
+#' CADENA de ENTRENAMIENTO (train+test) con todo el PASADO-TTV que conocemos (ya sabemos el SUBGRUPO ganador)
+#'
+#' @param tag 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+ejecutarCadenaEntrenamientoTTV <- function(tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output){
+  
+  print('--------------- ejecutarCadenaEntrenamientoTTV: INICIO ------------')
+  print( paste( 'tag=', tag, sep = '' ) )
+  print( paste( 'limiteSql=', tag, sep = '' ) )
+  print( paste( 'tipoReduccion=', tipoReduccion, sep = '' ) )
+  print( paste( 'pca_umbral_varianza=', pca_umbral_varianza, sep = '' ) )
+  print( paste( 'tsne_num_features_output=', tsne_num_features_output, sep = '' ) )
+  
+  #Para quitar las COLUMNAS que no son UTILES para esa DISTANCIA
+  col_cortas <- c("vel_real_cortas_mediana_norm", "vel_real_cortas_max_norm", "vel_going_cortas_mediana_norm", "vel_going_cortas_max_norm")
+  col_medias <- c("vel_real_longmedias_mediana_norm", "vel_real_longmedias_max_norm", "vel_going_longmedias_mediana_norm", "vel_going_longmedias_max_norm")
+  col_largas <- c("vel_real_largas_mediana_norm", "vel_real_largas_max_norm", "vel_going_largas_mediana_norm", "vel_going_largas_max_norm")
+  
+  establecerConfigGeneral()
+  
+  #Aplico PCA sobre train-FT
+  reduccion_out <- ejecutarReduccionDimensiones('datos_desa.tb_ds_pasado_ttv_features_', 
+                                                'datos_desa.tb_ds_pasado_ttv_targets_',
+                                                tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output)
+  
+  lista_ft_transformadas <- list(reduccion_out[[1]], reduccion_out[[2]], reduccion_out[[3]])
+  # lista_modelos_pca <- list(reduccion_out[[4]], reduccion_out[[5]], reduccion_out[[6]])
+  
+  # Modelos predictivos (sobre los datos transformados)
+  calcularModelosPredictivosParaDistanciasYGuardarlos(lista_ft_transformadas, tag)
+  
+  
+  print('--------------- ejecutarCadenaEntrenamientoTTV: FIN ------------')
+}
+
+
+#' CADENA de PREDICCION DEL FUTURO (train+test)
+#'
+#' @param tag 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+ejecutarCadenaPredecirFuturo <- function(tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output){
+  
+  print('--------------- ejecutarCadenaPredecirFuturo ------------')
+  print( paste( 'tag=', tag, sep = '' ) )
+  print( paste( 'limiteSql=', limiteSql, sep = '' ) )
+  print( paste( 'tipoReduccion=', tipoReduccion, sep = '' ) )
+  print( paste( 'pca_umbral_varianza=', pca_umbral_varianza, sep = '' ) )
+  print( paste( 'tsne_num_features_output=', tsne_num_features_output, sep = '' ) )
+  
+  #Para quitar las COLUMNAS que no son UTILES para esa DISTANCIA
+  col_cortas <- c("vel_real_cortas_mediana_norm", "vel_real_cortas_max_norm", "vel_going_cortas_mediana_norm", "vel_going_cortas_max_norm")
+  col_medias <- c("vel_real_longmedias_mediana_norm", "vel_real_longmedias_max_norm", "vel_going_longmedias_mediana_norm", "vel_going_longmedias_max_norm")
+  col_largas <- c("vel_real_largas_mediana_norm", "vel_real_largas_max_norm", "vel_going_largas_mediana_norm", "vel_going_largas_max_norm")
+  
+  establecerConfigGeneral()
+  listaDatos <- leerDesdeBaseDatosYEscribirCSV('datos_desa.tb_ds_futuro_features_', 
+                                               'NO SABEMOS TARGETS DEL FUTURO',
+                                               'NO_HACEMOS_VALIDATION', 
+                                               tag, 
+                                               format(limiteSql, scientific = FALSE),
+                                               FALSE, FALSE)
+  
+  futuro_f <- listaDatos[[1]]
+  print(paste("futuro_f: ", names(futuro_f)))
+  # ---------------
+  #A=listaDatos[[1]] contiene una matriz de 1000x39 (F)
+  A <- futuro_f
+  print(paste(class(A), "A:", nrow(A), "x", ncol(A)))
+  
+  #B=Subset de todas las columnas excepto "las de distancia": 1000x29
+  columnas_distancia <- as.vector( c(col_cortas, col_medias, col_largas) )
+  B <- A[, !(names(A) %in% columnas_distancia)]
+  print(paste(class(B), "B:", nrow(B), "x", ncol(B)))
+  
+  #C=Quitar los valores NA, apuntando qué indices tenían NAs (D). Ej: 800x29, con indices NA borrados
+  C <- na.omit(B)
+  indices_con_na <- as.numeric( na.action(C) ) #Filas de B con NAs
+  if (sum( colSums(is.na(C)) ) != 0) { print('ERROR: Hay columnas con missing data en C!') } #comprobamos que no hay missing data
+  print(paste(class(C), "C:", nrow(C), "x", ncol(C)))
+  print('Numero de filas de C que tenian algun NA:')
+  print(indices_con_na)
+  
+  #E = sobre A, quitar las filas de los índices D.
+  E <- A[-indices_con_na, ]
+  print(paste(class(E), "E:", nrow(E), "x", ncol(E)))
+  
+  # Aplicar crearFeaturesyTargetDelPasadoParaDistancias sobre E: divide en 3 tablas (por distancias), quitando NAs en esas 3 tablas por separado (por si hubiera valores NA dentro de las columnas de esa distancia)
+  lista_f_cortasmediaslargas <- crearFeaturesyTargetDelPasadoParaDistancias(E, col_cortas,col_medias,col_largas, TRUE, TRUE)
+  #-----------------
+  
+  
+  print('######## REDUCIR DIMENSIONES ##########')
+  lista_modelos_pca <- cargarModelosPCADesdeFicheros(tag)
+  modelo_pca_cortas <- lista_modelos_pca[[1]]
+  modelo_pca_medias <- lista_modelos_pca[[2]]
+  modelo_pca_largas <- lista_modelos_pca[[3]]
+  
+  
+  
+  #Coger solo las features que mas impacto tengan en la varianza
+  indice_umbral_cortas <- aplicarUmbralVarianza(modelo_pca_cortas$sdev, pca_umbral_varianza)
+  indice_umbral_medias <- aplicarUmbralVarianza(modelo_pca_medias$sdev, pca_umbral_varianza)
+  indice_umbral_largas <- aplicarUmbralVarianza(modelo_pca_largas$sdev, pca_umbral_varianza)
+  
+  
+  print('CORTAS: reducir las FEATURES...')
+  futuro_f_temp_transformada <- predict(modelo_pca_cortas, lista_f_cortasmediaslargas[[1]])  #Reduccion
+  futuro_f_cortas_transformada <- futuro_f_temp_transformada[, 1:indice_umbral_cortas] # F (reducidas)
+  
+  print('MEDIAS: reducir las FEATURES...')
+  futuro_f_temp_transformada <- predict(modelo_pca_medias, lista_f_cortasmediaslargas[[2]])  #Reduccion
+  futuro_f_medias_transformada <- futuro_f_temp_transformada[, 1:indice_umbral_medias] # F (reducidas)
+  
+  print('LARGAS: reducir las FEATURES...')
+  futuro_f_temp_transformada <- predict(modelo_pca_largas, lista_f_cortasmediaslargas[[3]])  #Reduccion
+  futuro_f_largas_transformada <- futuro_f_temp_transformada[, 1:indice_umbral_largas] # F (reducidas)
+  
+  
+  
+  lista_f_cortasmediaslargas <- list(futuro_f_cortas_transformada, futuro_f_medias_transformada, futuro_f_largas_transformada)
+  
+  
+  print(paste("lista_f_cortasmediaslargas: ", nrow(lista_f_cortasmediaslargas), "x", ncol(lista_f_cortasmediaslargas)))
+  
+  print('######## PREDICCION DEL FUTURO ##########')
+  predecir(tag, lista_f_cortasmediaslargas, lista_modelos_pca, "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/FILELOAD_ds_futuro_targets_2_", "FUTURO")
+  
+}
 
 

@@ -2,52 +2,19 @@
 
 source("/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_inteligencia.R") # para reciclar funciones
 
-# --------- FUNCIONES -----------------------------------------
-
-#' CADENA de PREDICCION DEL FUTURO (train+test)
-#'
-#' @param tag 
-#'
-#' @return
-#' @export
-#'
-#' @examples
-ejecutarCadenaPredecirFuturo <- function(tag, limiteSql){
-  
-  print('--------------- ejecutarCadenaPredecirFuturo ------------')
-  print( paste( 'tag=', tag, sep = '' ) )
-  print( paste( 'limiteSql=', tag, sep = '' ) )
-  
-  #Para quitar las COLUMNAS que no son UTILES para esa DISTANCIA
-  col_cortas <- c("vel_real_cortas_mediana_norm", "vel_real_cortas_max_norm", "vel_going_cortas_mediana_norm", "vel_going_cortas_max_norm")
-  col_medias <- c("vel_real_longmedias_mediana_norm", "vel_real_longmedias_max_norm", "vel_going_longmedias_mediana_norm", "vel_going_longmedias_max_norm")
-  col_largas <- c("vel_real_largas_mediana_norm", "vel_real_largas_max_norm", "vel_going_largas_mediana_norm", "vel_going_largas_max_norm")
-  
-  establecerConfigGeneral()
-  listaDatos <- leerDesdeBaseDatosYEscribirCSV(1, 
-                                               'datos_desa.tb_ds_futuro_features_', 
-                                               'NO SABEMOS TARGETS DEL FUTURO',
-                                               'NO_HACEMOS_VALIDATION', 
-                                               tag, 
-                                               format(limiteSql, scientific = FALSE),
-                                               FALSE, FALSE)
-  
-  futuro_f <- listaDatos[[1]]
-  print(paste("futuro_f: ", nrow(futuro_f), "x", ncol(futuro_f)))
-  
-  predecir(tag, futuro_f, "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/FILELOAD_ds_futuro_targets_2_", "FUTURO", col_cortas,col_medias,col_largas)
-  
-}
-
-
-######################################################################################################################################
-######################################################################################################################################
-######################################################################################################################################
-print('-------------------- PRINCIPAL --------------------------')
-
-options(echo = FALSE) # En la salida, queremos ver los comandos ejecutados
-
 entradas <- commandArgs(trailingOnly = TRUE)
+
+##### Solo para debug
+modo <- 3
+tag <- "DOW_LAB"
+limiteSql <- "1000"
+tipoReduccion <- "PCA"
+path_modelo_pca_prefijo <- "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_"
+pca_umbral_varianza <- 0.95
+tsne_num_features_output <- 12
+entradas <- c(modo, tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output)
+#######
+
 
 if (length(entradas) == 0) {
   print("Necesario indicar parametros de entrada")
@@ -58,10 +25,14 @@ if (length(entradas) == 0) {
   modo <- entradas[1];  print( paste( 'modo=', modo, sep = '' )   ) # 1=train+test+validation, 2=train+test (ttv), 3=prediccion_futuro
   tag <- entradas[2];  print( paste( 'tag=', tag, sep = '' )   )
   limiteSql <- entradas[3];  print( paste( 'limiteSql=', limiteSql, sep = '' ) )
+  tipoReduccion <- entradas[4];  print( paste( 'tipoReduccion=', tipoReduccion, sep = '' )   )
+  path_modelo_pca_prefijo <- entradas[5];  print( paste( 'path_modelo_pca_prefijo=', path_modelo_pca_prefijo, sep = '' )   )
+  pca_umbral_varianza <- entradas[6];  print( paste( 'pca_umbral_varianza=', pca_umbral_varianza, sep = '' )   )
+  tsne_num_features_output <- entradas[7];  print( paste( 'tsne_num_features_output=', tsne_num_features_output, sep = '' )   )
   
   ############ LLAMADA PRINCIPAL ##########
   if (modo == 3) {
-    ejecutarCadenaPredecirFuturo(tag, limiteSql)
+    ejecutarCadenaPredecirFuturo(tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output)
   }
   
   #Borramos array de parametros, para evitar confusiones

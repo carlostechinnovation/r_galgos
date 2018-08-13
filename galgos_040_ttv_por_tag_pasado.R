@@ -5,14 +5,14 @@ source("/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_intelige
 entradas <- commandArgs(trailingOnly = TRUE)
 
 ##### Solo para debug
-modo <- 1 # 1=train+test+validation
-tag <- "DOW_LAB"
-limiteSql <- "1000"
-tipoReduccion <- "PCA"
-path_modelo_pca_prefijo <- "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_"
-pca_umbral_varianza <- 0.95
-tsne_num_features_output <- 12
-entradas <- c(modo, tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output)
+# modo <- 1 # 1=train+test+validation
+# tag <- "DOW_LAB"
+# limiteSql <- "1000"
+# tipoReduccion <- "PCA"
+# path_modelo_pca_prefijo <- "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_"
+# pca_umbral_varianza <- 0.95
+# tsne_num_features_output <- 12
+# entradas <- c(modo, tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output)
 #######
 
 
@@ -29,10 +29,11 @@ if (length(entradas) == 0) {
   tipoReduccion <- entradas[4];  print( paste( 'tipoReduccion=', tipoReduccion, sep = '' )   )
   path_modelo_pca_prefijo <- entradas[5];  print( paste( 'path_modelo_pca_prefijo=', path_modelo_pca_prefijo, sep = '' )   )
   pca_umbral_varianza <- entradas[6];  print( paste( 'pca_umbral_varianza=', pca_umbral_varianza, sep = '' )   )
+  tsne_num_features_output <- entradas[7];  print( paste( 'tsne_num_features_output=', tsne_num_features_output, sep = '' )   )
   
   ############ LLAMADA PRINCIPAL ##########
   if (modo == 1) {
-    ejecutarCadenaEntrenamientoValidation(tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza)
+    ejecutarCadenaEntrenamientoValidation(tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output)
   }
   
   #Borramos array de parametros, para evitar confusiones
