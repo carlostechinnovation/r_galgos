@@ -6,7 +6,7 @@ entradas <- commandArgs(trailingOnly = TRUE)
 
 ##### Solo para debug
 # modo <- 1 # 1=train+test+validation
-# tag <- "DOW_LAB"
+# tag <- "DOW_FIN"
 # limiteSql <- "1000"
 # tipoReduccion <- "PCA"
 # path_modelo_pca_prefijo <- "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_"

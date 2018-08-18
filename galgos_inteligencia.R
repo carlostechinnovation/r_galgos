@@ -80,7 +80,7 @@ leerDesdeBaseDatosYEscribirCSV <- function(nombre_tabla_f, nombre_tabla_t, nombr
   mes_indice <- which( colnames(leido_f) == "mes_norm" ) #EXCEPCION Quito columna mes
   leido_f_sinmes <- leido_f[, -mes_indice]
   print(paste("FEATURES (train o futuro): ", nrow(leido_f_sinmes), "x", ncol(leido_f_sinmes)))
-  print(names(leido_f_sinmes))
+  # print(head(leido_f_sinmes, n = 3L))
   
   if (incluyeTargets == TRUE) {
     print('------------------- Targets (INPUT) -----------------')
@@ -91,7 +91,7 @@ leerDesdeBaseDatosYEscribirCSV <- function(nombre_tabla_f, nombre_tabla_t, nombr
     leido_t <- dbFetch(pasado_t_rs, n = -1) 
     dbClearResult(pasado_t_rs)
     print(paste("TRAIN-T: ", nrow(leido_t), "x", ncol(leido_t)))
-    print(names(leido_t))
+    # print(head(leido_t, n = 5L))
   }
   
   if (incluyeValidation == TRUE ) {
@@ -105,30 +105,46 @@ leerDesdeBaseDatosYEscribirCSV <- function(nombre_tabla_f, nombre_tabla_t, nombr
     mes_indice_v <- which( colnames(pasado_vf) == "mes_norm" ) #EXCEPCION Quito columna mes
     pasado_vf_sinmes <- pasado_vf[, -mes_indice_v]
     print(paste("VALIDATION-F: ", nrow(pasado_vf_sinmes), "x", ncol(pasado_vf_sinmes)))
-    print(names(pasado_vf_sinmes))
+    # print(head(pasado_vf_sinmes, n = 5L))
     }
 
     
   # ------------ SALIDAS
   salida_1 <- "" #default
   salida_2 <- "" #default
+  salida_3 <- TRUE #Default: indica si la salida deseada (salida_1 ó salida_2) tiene mas de 0 filas.
   
   if (incluyeTargets == TRUE) {
     #Juntar FEATURES y TARGET
     leido_ft <- cbind(leido_f_sinmes, leido_t)
-    leido_ft[,"INDICE_ORDEN"] <- seq.int(from = 1, to = nrow(leido_ft), by = 1)#anhado una columna INDICE_ORDEN (al dataframe), para poder recuperar el ORDEN al final
+    if (nrow(leido_ft) == 0) {
+      salida_3 <- FALSE
+    } else {
+      print(paste("leerDesdeBaseDatosYEscribirCSV --->nrow(leido_ft)=",nrow(leido_ft)))
+      leido_ft[,"INDICE_ORDEN"] <- seq.int(from = 1, to = nrow(leido_ft), by = 1) #anhado una columna INDICE_ORDEN (al dataframe), para poder recuperar el ORDEN al final
+      print(paste("leido_ft: ", nrow(leido_ft), "x", ncol(leido_ft)))
+      salida_1 <- leido_ft
+    }
     
-    print(paste("leido_ft: ", nrow(leido_ft), "x", ncol(leido_ft)))
-    salida_1 <- leido_ft
-    
-  }else{
-    leido_f_sinmes[,"INDICE_ORDEN"] <- seq.int(from = 1, to = nrow(leido_f_sinmes), by = 1)#anhado una columna INDICE_ORDEN (al dataframe), para poder recuperar el ORDEN al final
-    salida_1 <- leido_f_sinmes
+  } else {
+    if (nrow(leido_f_sinmes) == 0) {
+      salida_3 <- FALSE
+    } else {
+      print(paste("leerDesdeBaseDatosYEscribirCSV --->nrow(leido_f_sinmes)=",nrow(leido_f_sinmes)))
+      leido_f_sinmes[,"INDICE_ORDEN"] <- seq.int(from = 1, to = nrow(leido_f_sinmes), by = 1) #anhado una columna INDICE_ORDEN (al dataframe), para poder recuperar el ORDEN al final
+      salida_1 <- leido_f_sinmes
+    }
   }
   
   if (incluyeValidation == TRUE ) {
-    pasado_vf_sinmes[,"INDICE_ORDEN"] <- seq.int(from = 1, to = nrow(pasado_vf_sinmes), by = 1)#anhado una columna INDICE_ORDEN (al dataframe), para poder recuperar el ORDEN al final
-    salida_2 <- pasado_vf_sinmes
+    if (nrow(pasado_vf_sinmes) == 0) {
+      salida_3 <- FALSE
+    } else {
+      print(paste("leerDesdeBaseDatosYEscribirCSV --->nrow(pasado_vf_sinmes)=",nrow(pasado_vf_sinmes)))
+      pasado_vf_sinmes[,"INDICE_ORDEN"] <- seq.int(from = 1, to = nrow(pasado_vf_sinmes), by = 1) #anhado una columna INDICE_ORDEN (al dataframe), para poder recuperar el ORDEN al final
+      salida_2 <- pasado_vf_sinmes
+    }
+    
   }
   
   #Cerramos las conexiones abiertas
@@ -136,7 +152,7 @@ leerDesdeBaseDatosYEscribirCSV <- function(nombre_tabla_f, nombre_tabla_t, nombr
   
   print('--------------- leerDesdeBaseDatosYEscribirCSV: FIN ------------')
   
-  return(list(salida_1, salida_2))
+  return(list(salida_1, salida_2, salida_3))
 }
 
 
@@ -269,6 +285,36 @@ aplicarUmbralVarianza <- function(pca_modelo_sdev, umbral_varianza) {
 }
 
 
+#' Si los eigenvectores tienen valor negativo, no tiene sentido, se debe a pequenhos errores de precision en el calculo informatico. 
+#' Asi que les doy un valor positivo minusculo, para que PCA funcione siempre bien.
+#' Explicacion: https://stackoverflow.com/questions/21832254/pca-analysis-using-correlation-matrix-as-input-in-r
+#'
+#' @param A Matriz de covarianza sin ajsutar
+#'
+#' @return
+#' @export
+#'
+#' @examples
+ajustarMatrizCovarianza <- function(A){
+  
+  print("---- ajustarMatrizCovarianza() ---")
+  eigen_res <- eigen(A)
+  print("Covarianza ->Eigenvalores y eigenvectores ANTES de ajustar (se deberian ver valores algunos negativos muy pequenhos)...")
+  #print(eigen_res)
+  
+  eigen_res$values # sorted list of eigenvalues
+  
+  eigen_res$values[eigen_res$values < 0] <- 1e-10 # slightly negative eigenvalues, set them to small positive value
+  
+  Areg <- eigen_res$vectors %*% diag(eigen_res$values) %*% t(eigen_res$vectors) # Regularized covariance matrix
+  
+  print("Covarianza ->Matriz de covarianza AJUSTADA (sin valores negativos):")
+  print(Areg)
+  
+  return(Areg)
+}
+
+
 #' Reducir dimensiones usando PCA (no supervisado).
 #' Calcula los eigenvectores que definen las correlaciones entre features.
 #'
@@ -282,17 +328,59 @@ aplicarUmbralVarianza <- function(pca_modelo_sdev, umbral_varianza) {
 #' @examples
 reducirConPCA <- function(input_ft, path_modelo_pca, umbral_varianza){
   
-  print( paste(" **** PCA ***** "))
+  print( paste(" **** reducirConPCA ***** "))
+  print(paste("input_ft:", nrow(input_ft), "x", ncol(input_ft)))
+  print(paste("path_modelo_pca:", path_modelo_pca))
+  print(paste("umbral_varianza:", umbral_varianza))
+  
   library(stats)
   
   indice_target <- which( colnames(input_ft) == "TARGET" ) #Columna TARGET
   input_f_full <- subset(input_ft, select = -indice_target)
-  print(paste("input_f_full:", nrow(input_f_full), "x", ncol(input_f_full)))
-  print(head(input_f_full, n=5L))
+  print(paste("input_f_full (sin TARGET):", nrow(input_f_full), "x", ncol(input_f_full)))
+  # print(head(input_f_full, n = 5L))
   
-  #ALGORITMO:
-  pca_modelo <- princomp(x = input_f_full, cor = FALSE, scores = T)
-  print("summary:"); print( summary(pca_modelo) )
+  if (sum( colSums(is.na(input_f_full)) ) != 0) { print('ERROR: Hay columnas con missing data en input_f_full!') } #comprobamos que no hay missing data
+  
+  
+  print('reducirConPCA() --> ALGORITMO...')
+  matriz_covarianza_sin_ajustar <- cov(input_f_full)
+  sum_valores_na <- sum(is.na(matriz_covarianza_sin_ajustar))
+  
+  if (sum_valores_na > 0) {
+    print(paste('Covarianza --> sum_valores_na=',sum_valores_na))
+    print('Covarianza --> Matriz de covarianza normal, con todos sus valores cero o positivos...')
+    pca_modelo <- princomp(x = input_f_full, cor = FALSE, scores = T)
+    
+  } else {
+    
+    eigen_val_vec <- eigen(matriz_covarianza_sin_ajustar)
+    eigenvaloresNegativos <- sum(eigen_val_vec$values < 0)
+    print(paste('Covarianza -> Eigenvalores negativos (antes de ajustar):', eigenvaloresNegativos))
+    
+    if ( eigenvaloresNegativos > 0) {
+      ###################################
+      # print('PENDIENTE La funcion princomp me indica error (covariance matrix is not non-negative definite).')
+      # print('Asi que de momento, limito el numero de filas de entrada, pero esta PENDIENTE de ARREGLAR...')
+      #input_f_full_chapuza <- head(input_f_full, 500L)
+      ###################################
+      print("Covarianza -> Hay eigenvalores negativos. NO tiene sentido. Ajustamos la matriz de covarianza asignandoles un valor positivo casi cero...")
+      matrizCovAjustada <- ajustarMatrizCovarianza(matriz_covarianza_sin_ajustar)
+      eigen_val_vec_AJUSTADO <- eigen(matrizCovAjustada)
+      eigenvaloresNegativosAjustada <- sum(eigen_val_vec_AJUSTADO$values < 0)
+      print('Covarianza -> Eigenvalores negativos en la matriz AJUSTADA:')
+      print(eigenvaloresNegativosAjustada)
+      pca_modelo <- princomp(x = input_f_full, cor = FALSE, scores = T, covmat = matrizCovAjustada)
+      
+    } else {
+      print('Covarianza --> Matriz de covarianza normal, con todos sus valores cero o positivos...')
+      pca_modelo <- princomp(x = input_f_full, cor = FALSE, scores = T)
+    }
+    
+  }
+  
+  
+  print("Summary (ver varianza acumulada):"); print( summary(pca_modelo) )
   
   #Coger solo las features que mas impacto tengan en la varianza
   indice_umbral <- aplicarUmbralVarianza(pca_modelo$sdev, umbral_varianza)
@@ -301,6 +389,7 @@ reducirConPCA <- function(input_ft, path_modelo_pca, umbral_varianza){
   input_f_transformado <- pca_modelo$scores[, 1:indice_umbral]
   
   print("Ejemplo de filas en TABLON ANALITICO TRANSFORMADO:")
+  print(paste("input_f_transformado:", nrow(input_f_transformado), "x", ncol(input_f_transformado)))
   print(head(input_f_transformado, n = 5L))
   
   print(paste("Guardando modelo PCA fichero:", path_modelo_pca))
@@ -381,9 +470,9 @@ reducirDimensionesYObtenerReductores <- function(tag, lista_ft_cortasmediaslarga
   medias_ft_sinindice <- subset(pasado_ft_medias, select = -which( colnames(pasado_ft_medias) == "INDICE_ORDEN" ))
   largas_ft_sinindice <- subset(pasado_ft_largas, select = -which( colnames(pasado_ft_largas) == "INDICE_ORDEN" ))
   
-  print('---- CORTAS ----'); print(names(pasado_ft_cortas)); print(head(pasado_ft_cortas, n = 5L))
-  print('---- MEDIAS ----'); print(names(pasado_ft_medias)); print(head(pasado_ft_medias, n = 5L))
-  print('---- LARGAS ----'); print(names(pasado_ft_largas)); print(head(pasado_ft_largas, n = 5L))
+  print('---- CORTAS ----'); print(head(pasado_ft_cortas, n = 5L))
+  print('---- MEDIAS ----'); print(head(pasado_ft_medias, n = 5L))
+  print('---- LARGAS ----'); print(head(pasado_ft_largas, n = 5L))
   
   lista_out <- ""
   
@@ -814,7 +903,7 @@ ejecutarReduccionDimensiones <- function(tabla_train_f, tabla_test_f, tag, limit
   if (sum( colSums(is.na(C)) ) != 0) { print('ERROR: Hay columnas con missing data en C!') } #comprobamos que no hay missing data
   print(paste(class(C), "C:", nrow(C), "x", ncol(C)))
   print('Numero de filas de C que tenian algun NA:')
-  print(indices_con_na)
+  print(length(indices_con_na))
   
   #E = sobre A, quitar las filas de los índices D.
   E <- A[-indices_con_na, ]
@@ -966,7 +1055,7 @@ ejecutarCadenaEntrenamientoValidation <- function(tag, limiteSql, tipoReduccion,
                                                format(limiteSql, scientific = FALSE), 
                                                TRUE, TRUE)
   
-    #pasado_train_ft <- listaDatos[[1]]
+  #pasado_train_ft <- listaDatos[[1]]
   pasado_validation_f <- listaDatos[[2]] #con INDICE_ORDEN
   
   #Aplico PCA sobre train-FT (no devuelve INDICE_ORDEN)
@@ -1061,78 +1150,84 @@ ejecutarCadenaPredecirFuturo <- function(tag, limiteSql, tipoReduccion, path_mod
                                                format(limiteSql, scientific = FALSE),
                                                FALSE, FALSE)
   
-  futuro_f <- as.data.frame(listaDatos[[1]]) #con INDICE_ORDEN
-  print(paste("futuro_f:", nrow(futuro_f), 'x', ncol(futuro_f)))
-  print(head(futuro_f, n = 5L))
-  
-  # ---------------
-  #A=listaDatos[[1]] contiene una matriz de 1000x39 (F)
-  A <- futuro_f
-  print(paste(class(A), "A:", nrow(A), "x", ncol(A)))
-  
-  #B=Subset de todas las columnas excepto "las de distancia": 1000x29
-  columnas_distancia <- as.vector( c(col_cortas, col_medias, col_largas) )
-  B <- A[, !(names(A) %in% columnas_distancia)]
-  print(paste(class(B), "B:", nrow(B), "x", ncol(B)))
-  
-  #C=Quitar los valores NA, apuntando qué indices tenían NAs (D). Ej: 800x29, con indices NA borrados
-  C <- na.omit(B)
-  indices_con_na <- as.numeric( na.action(C) ) #Filas de B con NAs
-  if (sum( colSums(is.na(C)) ) != 0) { print('ERROR: Hay columnas con missing data en C!') } #comprobamos que no hay missing data
-  print(paste(class(C), "C:", nrow(C), "x", ncol(C)))
-  print('Numero de filas de C que tenian algun NA:')
-  print(indices_con_na)
-  
-  #E = sobre A, quitar las filas de los índices D.
-  E <- A[-indices_con_na, ]
-  print(paste(class(E), "E:", nrow(E), "x", ncol(E)))
-  
-  # Aplicar crearFeaturesyTargetDelPasadoParaDistancias sobre E: divide en 3 tablas (por distancias), quitando NAs en esas 3 tablas por separado (por si hubiera valores NA dentro de las columnas de esa distancia)
-  lista_f_cortasmediaslargas <- crearFeaturesyTargetDelPasadoParaDistancias(E, col_cortas,col_medias,col_largas, TRUE, TRUE)
-  #-----------------
-  
-  
-  print('######## REDUCIR DIMENSIONES ##########')
-  lista_modelos_pca <- cargarModelosPCADesdeFicheros(tag)
-  modelo_pca_cortas <- lista_modelos_pca[[1]]
-  modelo_pca_medias <- lista_modelos_pca[[2]]
-  modelo_pca_largas <- lista_modelos_pca[[3]]
-  
-  #Coger solo las features que mas impacto tengan en la varianza
-  indice_umbral_cortas <- aplicarUmbralVarianza(modelo_pca_cortas$sdev, pca_umbral_varianza)
-  indice_umbral_medias <- aplicarUmbralVarianza(modelo_pca_medias$sdev, pca_umbral_varianza)
-  indice_umbral_largas <- aplicarUmbralVarianza(modelo_pca_largas$sdev, pca_umbral_varianza)
-  
-  print('Reduciendo dimensiones....')
-  indice_de_indiceorden_cortas <- which( colnames(lista_f_cortasmediaslargas[[1]]) == "INDICE_ORDEN" )
-  indice_de_indiceorden_medias <- which( colnames(lista_f_cortasmediaslargas[[2]]) == "INDICE_ORDEN" )
-  indice_de_indiceorden_largas <- which( colnames(lista_f_cortasmediaslargas[[3]]) == "INDICE_ORDEN" )
-  
-  cortas_f_sinindice <- subset(lista_f_cortasmediaslargas[[1]], select = -indice_de_indiceorden_cortas)
-  medias_f_sinindice <- subset(lista_f_cortasmediaslargas[[2]], select = -indice_de_indiceorden_medias)
-  largas_f_sinindice <- subset(lista_f_cortasmediaslargas[[3]], select = -indice_de_indiceorden_largas)
-  
-  print('CORTAS: reducir las FEATURES...')
-  futuro_f_temp_transformada <- predict(modelo_pca_cortas, cortas_f_sinindice)  #Reduccion
-  futuro_f_cortas_transformada <- futuro_f_temp_transformada[, 1:indice_umbral_cortas] # F (reducidas)
-  
-  print('MEDIAS: reducir las FEATURES...')
-  futuro_f_temp_transformada <- predict(modelo_pca_medias, medias_f_sinindice)  #Reduccion
-  futuro_f_medias_transformada <- futuro_f_temp_transformada[, 1:indice_umbral_medias] # F (reducidas)
-  
-  print('LARGAS: reducir las FEATURES...')
-  futuro_f_temp_transformada <- predict(modelo_pca_largas, largas_f_sinindice)  #Reduccion
-  futuro_f_largas_transformada <- futuro_f_temp_transformada[, 1:indice_umbral_largas] # F (reducidas)
-  
-  print("Metiendo columna INDICE_ORDEN...")
-  cortas_f_transf_conindice <- cbind(futuro_f_cortas_transformada, subset(lista_f_cortasmediaslargas[[1]], select = indice_de_indiceorden_cortas)); print(head(cortas_f_transf_conindice, n=5L))
-  medias_f_transf_conindice <- cbind(futuro_f_medias_transformada, subset(lista_f_cortasmediaslargas[[2]], select = indice_de_indiceorden_medias)); print(head(medias_f_transf_conindice, n=5L))
-  largas_f_transf_conindice <- cbind(futuro_f_largas_transformada, subset(lista_f_cortasmediaslargas[[3]], select = indice_de_indiceorden_largas)); print(head(largas_f_transf_conindice, n=5L))
-  
-  lista_f_cortasmediaslargas <- list(cortas_f_transf_conindice, medias_f_transf_conindice, largas_f_transf_conindice) #Lista de features, agrupadas por DISTANCIA, y con columna INDICE_ORDEN
-  
-  print('######## PREDICCION DEL FUTURO ##########')
-  predecir(tag, lista_f_cortasmediaslargas, cargarModelosPredictivosDesdeFicheros(tag), "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/FILELOAD_ds_futuro_targets_2_", "FUTURO")
+  if (listaDatos[[3]] == FALSE){
+    print('ERROR El metodo leerDesdeBaseDatosYEscribirCSV() ha devuelto 0 filas. Revisara mano. Puede que tenga sentido.')
+    
+  } else {
+    
+    futuro_f <- as.data.frame(listaDatos[[1]]) #con INDICE_ORDEN
+    print(paste("futuro_f:", nrow(futuro_f), 'x', ncol(futuro_f)))
+    print(head(futuro_f, n = 5L))
+    
+    # ---------------
+    #A=listaDatos[[1]] contiene una matriz de 1000x39 (F)
+    A <- futuro_f
+    print(paste(class(A), "A:", nrow(A), "x", ncol(A)))
+    
+    #B=Subset de todas las columnas excepto "las de distancia": 1000x29
+    columnas_distancia <- as.vector( c(col_cortas, col_medias, col_largas) )
+    B <- A[, !(names(A) %in% columnas_distancia)]
+    print(paste(class(B), "B:", nrow(B), "x", ncol(B)))
+    
+    #C=Quitar los valores NA, apuntando qué indices tenían NAs (D). Ej: 800x29, con indices NA borrados
+    C <- na.omit(B)
+    indices_con_na <- as.numeric( na.action(C) ) #Filas de B con NAs
+    if (sum( colSums(is.na(C)) ) != 0) { print('ERROR: Hay columnas con missing data en C!') } #comprobamos que no hay missing data
+    print(paste(class(C), "C:", nrow(C), "x", ncol(C)))
+    print('Numero de filas de C que tenian algun NA:')
+    print(indices_con_na)
+    
+    #E = sobre A, quitar las filas de los índices D.
+    E <- A[-indices_con_na, ]
+    print(paste(class(E), "E:", nrow(E), "x", ncol(E)))
+    
+    # Aplicar crearFeaturesyTargetDelPasadoParaDistancias sobre E: divide en 3 tablas (por distancias), quitando NAs en esas 3 tablas por separado (por si hubiera valores NA dentro de las columnas de esa distancia)
+    lista_f_cortasmediaslargas <- crearFeaturesyTargetDelPasadoParaDistancias(E, col_cortas,col_medias,col_largas, TRUE, TRUE)
+    #-----------------
+    
+    
+    print('######## REDUCIR DIMENSIONES ##########')
+    lista_modelos_pca <- cargarModelosPCADesdeFicheros(tag)
+    modelo_pca_cortas <- lista_modelos_pca[[1]]
+    modelo_pca_medias <- lista_modelos_pca[[2]]
+    modelo_pca_largas <- lista_modelos_pca[[3]]
+    
+    #Coger solo las features que mas impacto tengan en la varianza
+    indice_umbral_cortas <- aplicarUmbralVarianza(modelo_pca_cortas$sdev, pca_umbral_varianza)
+    indice_umbral_medias <- aplicarUmbralVarianza(modelo_pca_medias$sdev, pca_umbral_varianza)
+    indice_umbral_largas <- aplicarUmbralVarianza(modelo_pca_largas$sdev, pca_umbral_varianza)
+    
+    print('Reduciendo dimensiones....')
+    indice_de_indiceorden_cortas <- which( colnames(lista_f_cortasmediaslargas[[1]]) == "INDICE_ORDEN" )
+    indice_de_indiceorden_medias <- which( colnames(lista_f_cortasmediaslargas[[2]]) == "INDICE_ORDEN" )
+    indice_de_indiceorden_largas <- which( colnames(lista_f_cortasmediaslargas[[3]]) == "INDICE_ORDEN" )
+    
+    cortas_f_sinindice <- subset(lista_f_cortasmediaslargas[[1]], select = -indice_de_indiceorden_cortas)
+    medias_f_sinindice <- subset(lista_f_cortasmediaslargas[[2]], select = -indice_de_indiceorden_medias)
+    largas_f_sinindice <- subset(lista_f_cortasmediaslargas[[3]], select = -indice_de_indiceorden_largas)
+    
+    print('CORTAS: reducir las FEATURES...')
+    futuro_f_temp_transformada <- predict(modelo_pca_cortas, cortas_f_sinindice)  #Reduccion
+    futuro_f_cortas_transformada <- futuro_f_temp_transformada[, 1:indice_umbral_cortas] # F (reducidas)
+    
+    print('MEDIAS: reducir las FEATURES...')
+    futuro_f_temp_transformada <- predict(modelo_pca_medias, medias_f_sinindice)  #Reduccion
+    futuro_f_medias_transformada <- futuro_f_temp_transformada[, 1:indice_umbral_medias] # F (reducidas)
+    
+    print('LARGAS: reducir las FEATURES...')
+    futuro_f_temp_transformada <- predict(modelo_pca_largas, largas_f_sinindice)  #Reduccion
+    futuro_f_largas_transformada <- futuro_f_temp_transformada[, 1:indice_umbral_largas] # F (reducidas)
+    
+    print("Metiendo columna INDICE_ORDEN...")
+    cortas_f_transf_conindice <- cbind(futuro_f_cortas_transformada, subset(lista_f_cortasmediaslargas[[1]], select = indice_de_indiceorden_cortas)); print(head(cortas_f_transf_conindice, n=5L))
+    medias_f_transf_conindice <- cbind(futuro_f_medias_transformada, subset(lista_f_cortasmediaslargas[[2]], select = indice_de_indiceorden_medias)); print(head(medias_f_transf_conindice, n=5L))
+    largas_f_transf_conindice <- cbind(futuro_f_largas_transformada, subset(lista_f_cortasmediaslargas[[3]], select = indice_de_indiceorden_largas)); print(head(largas_f_transf_conindice, n=5L))
+    
+    lista_f_cortasmediaslargas <- list(cortas_f_transf_conindice, medias_f_transf_conindice, largas_f_transf_conindice) #Lista de features, agrupadas por DISTANCIA, y con columna INDICE_ORDEN
+    
+    print('######## PREDICCION DEL FUTURO ##########')
+    predecir(tag, lista_f_cortasmediaslargas, cargarModelosPredictivosDesdeFicheros(tag), "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/FILELOAD_ds_futuro_targets_2_", "FUTURO")
+  }
   
 }
 
