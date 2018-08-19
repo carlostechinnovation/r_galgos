@@ -176,7 +176,6 @@ crearFeaturesyTargetDelPasadoParaDistancias <- function(pasado_ft, col_cortas,co
   print(paste("quitarColumnasDeOtrasDistancias:", quitarColumnasDeOtrasDistancias))
   print(paste("quitarNas:", quitarNas))
   
-  print(paste("pasado_ft_cortas:", nrow(pasado_ft), "x", ncol(pasado_ft)))
   pasado_ft_cortas_conNAs <- subset(pasado_ft, distancia_norm <= 0.33)
   pasado_ft_medias_conNAs <- subset(pasado_ft, distancia_norm > 0.33 & distancia_norm <= 0.66)
   pasado_ft_largas_conNAs <- subset(pasado_ft, distancia_norm > 0.66)
@@ -230,7 +229,7 @@ crearFeaturesyTargetDelPasadoParaDistancias <- function(pasado_ft, col_cortas,co
   return(list(pasado_ft_cortas, pasado_ft_medias, pasado_ft_largas))
 }
 
-#' Title
+#' Leer modelos PCA desde ficheros
 #'
 #' @param tag 
 #'
@@ -239,15 +238,19 @@ crearFeaturesyTargetDelPasadoParaDistancias <- function(pasado_ft, col_cortas,co
 #'
 #' @examples
 cargarModelosPCADesdeFicheros <- function(tag){
-  print("Cargando reductores PCA (desde fichero)...")
-  modelo_pca_cortas <- readRDS(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_cortas_', tag, sep=''))
-  modelo_pca_medias <- readRDS(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_medias_', tag, sep=''))
-  modelo_pca_largas <- readRDS(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_largas_', tag, sep=''))
+  print("Cargando reductores PCA (desde ficheros)...")
+  path_pca_cortas <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_cortas_', tag, sep=''); print(path_pca_cortas)
+  path_pca_medias <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_medias_', tag, sep=''); print(path_pca_medias)
+  path_pca_largas <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_largas_', tag, sep=''); print(path_pca_largas)
+  
+  modelo_pca_cortas <- readRDS(file = path_pca_cortas)
+  modelo_pca_medias <- readRDS(file = path_pca_medias)
+  modelo_pca_largas <- readRDS(file = path_pca_largas)
 
-    return(list(modelo_pca_cortas, modelo_pca_medias, modelo_pca_largas))
+  return(list(modelo_pca_cortas, modelo_pca_medias, modelo_pca_largas))
 }
 
-#' Title
+#' Leer modelos PREDICTIVOS entrenados (ganadores) desde ficheros
 #'
 #' @param tag 
 #'
@@ -257,9 +260,9 @@ cargarModelosPCADesdeFicheros <- function(tag){
 #' @examples
 cargarModelosPredictivosDesdeFicheros <- function(tag) {
   print("Cargando modelos PREDICTIVOS ENTRENADOS (desde fichero)...")
-  modelo_predictivo_cortas <- readRDS(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_cortas_', tag, sep='')); print(modelo_predictivo_cortas)
-  modelo_predictivo_medias <- readRDS(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_medias_', tag, sep='')); print(modelo_predictivo_medias)
-  modelo_predictivo_largas <- readRDS(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_largas_', tag, sep='')); print(modelo_predictivo_largas)
+  modelo_predictivo_cortas <- readRDS(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_cortas_', tag, sep = '')); print(modelo_predictivo_cortas)
+  modelo_predictivo_medias <- readRDS(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_medias_', tag, sep = '')); print(modelo_predictivo_medias)
+  modelo_predictivo_largas <- readRDS(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_largas_', tag, sep = '')); print(modelo_predictivo_largas)
   
   return(list(modelo_predictivo_cortas, modelo_predictivo_medias, modelo_predictivo_largas))
 }
@@ -285,9 +288,9 @@ aplicarUmbralVarianza <- function(pca_modelo_sdev, umbral_varianza) {
 }
 
 
-#' Si los eigenvectores tienen valor negativo, no tiene sentido, se debe a pequenhos errores de precision en el calculo informatico. 
+#' La matriz de covarianza debe ser definida positiva. Si no lo es, se debe a pequenhos errores de precision en el calculo informatico. 
 #' Asi que les doy un valor positivo minusculo, para que PCA funcione siempre bien.
-#' Explicacion: https://stackoverflow.com/questions/21832254/pca-analysis-using-correlation-matrix-as-input-in-r
+#' Explicacion: https://stackoverflow.com/questions/29615440/one-of-eigenvalues-of-covariance-matrix-is-negative-in-r
 #'
 #' @param A Matriz de covarianza sin ajsutar
 #'
@@ -296,22 +299,14 @@ aplicarUmbralVarianza <- function(pca_modelo_sdev, umbral_varianza) {
 #'
 #' @examples
 ajustarMatrizCovarianza <- function(A){
-  
-  print("---- ajustarMatrizCovarianza() ---")
-  eigen_res <- eigen(A)
-  print("Covarianza ->Eigenvalores y eigenvectores ANTES de ajustar (se deberian ver valores algunos negativos muy pequenhos)...")
-  #print(eigen_res)
-  
-  eigen_res$values # sorted list of eigenvalues
-  
-  eigen_res$values[eigen_res$values < 0] <- 1e-10 # slightly negative eigenvalues, set them to small positive value
-  
-  Areg <- eigen_res$vectors %*% diag(eigen_res$values) %*% t(eigen_res$vectors) # Regularized covariance matrix
-  
-  print("Covarianza ->Matriz de covarianza AJUSTADA (sin valores negativos):")
-  print(Areg)
-  
-  return(Areg)
+  print("**** ajustarMatrizCovarianza() ****")
+  library(Matrix)
+  # saveRDS(A, file = "/home/carloslinux/Desktop/LOGS/temp_a")
+  A_corregida <- nearPD(A, eig.tol = 1e-10, conv.tol = 1e-10)
+  A_corregida_matriz <- as.matrix(A_corregida$mat)
+  # saveRDS(A_corregida_matriz, file = "/home/carloslinux/Desktop/LOGS/temp_a_corregida")
+  print(paste("A_corregida_matriz:", nrow(A_corregida_matriz), "x", ncol(A_corregida_matriz)))
+  return(A_corregida_matriz)
 }
 
 
@@ -324,14 +319,17 @@ ajustarMatrizCovarianza <- function(A){
 #'
 #' @return
 #' @export
+#' 
 #'
 #' @examples
-reducirConPCA <- function(input_ft, path_modelo_pca, umbral_varianza){
+reducirConPCA <- function(input_ft, path_modelo_pca, umbral_varianza, tipoPCA){
   
-  print( paste(" **** reducirConPCA ***** "))
+  print( paste(" **************************************** reducirConPCA: INICIO *************************** "))
   print(paste("input_ft:", nrow(input_ft), "x", ncol(input_ft)))
+  # print(head(input_ft, n = 5L))
   print(paste("path_modelo_pca:", path_modelo_pca))
   print(paste("umbral_varianza:", umbral_varianza))
+  print(paste("tipoPCA:", tipoPCA))
   
   library(stats)
   
@@ -342,60 +340,53 @@ reducirConPCA <- function(input_ft, path_modelo_pca, umbral_varianza){
   
   if (sum( colSums(is.na(input_f_full)) ) != 0) { print('ERROR: Hay columnas con missing data en input_f_full!') } #comprobamos que no hay missing data
   
-  
   print('reducirConPCA() --> ALGORITMO...')
-  matriz_covarianza_sin_ajustar <- cov(input_f_full)
-  sum_valores_na <- sum(is.na(matriz_covarianza_sin_ajustar))
   
-  if (sum_valores_na > 0) {
-    print(paste('Covarianza --> sum_valores_na=',sum_valores_na))
-    print('Covarianza --> Matriz de covarianza normal, con todos sus valores cero o positivos...')
-    pca_modelo <- princomp(x = input_f_full, cor = FALSE, scores = T)
+  
+  if (tipoPCA == 'princomp') {
     
-  } else {
-    
+    matriz_covarianza_sin_ajustar <- cov(input_f_full)
     eigen_val_vec <- eigen(matriz_covarianza_sin_ajustar)
+    # print("Eigenvalores (ANTES de ajustar):"); print(eigen_val_vec$values)
     eigenvaloresNegativos <- sum(eigen_val_vec$values < 0)
-    print(paste('Covarianza -> Eigenvalores negativos (antes de ajustar):', eigenvaloresNegativos))
+    print(paste("matriz_covarianza_sin_ajustar:", nrow(matriz_covarianza_sin_ajustar), "x", ncol(matriz_covarianza_sin_ajustar)))
+    print(paste("Cuantos eigenvalores son negativos (antes de ajustar):", eigenvaloresNegativos))
     
-    if ( eigenvaloresNegativos > 0) {
+    if (eigenvaloresNegativos > 0) {
       ###################################
       # print('PENDIENTE La funcion princomp me indica error (covariance matrix is not non-negative definite).')
       # print('Asi que de momento, limito el numero de filas de entrada, pero esta PENDIENTE de ARREGLAR...')
       #input_f_full_chapuza <- head(input_f_full, 500L)
       ###################################
       print("Covarianza -> Hay eigenvalores negativos. NO tiene sentido. Ajustamos la matriz de covarianza asignandoles un valor positivo casi cero...")
+      
       matrizCovAjustada <- ajustarMatrizCovarianza(matriz_covarianza_sin_ajustar)
       eigen_val_vec_AJUSTADO <- eigen(matrizCovAjustada)
+      # print("Eigenvalores (DESPUES de ajustar):"); print(eigen_val_vec_AJUSTADO$values)
       eigenvaloresNegativosAjustada <- sum(eigen_val_vec_AJUSTADO$values < 0)
-      print('Covarianza -> Eigenvalores negativos en la matriz AJUSTADA:')
-      print(eigenvaloresNegativosAjustada)
+      print(paste("Covarianza -> Eigenvalores negativos en la matriz AJUSTADA:", eigenvaloresNegativosAjustada))
+      
       pca_modelo <- princomp(x = input_f_full, cor = FALSE, scores = T, covmat = matrizCovAjustada)
       
     } else {
-      print('Covarianza --> Matriz de covarianza normal, con todos sus valores cero o positivos...')
+      print('Covarianza --> Matriz de covarianza NORMAL, con todos sus eigenvalores cero o positivos...')
       pca_modelo <- princomp(x = input_f_full, cor = FALSE, scores = T)
     }
     
+    
+  } else if (tipoPCA == 'prcomp') {
+    pca_modelo <- prcomp(x = input_f_full, retx = TRUE) #Usa SVD, no eigenvalores sobre la matriz de covarianza
   }
   
-  
-  print("Summary (ver varianza acumulada):"); print( summary(pca_modelo) )
-  
-  #Coger solo las features que mas impacto tengan en la varianza
-  indice_umbral <- aplicarUmbralVarianza(pca_modelo$sdev, umbral_varianza)
-  
-  #TABLON ANALITICO TRANSFORMADO con los pesos de las componentes (PCx) para cada individuo (fila), solo con las variables que mas peso tienen:
-  input_f_transformado <- pca_modelo$scores[, 1:indice_umbral]
-  
-  print("Ejemplo de filas en TABLON ANALITICO TRANSFORMADO:")
-  print(paste("input_f_transformado:", nrow(input_f_transformado), "x", ncol(input_f_transformado)))
-  print(head(input_f_transformado, n = 5L))
   
   print(paste("Guardando modelo PCA fichero:", path_modelo_pca))
   saveRDS(pca_modelo, file = path_modelo_pca)
   
-  return(pca_modelo)
+  #Borrar variable
+  rm(pca_modelo)
+  
+  print( paste(" ************************************** reducirConPCA: FIN **************************** "))
+  # return(pca_modelo)
 }
 
 
@@ -458,7 +449,7 @@ reducirConTSNE <- function(input_ft, tipo, path_modelo_tsne, num_features_output
 #' @examples
 reducirDimensionesYObtenerReductores <- function(tag, lista_ft_cortasmediaslargas, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output) {
   
-  print('-------- reducirDimensionesYObtenerReductores -----------')
+  print('-------- reducirDimensionesYObtenerReductores: INICIO -----------')
   print(paste("tipoReduccion:", tipoReduccion))
   print(paste("Lista:", length(lista_ft_cortasmediaslargas)))
   
@@ -470,19 +461,19 @@ reducirDimensionesYObtenerReductores <- function(tag, lista_ft_cortasmediaslarga
   medias_ft_sinindice <- subset(pasado_ft_medias, select = -which( colnames(pasado_ft_medias) == "INDICE_ORDEN" ))
   largas_ft_sinindice <- subset(pasado_ft_largas, select = -which( colnames(pasado_ft_largas) == "INDICE_ORDEN" ))
   
-  print('---- CORTAS ----'); print(head(pasado_ft_cortas, n = 5L))
-  print('---- MEDIAS ----'); print(head(pasado_ft_medias, n = 5L))
-  print('---- LARGAS ----'); print(head(pasado_ft_largas, n = 5L))
+  # print('---- CORTAS ----'); print(head(pasado_ft_cortas, n = 5L))
+  # print('---- MEDIAS ----'); print(head(pasado_ft_medias, n = 5L))
+  # print('---- LARGAS ----'); print(head(pasado_ft_largas, n = 5L))
   
   lista_out <- ""
   
   print('Reduciendo FEATURES por cada dataset por distancia...')
   if (tipoReduccion == "PCA") {
-    modelo_pca_cortas  <- reducirConPCA(cortas_ft_sinindice, paste(path_modelo_pca_prefijo, 'cortas_', tag, sep = ''), pca_umbral_varianza)
-    modelo_pca_medias  <- reducirConPCA(medias_ft_sinindice, paste(path_modelo_pca_prefijo, 'medias_', tag, sep = ''), pca_umbral_varianza)
-    modelo_pca_largas  <- reducirConPCA(largas_ft_sinindice, paste(path_modelo_pca_prefijo, 'largas_', tag, sep = ''), pca_umbral_varianza)
+    reducirConPCA(cortas_ft_sinindice, paste(path_modelo_pca_prefijo, 'cortas_', tag, sep = ''), pca_umbral_varianza, "prcomp")
+    reducirConPCA(medias_ft_sinindice, paste(path_modelo_pca_prefijo, 'medias_', tag, sep = ''), pca_umbral_varianza, "prcomp")
+    reducirConPCA(largas_ft_sinindice, paste(path_modelo_pca_prefijo, 'largas_', tag, sep = ''), pca_umbral_varianza, "prcomp")
     
-    lista_out <- list(modelo_pca_cortas, modelo_pca_medias, modelo_pca_largas)
+    lista_out <- cargarModelosPCADesdeFicheros(tag)
     
   } else if (tipoReduccion == "TSNE") {
     #PENDIENTE
@@ -490,6 +481,8 @@ reducirDimensionesYObtenerReductores <- function(tag, lista_ft_cortasmediaslarga
   }
   
   print('Devuelve los reductores (transformadores)...')
+  print('-------- reducirDimensionesYObtenerReductores: FIN -----------')
+  
   return(lista_out)
 }
 
@@ -664,7 +657,7 @@ analisis_modelos_superlearner <- function(matrizentrada, distancia_str, ejecutar
   return(list(modelo_unicore, x_test, y_test))
   }
 
-#' Para cada distancia, obtengo el mejor modelo y los GUARDO en fichero.
+#' Para cada distancia, obtengo el mejor modelo PREDICTIVO y los GUARDO en fichero.
 #'
 #' @param lista Input F+T (sin INDICE_ORDEN)
 #' @param tag 
@@ -675,38 +668,57 @@ analisis_modelos_superlearner <- function(matrizentrada, distancia_str, ejecutar
 #' @examples
 calcularModelosPredictivosParaDistanciasYGuardarlos <- function(lista, tag){
   
-  print('----------------------------------------- calcularModelosPredictivosParaDistanciasYGuardarlos ----------------------------')
+  print('----------------------------------------- calcularModelosPredictivosParaDistanciasYGuardarlos: INICIO ----------------------------')
   print(paste("tag:", tag))
   
   pasado_ft_cortas <- lista[[1]]
   pasado_ft_medias <- lista[[2]]
   pasado_ft_largas <- lista[[3]]
   
-  print( paste( "pasado_ft_cortas=",nrow(pasado_ft_cortas), "x", ncol(pasado_ft_cortas) ) ); print(head(pasado_ft_cortas))
-  print( paste( "pasado_ft_medias=",nrow(pasado_ft_medias), "x", ncol(pasado_ft_medias) ) ); print(head(pasado_ft_medias))
-  print( paste( "pasado_ft_largas=",nrow(pasado_ft_largas), "x", ncol(pasado_ft_largas) ) ); print(head(pasado_ft_largas))
-  
-  out_cortas <- analisis_modelos_superlearner(pasado_ft_cortas, "CORTAS", FALSE)
-  out_medias <- analisis_modelos_superlearner(pasado_ft_medias, "MEDIAS", FALSE)
-  out_largas <- analisis_modelos_superlearner(pasado_ft_largas, "LARGAS", FALSE)
-  
-  modelo_cortas <- out_cortas[[1]]
-  modelo_medias <- out_medias[[1]]
-  modelo_largas <- out_largas[[1]]
-  
-  print('Guardando los modelos a ficheros...')
-  path_modelo_cortas <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_cortas_', tag, sep = ''); print(path_modelo_cortas)
-  path_modelo_medias <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_medias_', tag, sep = ''); print(path_modelo_medias)
-  path_modelo_largas <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_largas_', tag, sep = ''); print(path_modelo_largas)
-  saveRDS(modelo_cortas, file = path_modelo_cortas)
-  saveRDS(modelo_medias, file = path_modelo_medias)
-  saveRDS(modelo_largas, file = path_modelo_largas)
-  
-  rm(modelo_cortas)
-  rm(modelo_medias)
-  rm(modelo_largas)
-  ls() # Compruebo que se han borrado
+  if (nrow(pasado_ft_cortas) > 0) {
+    print( paste( "pasado_ft_cortas=", nrow(pasado_ft_cortas), "x", ncol(pasado_ft_cortas) ) ); 
+    # print(head(pasado_ft_cortas))
+    out_cortas <- analisis_modelos_superlearner(pasado_ft_cortas, "CORTAS", FALSE)
+    modelo_cortas <- out_cortas[[1]]
+    path_modelo_cortas <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_cortas_', tag, sep = '');
+    print(paste('Guardando modelo PREDICTIVO: ', path_modelo_cortas))
+    saveRDS(modelo_cortas, file = path_modelo_cortas)
+    rm(modelo_cortas)
+    
+  } else {
+    print("WARNING El dataset FT de CORTAS NO tiene suficientes filas para poder crear un MODELO PREDICTIVO")
   }
+  
+  
+  if (nrow(pasado_ft_medias) > 0) {
+    print( paste( "pasado_ft_medias=", nrow(pasado_ft_medias), "x", ncol(pasado_ft_medias) ) ); 
+    # print(head(pasado_ft_medias))
+    out_medias <- analisis_modelos_superlearner(pasado_ft_medias, "MEDIAS", FALSE)
+    modelo_medias <- out_medias[[1]]
+    path_modelo_medias <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_medias_', tag, sep = '');
+    print(paste('Guardando modelo PREDICTIVO: ', path_modelo_medias))
+    saveRDS(modelo_medias, file = path_modelo_medias)
+    rm(modelo_medias)
+  } else {
+    print("WARNING El dataset FT de MEDIAS NO tiene suficientes filas para poder crear un MODELO PREDICTIVO")
+  }
+  
+  
+  if (nrow(pasado_ft_largas) > 0) {
+    print( paste( "pasado_ft_largas=", nrow(pasado_ft_largas), "x", ncol(pasado_ft_largas) ) ); 
+    # print(head(pasado_ft_largas))
+    out_largas <- analisis_modelos_superlearner(pasado_ft_largas, "LARGAS", FALSE)
+    modelo_largas <- out_largas[[1]]
+    path_modelo_largas <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_largas_', tag, sep = ''); 
+    print(paste('Guardando modelo PREDICTIVO: ', path_modelo_largas))
+    saveRDS(modelo_largas, file = path_modelo_largas)
+    rm(modelo_largas)
+  } else {
+    print("WARNING El dataset FT de LARGAS NO tiene suficientes filas para poder crear un MODELO PREDICTIVO")
+  }
+  
+  print('----------------------------------------- calcularModelosPredictivosParaDistanciasYGuardarlos: FIN ----------------------------')
+}
 
 #' Calcular PREDICCION para un subgrupo TAG.
 #'
@@ -779,6 +791,7 @@ predecir <- function(tag, input_f_transformadas, lista_modelos_predictivos, outp
   predicciones_t_model_cortas <- predict.SuperLearner(object = modelo_cortas, newdata = input_f_cortas_sinindice, onlySL = TRUE) #No usa los que tienen peso =0
   predicciones_t_cortas <- predicciones_t_model_cortas$pred #Prediccion
   print(paste("predicciones_t_cortas:", nrow(predicciones_t_cortas), "x", ncol(predicciones_t_cortas)))
+  print(head(predicciones_t_cortas, n = 5L))
 
   
   #Prediccion MEDIAS (sin la columna indice_orden)
@@ -788,6 +801,7 @@ predecir <- function(tag, input_f_transformadas, lista_modelos_predictivos, outp
   predicciones_t_model_medias <- predict.SuperLearner(object = modelo_medias, newdata = input_f_medias_sinindice, onlySL = TRUE) #No usa los que tienen peso =0
   predicciones_t_medias <- predicciones_t_model_medias$pred #Prediccion
   print(paste("predicciones_t_medias:", nrow(predicciones_t_medias), "x", ncol(predicciones_t_medias)))
+  # print(head(predicciones_t_medias, n = 5L))
   
   
   #Prediccion LARGAS (sin la columna indice_orden)
@@ -797,6 +811,7 @@ predecir <- function(tag, input_f_transformadas, lista_modelos_predictivos, outp
   predicciones_t_model_largas <- predict.SuperLearner(object = modelo_largas, newdata = input_f_largas_sinindice, onlySL = TRUE) #No usa los que tienen peso =0
   predicciones_t_largas <- predicciones_t_model_largas$pred #Prediccion
   print(paste("predicciones_t_largas:", nrow(predicciones_t_largas), "x", ncol(predicciones_t_largas)))
+  # print(head(predicciones_t_largas, n = 5L))
   
   
   library(plyr)
@@ -814,24 +829,24 @@ predecir <- function(tag, input_f_transformadas, lista_modelos_predictivos, outp
   cortasymedias <- as.data.frame( rbind(output_it_cortas, output_it_medias) )
   pasado_it <- as.data.frame( rbind( cortasymedias, output_it_largas) )
   print(paste("Dim de pasado_it:", nrow(pasado_it), "x", ncol(pasado_it)));
-  print(paste("Ejemplos de pasado_it:", head(pasado_it, n = 5L)))
+  # print( head(pasado_it, n = 5L))
   
   print('Ordenamos por INDICE_ORDEN...')
   pasado_it_ordenado <- pasado_it[order(pasado_it$INDICE_ORDEN),] 
   print(paste("Dim de pasado_it_ordenado:", nrow(pasado_it_ordenado), "x", ncol(pasado_it_ordenado)))
-  print(paste("Ejemplos de pasado_it_ordenado:", head(pasado_it_ordenado, n = 5L)))
+  # print(head(pasado_it_ordenado, n = 5L))
   
   print('Rellenamos las filas que eran NAs (rellenando en los huecos del indice, hasta el numero de elementos de entrada)...')
   num_input <- num_cortas + num_medias + num_largas
   df_nulos <- data.frame( matrix(NA, nrow = num_input, ncol = 1) )
   df_nulos$INDICE_ORDEN <- seq.int(nrow(df_nulos))
   print(paste("Dim de df_nulos:", nrow(df_nulos), "x", ncol(df_nulos)))
-  print(paste("Ejemplos de df_nulos:", head(df_nulos, n = 5L)))
+  # print(head(df_nulos, n = 5L))
   
   # rellenos (con huecos) LEFT OUTER JOIN df_nullos
   juntos <- merge(x = df_nulos, y = pasado_it_ordenado, by = "INDICE_ORDEN", all = TRUE) 
   print(paste("Dimensiones de juntos:", nrow(juntos), "x", ncol(juntos)))
-  print(paste("Ejemplos de juntos:", head(juntos, n = 5L)))
+  # print(head(juntos, n = 5L))
 
 
   print('Fichero de salida...')
@@ -921,33 +936,55 @@ ejecutarReduccionDimensiones <- function(tabla_train_f, tabla_test_f, tag, limit
   modelo_pca_medias <- reductores[[2]]
   modelo_pca_largas <- reductores[[3]]
   
-  
-  #Coger solo las features que mas impacto tengan en la varianza
-  indice_umbral_cortas <- aplicarUmbralVarianza(modelo_pca_cortas$sdev, pca_umbral_varianza)
-  indice_umbral_medias <- aplicarUmbralVarianza(modelo_pca_medias$sdev, pca_umbral_varianza)
-  indice_umbral_largas <- aplicarUmbralVarianza(modelo_pca_largas$sdev, pca_umbral_varianza)
+  pasado_ft_cortas_transformada <- NA #default
+  pasado_ft_medias_transformada <- NA #default
+  pasado_ft_largas_transformada <- NA #default
   
   
-  print('CORTAS: separar TARGET, reducir las FEATURES y pegar el TARGET otra vez...')
-  pasado_ft_temp <- lista_ft_cortasmediaslargas[[1]]
-  indice_t_temp <- which( colnames(pasado_ft_temp) == "TARGET" )
-  pasado_f_temp_transformada <- predict(modelo_pca_cortas, subset(pasado_ft_temp, select = -indice_t_temp))  #Reduccion
-  pasado_ft_cortas_transformada <- cbind(pasado_f_temp_transformada[, 1:indice_umbral_cortas], subset(pasado_ft_temp, select = indice_t_temp)) # F (reducidas) + t
-  print(paste(class(pasado_ft_cortas_transformada), "pasado_ft_cortas_transformada:", nrow(pasado_ft_cortas_transformada), "x", ncol(pasado_ft_cortas_transformada)))
+  if (is.null(modelo_pca_cortas$scores) && is.null(modelo_pca_cortas$rotation)) {
+    print("Modelo PCA para CORTAS es incorrecto, porque su SCORES es NULL. Revisarlo!")
+  } else {
+    indice_umbral_cortas <- aplicarUmbralVarianza(modelo_pca_cortas$sdev, pca_umbral_varianza)
+    print('CORTAS: separar TARGET, reducir las FEATURES y pegar el TARGET otra vez...')
+    pasado_ft_temp <- lista_ft_cortasmediaslargas[[1]]
+    indice_t_temp <- which( colnames(pasado_ft_temp) == "TARGET" )
+    pasado_f_temp <- subset(pasado_ft_temp, select = -indice_t_temp); #print("CORTAS (antes de PCA):"); print(head(pasado_f_temp, n=5L))
+    pasado_f_temp_transformada <- predict(modelo_pca_cortas, pasado_f_temp)  #Reduccion (solo sobre F)
+    pasado_ft_cortas_transformada <- cbind(pasado_f_temp_transformada[, 1:indice_umbral_cortas], subset(pasado_ft_temp, select = indice_t_temp)) # F (reducidas) + t
+    print(paste(class(pasado_ft_cortas_transformada), "pasado_ft_cortas_transformada:", nrow(pasado_ft_cortas_transformada), "x", ncol(pasado_ft_cortas_transformada)))
+    # print(head(pasado_ft_cortas_transformada))
+    rm(pasado_ft_temp); rm(indice_t_temp); rm(pasado_f_temp); rm(pasado_f_temp_transformada)
+  }
   
-  print('MEDIAS: separar TARGET, reducir las FEATURES y pegar el TARGET otra vez...')
-  pasado_ft_temp <- lista_ft_cortasmediaslargas[[2]]
-  indice_t_temp <- which( colnames(pasado_ft_temp) == "TARGET" )
-  pasado_f_temp_transformada <- predict(modelo_pca_medias, subset(pasado_ft_temp, select = -indice_t_temp))  #Reduccion
-  pasado_ft_medias_transformada <- cbind(pasado_f_temp_transformada[, 1:indice_umbral_medias], subset(pasado_ft_temp, select = indice_t_temp)) # F (reducidas) + t
-  print(paste(class(pasado_ft_medias_transformada), "pasado_ft_medias_transformada:", nrow(pasado_ft_medias_transformada), "x", ncol(pasado_ft_medias_transformada)))
+  if (is.null(modelo_pca_medias$scores) && is.null(modelo_pca_medias$rotation)) {
+    print("Modelo PCA para MEDIAS es incorrecto, porque su SCORES es NULL. Revisarlo!")
+  } else {
+    indice_umbral_medias <- aplicarUmbralVarianza(modelo_pca_medias$sdev, pca_umbral_varianza)
+    print('MEDIAS: separar TARGET, reducir las FEATURES y pegar el TARGET otra vez...')
+    pasado_ft_temp <- lista_ft_cortasmediaslargas[[2]]
+    indice_t_temp <- which( colnames(pasado_ft_temp) == "TARGET" )
+    pasado_f_temp <- subset(pasado_ft_temp, select = -indice_t_temp); #print("MEDIAS (antes de PCA):"); print(head(pasado_f_temp, n=5L))
+    pasado_f_temp_transformada <- predict(modelo_pca_medias, pasado_f_temp)  #Reduccion (solo sobre F)
+    pasado_ft_medias_transformada <- cbind(pasado_f_temp_transformada[, 1:indice_umbral_medias], subset(pasado_ft_temp, select = indice_t_temp)) # F (reducidas) + t
+    print(paste(class(pasado_ft_medias_transformada), "pasado_ft_medias_transformada:", nrow(pasado_ft_medias_transformada), "x", ncol(pasado_ft_medias_transformada)))
+    # print(head(pasado_ft_medias_transformada))
+    rm(pasado_ft_temp); rm(indice_t_temp); rm(pasado_f_temp); rm(pasado_f_temp_transformada)
+  }
   
-  print('LARGAS: separar TARGET, reducir las FEATURES y pegar el TARGET otra vez...')
-  pasado_ft_temp <- lista_ft_cortasmediaslargas[[3]]
-  indice_t_temp <- which( colnames(pasado_ft_temp) == "TARGET" )
-  pasado_f_temp_transformada <- predict(modelo_pca_largas, subset(pasado_ft_temp, select = -indice_t_temp))  #Reduccion
-  pasado_ft_largas_transformada <- cbind(pasado_f_temp_transformada[, 1:indice_umbral_largas], subset(pasado_ft_temp, select = indice_t_temp)) # F (reducidas) + t
-  print(paste(class(pasado_ft_largas_transformada), "pasado_ft_largas_transformada:", nrow(pasado_ft_largas_transformada), "x", ncol(pasado_ft_largas_transformada)))
+  if (is.null(modelo_pca_largas$scores) && is.null(modelo_pca_largas$rotation)) {
+    print("Modelo PCA para LARGAS es incorrecto, porque su SCORES es NULL. Revisarlo!")
+  } else {
+    indice_umbral_largas <- aplicarUmbralVarianza(modelo_pca_largas$sdev, pca_umbral_varianza)
+    print('LARGAS: separar TARGET, reducir las FEATURES y pegar el TARGET otra vez...')
+    pasado_ft_temp <- lista_ft_cortasmediaslargas[[3]]
+    indice_t_temp <- which( colnames(pasado_ft_temp) == "TARGET" )
+    pasado_f_temp <- subset(pasado_ft_temp, select = -indice_t_temp); #print("MEDIAS (antes de PCA):"); print(head(pasado_f_temp, n=5L))
+    pasado_f_temp_transformada <- predict(modelo_pca_largas, pasado_f_temp)  #Reduccion (solo sobre F)
+    pasado_ft_largas_transformada <- cbind(pasado_f_temp_transformada[, 1:indice_umbral_largas], subset(pasado_ft_temp, select = indice_t_temp)) # F (reducidas) + t
+    print(paste(class(pasado_ft_largas_transformada), "pasado_ft_largas_transformada:", nrow(pasado_ft_largas_transformada), "x", ncol(pasado_ft_largas_transformada)))
+    # print(head(pasado_ft_largas_transformada))
+    rm(pasado_ft_temp); rm(indice_t_temp); rm(pasado_f_temp); rm(pasado_f_temp_transformada)
+  }
   
   
   print('--------------- ejecutarReduccionDimensiones: FIN ------------')
@@ -957,7 +994,7 @@ ejecutarReduccionDimensiones <- function(tabla_train_f, tabla_test_f, tag, limit
 }
 
 
-#' Title
+#' Aplicar el REDUCTOR de cada distancia.
 #'
 #' @param input_f Features que incluyen INDICE_ORDEN
 #' @param lista_modelos_pca 
@@ -986,8 +1023,6 @@ aplicarReductores <- function(input_f, lista_modelos_pca, tipo, umbral_varianza)
   print( paste(tipo,"-F cortas:", nrow(input_f_cortas), "x", ncol(input_f_cortas)) )
   print( paste(tipo,"-F medias:", nrow(input_f_medias), "x", ncol(input_f_medias)) )
   print( paste(tipo,"-F largas:", nrow(input_f_largas), "x", ncol(input_f_largas)) )
-  
-  print(names(input_f_cortas))
   
   print('Reduciendo dimensiones....')
   indice_de_indiceorden_cortas <- which( colnames(input_f_cortas) == "INDICE_ORDEN" )
@@ -1063,20 +1098,30 @@ ejecutarCadenaEntrenamientoValidation <- function(tag, limiteSql, tipoReduccion,
                                                 'datos_desa.tb_ds_pasado_train_targets_',
                                                 tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output)
   
-  lista_ft_transformadas <- list(reduccion_out[[1]], reduccion_out[[2]], reduccion_out[[3]]) #Sin INDICE_ORDEN
-  lista_modelos_pca <- list(reduccion_out[[4]], reduccion_out[[5]], reduccion_out[[6]])
-
-  # Modelos predictivos (sobre los datos transformados) y los guarda en ficheros
-  calcularModelosPredictivosParaDistanciasYGuardarlos(lista_ft_transformadas, tag)
+  datasetsBienTransformados <- ( sum(is.na(reduccion_out[[1]])) + sum(is.na(reduccion_out[[2]])) + sum(is.na(reduccion_out[[3]])) == 0)
   
-  
-  print('----- VALIDATION: Aplicando reduccion PCA y modelos predictivos para adivinar el target ---')
-  
-  
-  print('Aplicando PCA sobre Validation-F...')
-  validation_f_transformadas <- aplicarReductores(pasado_validation_f, lista_modelos_pca, "validation", pca_umbral_varianza) #Con INDICE_ORDEN
-  print('Predeciendo el target sobre el validation, usando modelos predictivos...')
-  predecir(tag, validation_f_transformadas, cargarModelosPredictivosDesdeFicheros(tag), "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pasado_validation_targets_predichos_", "VALIDATION")
+  if (datasetsBienTransformados == TRUE) {
+    
+    lista_ft_transformadas <- list(reduccion_out[[1]], reduccion_out[[2]], reduccion_out[[3]]) #Sin INDICE_ORDEN
+    lista_modelos_pca <- list(reduccion_out[[4]], reduccion_out[[5]], reduccion_out[[6]])
+    
+    # Modelos predictivos (sobre los datos transformados) y los guarda en ficheros
+    calcularModelosPredictivosParaDistanciasYGuardarlos(lista_ft_transformadas, tag)
+    
+    
+    print('----- VALIDATION: Aplicando reduccion PCA y modelos predictivos para adivinar el target ---')
+    
+    
+    print('Aplicando PCA sobre Validation-F...')
+    validation_f_transformadas <- aplicarReductores(pasado_validation_f, lista_modelos_pca, "validation", pca_umbral_varianza) #Con INDICE_ORDEN
+    print('Predeciendo el target sobre el validation, usando modelos predictivos...')
+    predecir(tag, validation_f_transformadas, cargarModelosPredictivosDesdeFicheros(tag), "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pasado_validation_targets_predichos_", "VALIDATION")
+    
+    
+    
+  } else {
+    print("ERROR Algun dataset no ha sido bien transformado")
+  }
   
   
   print('--------------- ejecutarCadenaEntrenamientoValidation: FIN ------------')
