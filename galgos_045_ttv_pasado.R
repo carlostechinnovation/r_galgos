@@ -22,13 +22,14 @@ if (length(entradas) == 0) {
 } else if (length(entradas) >= 1) {
   
   print( paste('Numero de parametros: ', length(entradas)) )
-  modo <- entradas[1];  print( paste( 'modo=', modo, sep = '' )   ) # 1=train+test+validation, 2=train+test (ttv), 3=prediccion_futuro
-  tag <- entradas[2];  print( paste( 'tag=', tag, sep = '' )   )
-  limiteSql <- entradas[3];  print( paste( 'limiteSql=', limiteSql, sep = '' ) )
-  tipoReduccion <- entradas[4];  print( paste( 'tipoReduccion=', tipoReduccion, sep = '' )   )
-  path_modelo_pca_prefijo <- entradas[5];  print( paste( 'path_modelo_pca_prefijo=', path_modelo_pca_prefijo, sep = '' )   )
-  pca_umbral_varianza <- as.numeric(entradas[6]);  print( paste( 'pca_umbral_varianza=', pca_umbral_varianza, sep = '' )   )
-  tsne_num_features_output <- as.integer(entradas[7]);  print( paste( 'tsne_num_features_output=', tsne_num_features_output, sep = '' )   )
+  modo <- entradas[1] # 1=train+test+validation, 2=train+test (ttv), 3=prediccion_futuro
+  tag <- entradas[2]
+  limiteSql <- entradas[3]
+  tipoReduccion <- entradas[4]
+  path_modelo_pca_prefijo <- entradas[5]
+  pca_umbral_varianza <- as.numeric(entradas[6])
+  tsne_num_features_output <- as.integer(entradas[7])
+  
   
   ############ LLAMADA PRINCIPAL ##########
   if (modo == 2) {

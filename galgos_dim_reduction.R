@@ -13,14 +13,14 @@ options(echo = FALSE) # En la salida, queremos ver los comandos ejecutados
 entradas <- commandArgs(trailingOnly = TRUE)
 
 ##### Solo para debug
-modo <- 0 # 0=reduccion_dimensiones
-tag <- "DOW_LAB"
-limiteSql <- "1000"
-tipoReduccion <- "PCA"
-path_modelo_pca_prefijo <- "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_"
-pca_umbral_varianza <- 0.95
-tsne_num_features_output <- 12
-entradas <- c(modo, tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output)
+#modo <- 0 # 0=reduccion_dimensiones
+#tag <- "DOW_LAB"
+#limiteSql <- "1000"
+#tipoReduccion <- "PCA"
+#path_modelo_pca_prefijo <- "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_"
+#pca_umbral_varianza <- 0.95
+#tsne_num_features_output <- 12
+#entradas <- c(modo, tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output)
 #######
 
 
@@ -40,7 +40,10 @@ if (length(entradas) == 0) {
   
   ############ LLAMADA PRINCIPAL ##########
   if (modo == 0) {
-    ejecutarReduccionDimensiones(tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output)
+    ejecutarReduccionDimensiones('datos_desa.tb_ds_pasado_train_features_', 
+                                 'datos_desa.tb_ds_pasado_train_targets_',
+                                 tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output)
+    
   }
   
   #Borramos array de parametros, para evitar confusiones

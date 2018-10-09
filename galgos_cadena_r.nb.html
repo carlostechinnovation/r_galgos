@@ -181,47 +181,27 @@ $(document).ready(function () {
 <p>Usando PCA:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kbyA8LSAwICMgMD1yZWR1Y2Npb25fZGltZW5zaW9uZXNcbnRhZyA8LSBcIkRPV19MQUJcIlxubGltaXRlU3FsIDwtIFwiMTAwMFwiXG50aXBvUmVkdWNjaW9uIDwtIFwiUENBXCJcbnBhdGhfbW9kZWxvX3BjYV9wcmVmaWpvIDwtIFwiL2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9EQVRPU19MSU1QSU8vZ2FsZ29zL3BjYV9tb2RlbG9fXCJcbnBjYV91bWJyYWxfdmFyaWFuemEgPC0gMC45NVxudHNuZV9udW1fZmVhdHVyZXNfb3V0cHV0IDwtIDEyXG5zeXN0ZW0ocGFzdGUoXCJSc2NyaXB0IC9ob21lL2Nhcmxvc2xpbnV4L0Rlc2t0b3AvV09SS1NQQUNFUy93a3NwX2Zvcl9yL3JfZ2FsZ29zL2dhbGdvc19kaW1fcmVkdWN0aW9uLlJcIiwgbW9kbywgdGFnLCBsaW1pdGVTcWwsIHRpcG9SZWR1Y2Npb24sIHBhdGhfbW9kZWxvX3BjYV9wcmVmaWpvLFxuICAgICAgICAgICAgIHBjYV91bWJyYWxfdmFyaWFuemEsIHRzbmVfbnVtX2ZlYXR1cmVzX291dHB1dCwgc2VwID0gJyAnKSlcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kbyA8LSAwICMgMD1yZWR1Y2Npb25fZGltZW5zaW9uZXNcbnRhZyA8LSBcIkRPV19NXCJcbmxpbWl0ZVNxbCA8LSBcIjEwMDBcIlxudGlwb1JlZHVjY2lvbiA8LSBcIlBDQVwiXG5wYXRoX21vZGVsb19wY2FfcHJlZmlqbyA8LSBcIi9ob21lL2Nhcmxvc2xpbnV4L0Rlc2t0b3AvREFUT1NfTElNUElPL2dhbGdvcy9wY2FfbW9kZWxvX1wiXG5wY2FfdW1icmFsX3ZhcmlhbnphIDwtIDAuOTBcbnRzbmVfbnVtX2ZlYXR1cmVzX291dHB1dCA8LSAxMlxuXG4jRWplY3VjaW9uIGRlIENPRElHTyBSIG1lZGlhbnRlIGxsYW1hZGEgYWwgc2lzdGVtYSAoUEVORElFTlRFIG5vIGVzIG11eSBib25pdG8sIHBlcm8gbWUgdmFsZSBkZSBtb21lbnRvKVxuc3lzdGVtKHBhc3RlKFwiUnNjcmlwdCAvaG9tZS9jYXJsb3NsaW51eC9EZXNrdG9wL1dPUktTUEFDRVMvd2tzcF9mb3Jfci9yX2dhbGdvcy9nYWxnb3NfZGltX3JlZHVjdGlvbi5SXCIsIG1vZG8sIHRhZywgbGltaXRlU3FsLCB0aXBvUmVkdWNjaW9uLCBwYXRoX21vZGVsb19wY2FfcHJlZmlqbyxcbiAgICAgICAgICAgICBwY2FfdW1icmFsX3ZhcmlhbnphLCB0c25lX251bV9mZWF0dXJlc19vdXRwdXQsIHNlcCA9ICcgJykpXG5gYGAifQ== -->
 <pre class="r"><code>modo &lt;- 0 # 0=reduccion_dimensiones
-tag &lt;- &quot;DOW_LAB&quot;
+tag &lt;- &quot;DOW_M&quot;
 limiteSql &lt;- &quot;1000&quot;
 tipoReduccion &lt;- &quot;PCA&quot;
 path_modelo_pca_prefijo &lt;- &quot;/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_&quot;
-pca_umbral_varianza &lt;- 0.95
+pca_umbral_varianza &lt;- 0.90
 tsne_num_features_output &lt;- 12
+
+#Ejecucion de CODIGO R mediante llamada al sistema (PENDIENTE no es muy bonito, pero me vale de momento)
 system(paste(&quot;Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_dim_reduction.R&quot;, modo, tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo,
              pca_umbral_varianza, tsne_num_features_output, sep = ' '))</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiLS0tLS0tLS0tLS0tLS0tLS0tLS0gUFJJTkNJUEFMIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXCJcblsxXSBcIk51bWVybyBkZSBwYXJhbWV0cm9zOiAgN1wiXG5bMV0gXCJtb2RvPTBcIlxuWzFdIFwidGFnPURPV19MQUJcIlxuWzFdIFwibGltaXRlU3FsPTEwMDBcIlxuWzFdIFwidGlwb1JlZHVjY2lvbj1QQ0FcIlxuWzFdIFwicGF0aF9tb2RlbG9fcGNhX3ByZWZpam89L2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9EQVRPU19MSU1QSU8vZ2FsZ29zL3BjYV9tb2RlbG9fXCJcblsxXSBcInBjYV91bWJyYWxfdmFyaWFuemE9MC45NVwiXG5bMV0gXCJ0c25lX251bV9mZWF0dXJlc19vdXRwdXQ9MTJcIlxuWzFdIFwiLS0tLS0tLS0tLS0tLS0tIGVqZWN1dGFyUmVkdWNjaW9uRGltZW5zaW9uZXM6IElOSUNJTyAtLS0tLS0tLS0tLS1cIlxuWzFdIFwidGFnPVBDQVwiXG5bMV0gXCJsaW1pdGVTcWw9UENBXCJcblsxXSBcInRpcG9SZWR1Y2Npb249MC45NVwiXG5bMV0gXCJwYXRoX21vZGVsb19wY2FfcHJlZmlqbz0xMlwiXG4ifQ== -->
-<pre><code>[1] &quot;-------------------- PRINCIPAL --------------------------&quot;
-[1] &quot;Numero de parametros:  7&quot;
-[1] &quot;modo=0&quot;
-[1] &quot;tag=DOW_LAB&quot;
-[1] &quot;limiteSql=1000&quot;
-[1] &quot;tipoReduccion=PCA&quot;
-[1] &quot;path_modelo_pca_prefijo=/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_&quot;
-[1] &quot;pca_umbral_varianza=0.95&quot;
-[1] &quot;tsne_num_features_output=12&quot;
-[1] &quot;--------------- ejecutarReduccionDimensiones: INICIO ------------&quot;
-[1] &quot;tag=PCA&quot;
-[1] &quot;limiteSql=PCA&quot;
-[1] &quot;tipoReduccion=0.95&quot;
-[1] &quot;path_modelo_pca_prefijo=12&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gcGFzdGUoXCJwY2FfdW1icmFsX3ZhcmlhbnphPVwiLCBwY2FfdW1icmFsX3ZhcmlhbnphLCBzZXAgPSBcIlwiKSA6IFxuICBhcmd1bWVudCBcInBjYV91bWJyYWxfdmFyaWFuemFcIiBpcyBtaXNzaW5nLCB3aXRoIG5vIGRlZmF1bHRcbkNhbGxzOiBlamVjdXRhclJlZHVjY2lvbkRpbWVuc2lvbmVzIC0+IHByaW50IC0+IHBhc3RlXG5FeGVjdXRpb24gaGFsdGVkXG4ifQ== -->
-<pre><code>Error in paste(&quot;pca_umbral_varianza=&quot;, pca_umbral_varianza, sep = &quot;&quot;) : 
-  argument &quot;pca_umbral_varianza&quot; is missing, with no default
-Calls: ejecutarReduccionDimensiones -&gt; print -&gt; paste
-Execution halted</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Usando tSNE:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kbyA8LSAwICMgMD1yZWR1Y2Npb25fZGltZW5zaW9uZXNcbnRhZyA8LSBcIkRPV19MQUJcIlxubGltaXRlU3FsIDwtIFwiMTAwMFwiXG50aXBvUmVkdWNjaW9uIDwtIFwiVFNORVwiXG5wYXRoX21vZGVsb19wY2FfcHJlZmlqbyA8LSBcIi9ob21lL2Nhcmxvc2xpbnV4L0Rlc2t0b3AvREFUT1NfTElNUElPL2dhbGdvcy9wY2FfbW9kZWxvX1wiXG5wY2FfdW1icmFsX3ZhcmlhbnphIDwtIDAuOTVcbnRzbmVfbnVtX2ZlYXR1cmVzX291dHB1dCA8LSAxMlxuXG5zeXN0ZW0ocGFzdGUoXCJSc2NyaXB0IC9ob21lL2Nhcmxvc2xpbnV4L0Rlc2t0b3AvV09SS1NQQUNFUy93a3NwX2Zvcl9yL3JfZ2FsZ29zL2dhbGdvc19kaW1fcmVkdWN0aW9uLlJcIiwgbW9kbywgdGFnLCBsaW1pdGVTcWwsIHRpcG9SZWR1Y2Npb24scGF0aF9tb2RlbG9fcGNhX3ByZWZpam8sXG4gICAgICAgICAgICAgcGNhX3VtYnJhbF92YXJpYW56YSwgdHNuZV9udW1fZmVhdHVyZXNfb3V0cHV0LCAgc2VwID0gJyAnKSlcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kbyA8LSAwICMgMD1yZWR1Y2Npb25fZGltZW5zaW9uZXNcbnRhZyA8LSBcIkRPV19NXCJcbmxpbWl0ZVNxbCA8LSBcIjEwMDBcIlxudGlwb1JlZHVjY2lvbiA8LSBcIlRTTkVcIlxucGF0aF9tb2RlbG9fcGNhX3ByZWZpam8gPC0gXCIvaG9tZS9jYXJsb3NsaW51eC9EZXNrdG9wL0RBVE9TX0xJTVBJTy9nYWxnb3MvcGNhX21vZGVsb19cIlxucGNhX3VtYnJhbF92YXJpYW56YSA8LSAwLjk1XG50c25lX251bV9mZWF0dXJlc19vdXRwdXQgPC0gMTJcblxuc3lzdGVtKHBhc3RlKFwiUnNjcmlwdCAvaG9tZS9jYXJsb3NsaW51eC9EZXNrdG9wL1dPUktTUEFDRVMvd2tzcF9mb3Jfci9yX2dhbGdvcy9nYWxnb3NfZGltX3JlZHVjdGlvbi5SXCIsIG1vZG8sIHRhZywgbGltaXRlU3FsLCB0aXBvUmVkdWNjaW9uLHBhdGhfbW9kZWxvX3BjYV9wcmVmaWpvLFxuICAgICAgICAgICAgIHBjYV91bWJyYWxfdmFyaWFuemEsIHRzbmVfbnVtX2ZlYXR1cmVzX291dHB1dCwgIHNlcCA9ICcgJykpXG5gYGAifQ== -->
 <pre class="r"><code>modo &lt;- 0 # 0=reduccion_dimensiones
-tag &lt;- &quot;DOW_LAB&quot;
+tag &lt;- &quot;DOW_M&quot;
 limiteSql &lt;- &quot;1000&quot;
 tipoReduccion &lt;- &quot;TSNE&quot;
 path_modelo_pca_prefijo &lt;- &quot;/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_&quot;
@@ -238,31 +218,25 @@ system(paste(&quot;Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_gal
 <h4>CADENA COMPLETA para ENTRENAMIENTO</h4>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kbyA8LSAxICMgMT10cmFpbit0ZXN0K3ZhbGlkYXRpb25cbnRhZyA8LSBcIkRPV19MQUJcIlxubGltaXRlU3FsIDwtIFwiMTAwMDBcIlxucGF0aF9tb2RlbG9fcGNhX3ByZWZpam8gPC0gXCIvaG9tZS9jYXJsb3NsaW51eC9EZXNrdG9wL0RBVE9TX0xJTVBJTy9nYWxnb3MvcGNhX21vZGVsb19cIlxucGNhX3VtYnJhbF92YXJpYW56YSA8LSAwLjk1XG50c25lX251bV9mZWF0dXJlc19vdXRwdXQgPC0gMTJcbnN5c3RlbShwYXN0ZShcIlJzY3JpcHQgL2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9XT1JLU1BBQ0VTL3drc3BfZm9yX3Ivcl9nYWxnb3MvZ2FsZ29zXzA0MF90dHZfcG9yX3RhZ19wYXNhZG8uUlwiLCBtb2RvLCB0YWcsIGxpbWl0ZVNxbCwgdGlwb1JlZHVjY2lvbixwYXRoX21vZGVsb19wY2FfcHJlZmlqbyxcbiAgICAgICAgICAgICBwY2FfdW1icmFsX3ZhcmlhbnphLCB0c25lX251bV9mZWF0dXJlc19vdXRwdXQsIHNlcCA9ICcgJykpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kbyA8LSAxICMgMT10cmFpbit0ZXN0K3ZhbGlkYXRpb25cbnRhZyA8LSBcIkRPV19NXCJcbmxpbWl0ZVNxbCA8LSBcIjEwMDAwXCJcbnRpcG9SZWR1Y2Npb24gPC0gXCJQQ0FcIlxucGF0aF9tb2RlbG9fcGNhX3ByZWZpam8gPC0gXCIvaG9tZS9jYXJsb3NsaW51eC9EZXNrdG9wL0RBVE9TX0xJTVBJTy9nYWxnb3MvcGNhX21vZGVsb19cIlxucGNhX3VtYnJhbF92YXJpYW56YSA8LSAwLjg1XG50c25lX251bV9mZWF0dXJlc19vdXRwdXQgPC0gMTJcbnN5c3RlbShwYXN0ZShcIlJzY3JpcHQgL2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9XT1JLU1BBQ0VTL3drc3BfZm9yX3Ivcl9nYWxnb3MvZ2FsZ29zXzA0MF90dHZfcG9yX3RhZ19wYXNhZG8uUlwiLCBtb2RvLCB0YWcsIGxpbWl0ZVNxbCwgdGlwb1JlZHVjY2lvbixwYXRoX21vZGVsb19wY2FfcHJlZmlqbyxcbiAgICAgICAgICAgICBwY2FfdW1icmFsX3ZhcmlhbnphLCB0c25lX251bV9mZWF0dXJlc19vdXRwdXQsIHNlcCA9ICcgJykpXG5gYGAifQ== -->
 <pre class="r"><code>modo &lt;- 1 # 1=train+test+validation
-tag &lt;- &quot;DOW_LAB&quot;
+tag &lt;- &quot;DOW_M&quot;
 limiteSql &lt;- &quot;10000&quot;
+tipoReduccion &lt;- &quot;PCA&quot;
 path_modelo_pca_prefijo &lt;- &quot;/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_&quot;
-pca_umbral_varianza &lt;- 0.95
+pca_umbral_varianza &lt;- 0.85
 tsne_num_features_output &lt;- 12
 system(paste(&quot;Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_040_ttv_por_tag_pasado.R&quot;, modo, tag, limiteSql, tipoReduccion,path_modelo_pca_prefijo,
              pca_umbral_varianza, tsne_num_features_output, sep = ' '))</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiTnVtZXJvIGRlIHBhcmFtZXRyb3M6ICA3XCJcblsxXSBcIm1vZG89MVwiXG5bMV0gXCJ0YWc9RE9XX0xBQlwiXG5bMV0gXCJsaW1pdGVTcWw9MTAwMDBcIlxuWzFdIFwidGlwb1JlZHVjY2lvbj1QQ0FcIlxuWzFdIFwicGF0aF9tb2RlbG9fcGNhX3ByZWZpam89L2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9EQVRPU19MSU1QSU8vZ2FsZ29zL3BjYV9tb2RlbG9fXCJcblsxXSBcInBjYV91bWJyYWxfdmFyaWFuemE9MC45NVwiXG5bMV0gXCJ0c25lX251bV9mZWF0dXJlc19vdXRwdXQ9MTJcIlxuWzFdIFwiLS0tLS0tLS0tLS0tLS0tIGVqZWN1dGFyQ2FkZW5hRW50cmVuYW1pZW50b1ZhbGlkYXRpb24gLS0tLS0tLS0tLS0tXCJcblsxXSBcInRhZz1ET1dfTEFCXCJcblsxXSBcImxpbWl0ZVNxbD1ET1dfTEFCXCJcblsxXSBcInRpcG9SZWR1Y2Npb249UENBXCJcblsxXSBcInBhdGhfbW9kZWxvX3BjYV9wcmVmaWpvPS9ob21lL2Nhcmxvc2xpbnV4L0Rlc2t0b3AvREFUT1NfTElNUElPL2dhbGdvcy9wY2FfbW9kZWxvX1wiXG5bMV0gXCJwY2FfdW1icmFsX3ZhcmlhbnphPTAuOTVcIlxuWzFdIFwidHNuZV9udW1fZmVhdHVyZXNfb3V0cHV0PTEyXCJcblsxXSBcIi0tLS0tLS0tLS0tLS0tLSBlc3RhYmxlY2VyQ29uZmlnR2VuZXJhbCAtLS0tLS0tLS0tLS1cIlxuIn0= -->
-<pre><code>[1] &quot;Numero de parametros:  7&quot;
-[1] &quot;modo=1&quot;
-[1] &quot;tag=DOW_LAB&quot;
-[1] &quot;limiteSql=10000&quot;
-[1] &quot;tipoReduccion=PCA&quot;
-[1] &quot;path_modelo_pca_prefijo=/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_&quot;
-[1] &quot;pca_umbral_varianza=0.95&quot;
-[1] &quot;tsne_num_features_output=12&quot;
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiI1JfT1VUIy0tUEFSQU0gW21vZG98dGFnfGxpbWl0ZVNxbHx0aXBvUmVkdWNjaW9ufHBhdGhfbW9kZWxvX3BjYV9wcmVmaWpvfHBjYV91bWJyYWxfdmFyaWFuemF8dHNuZV9udW1fZmVhdHVyZXNfb3V0cHV0XSA9IDF8RE9XX018MTAwMDB8UENBfC9ob21lL2Nhcmxvc2xpbnV4L0Rlc2t0b3AvREFUT1NfTElNUElPL2dhbGdvcy9wY2FfbW9kZWxvX3wwLjg1fDEyXCJcblsxXSBcIi0tLS0tLS0tLS0tLS0tLSBlamVjdXRhckNhZGVuYUVudHJlbmFtaWVudG9WYWxpZGF0aW9uIC0tLS0tLS0tLS0tLVwiXG5bMV0gXCJ0YWc9RE9XX01cIlxuWzFdIFwibGltaXRlU3FsPURPV19NXCJcblsxXSBcInRpcG9SZWR1Y2Npb249UENBXCJcblsxXSBcInBhdGhfbW9kZWxvX3BjYV9wcmVmaWpvPS9ob21lL2Nhcmxvc2xpbnV4L0Rlc2t0b3AvREFUT1NfTElNUElPL2dhbGdvcy9wY2FfbW9kZWxvX1wiXG5bMV0gXCJwY2FfdW1icmFsX3ZhcmlhbnphPTAuODVcIlxuWzFdIFwidHNuZV9udW1fZmVhdHVyZXNfb3V0cHV0PTEyXCJcblsxXSBcIi0tLS0tLS0tLS0tLS0tLSBlc3RhYmxlY2VyQ29uZmlnR2VuZXJhbCAtLS0tLS0tLS0tLS1cIlxuIn0= -->
+<pre><code>[1] &quot;#R_OUT#--PARAM [modo|tag|limiteSql|tipoReduccion|path_modelo_pca_prefijo|pca_umbral_varianza|tsne_num_features_output] = 1|DOW_M|10000|PCA|/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_|0.85|12&quot;
 [1] &quot;--------------- ejecutarCadenaEntrenamientoValidation ------------&quot;
-[1] &quot;tag=DOW_LAB&quot;
-[1] &quot;limiteSql=DOW_LAB&quot;
+[1] &quot;tag=DOW_M&quot;
+[1] &quot;limiteSql=DOW_M&quot;
 [1] &quot;tipoReduccion=PCA&quot;
 [1] &quot;path_modelo_pca_prefijo=/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_&quot;
-[1] &quot;pca_umbral_varianza=0.95&quot;
+[1] &quot;pca_umbral_varianza=0.85&quot;
 [1] &quot;tsne_num_features_output=12&quot;
 [1] &quot;--------------- establecerConfigGeneral ------------&quot;</code></pre>
 <!-- rnb-output-end -->
@@ -293,9 +267,9 @@ arm (Version 1.10-1, built: 2018-4-12)
 
 Working directory is /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiLS0tLS0tLS0tLS0tLS0tIGxlZXJEZXNkZUJhc2VEYXRvc1lFc2NyaWJpckNTVjogSU5JQ0lPIC0tLS0tLS0tLS0tLVwiXG5bMV0gXCJ0YWc9IERPV19MQUJcIlxuWzFdIFwibGltaXRlU3FsPSAxMDAwMFwiXG5bMV0gXCJpbmNsdXllVGFyZ2V0cz0gVFJVRVwiXG5bMV0gXCJpbmNsdXllVmFsaWRhdGlvbj0gVFJVRVwiXG4ifQ== -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiLS0tLS0tLS0tLS0tLS0tIGxlZXJEZXNkZUJhc2VEYXRvc1lFc2NyaWJpckNTVjogSU5JQ0lPIC0tLS0tLS0tLS0tLVwiXG5bMV0gXCJ0YWc9IERPV19NXCJcblsxXSBcImxpbWl0ZVNxbD0gMTAwMDBcIlxuWzFdIFwiaW5jbHV5ZVRhcmdldHM9IFRSVUVcIlxuWzFdIFwiaW5jbHV5ZVZhbGlkYXRpb249IFRSVUVcIlxuIn0= -->
 <pre><code>[1] &quot;--------------- leerDesdeBaseDatosYEscribirCSV: INICIO ------------&quot;
-[1] &quot;tag= DOW_LAB&quot;
+[1] &quot;tag= DOW_M&quot;
 [1] &quot;limiteSql= 10000&quot;
 [1] &quot;incluyeTargets= TRUE&quot;
 [1] &quot;incluyeValidation= TRUE&quot;</code></pre>
@@ -303,17 +277,596 @@ Working directory is /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos</c
 <!-- rnb-output-begin eyJkYXRhIjoiTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBEQklcbiJ9 -->
 <pre><code>Loading required package: DBI</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiLS0tLS0tLS0tLS0tLS0tQ29uZXhpb24gYSBCQkREIC0tLS0tLS0tLS0tLVwiXG5bMV0gXCJDb25lY3RhbmRvLi4uXCJcblsxXSBcIi0tLS0tLS0tLS0tLS0gRmVhdHVyZXMgKElOUFVUKSAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVwiXG5bMV0gXCJTRUxFQ1QgKiBGUk9NIGRhdG9zX2Rlc2EudGJfZHNfcGFzYWRvX3RyYWluX2ZlYXR1cmVzX0RPV19MQUIgTElNSVQgMTAwMDA7XCJcbiJ9 -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiLS0tLS0tLS0tLS0tLS0tQ29uZXhpb24gYSBCQkREIC0tLS0tLS0tLS0tLVwiXG5bMV0gXCJDb25lY3RhbmRvLi4uXCJcblsxXSBcIi0tLS0tLS0tLS0tLS0gRmVhdHVyZXMgKElOUFVUKSAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVwiXG5bMV0gXCJTRUxFQ1QgKiBGUk9NIGRhdG9zX2Rlc2EudGJfZHNfcGFzYWRvX3RyYWluX2ZlYXR1cmVzX0RPV19NIExJTUlUIDEwMDAwO1wiXG5bMV0gXCJGRUFUVVJFUyAodHJhaW4gbyBmdXR1cm8pOiAgMjc0MiB4IDM5XCJcblsxXSBcIi0tLS0tLS0tLS0tLS0tLS0tLS0gVGFyZ2V0cyAoSU5QVVQpIC0tLS0tLS0tLS0tLS0tLS0tXCJcblsxXSBcIlNFTEVDVCAqIEZST00gZGF0b3NfZGVzYS50Yl9kc19wYXNhZG9fdHJhaW5fdGFyZ2V0c19ET1dfTSBMSU1JVCAxMDAwMDtcIlxuWzFdIFwiVFJBSU4tVDogIDI3NDIgeCAxXCJcblsxXSBcIi0tLS0tLS0tLS0tLS0gVkFMSURBVElPTi1GZWF0dXJlcyAoSU5QVVQpIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXCJcblsxXSBcIlNFTEVDVCAqIEZST00gZGF0b3NfZGVzYS50Yl9kc19wYXNhZG9fdmFsaWRhdGlvbl9mZWF0dXJlc19ET1dfTSBMSU1JVCAxMDAwMDtcIlxuWzFdIFwiVkFMSURBVElPTi1GOiAgMTM1NiB4IDM5XCJcblsxXSBcImxlZXJEZXNkZUJhc2VEYXRvc1lFc2NyaWJpckNTViAtLS0+bnJvdyhsZWlkb19mdCk9IDI3NDJcIlxuWzFdIFwibGVpZG9fZnQ6ICAyNzQyIHggNDFcIlxuWzFdIFwibGVlckRlc2RlQmFzZURhdG9zWUVzY3JpYmlyQ1NWIC0tLT5ucm93KHBhc2Fkb192Zl9zaW5tZXMpPSAxMzU2XCJcblsxXSBcIi0tLS0tLS0tLS0tLS0tLSBsZWVyRGVzZGVCYXNlRGF0b3NZRXNjcmliaXJDU1Y6IEZJTiAtLS0tLS0tLS0tLS1cIlxuWzFdIFwiLS0tLS0tLS0tLS0tLS0tIGVqZWN1dGFyUmVkdWNjaW9uRGltZW5zaW9uZXM6IElOSUNJTyAtLS0tLS0tLS0tLS1cIlxuWzFdIFwidGFnPURPV19NXCJcblsxXSBcImxpbWl0ZVNxbD1ET1dfTVwiXG5bMV0gXCJ0aXBvUmVkdWNjaW9uPVBDQVwiXG5bMV0gXCJwYXRoX21vZGVsb19wY2FfcHJlZmlqbz0vaG9tZS9jYXJsb3NsaW51eC9EZXNrdG9wL0RBVE9TX0xJTVBJTy9nYWxnb3MvcGNhX21vZGVsb19cIlxuWzFdIFwicGNhX3VtYnJhbF92YXJpYW56YT0wLjg1XCJcblsxXSBcInRzbmVfbnVtX2ZlYXR1cmVzX291dHB1dD0xMlwiXG5bMV0gXCItLS0tLS0tLS0tLS0tLS0gZXN0YWJsZWNlckNvbmZpZ0dlbmVyYWwgLS0tLS0tLS0tLS0tXCJcblsxXSBcIi0tLS0tLS0tLS0tLS0tLSBsZWVyRGVzZGVCYXNlRGF0b3NZRXNjcmliaXJDU1Y6IElOSUNJTyAtLS0tLS0tLS0tLS1cIlxuWzFdIFwidGFnPSBET1dfTVwiXG5bMV0gXCJsaW1pdGVTcWw9IDEwMDAwXCJcblsxXSBcImluY2x1eWVUYXJnZXRzPSBUUlVFXCJcblsxXSBcImluY2x1eWVWYWxpZGF0aW9uPSBGQUxTRVwiXG5bMV0gXCItLS0tLS0tLS0tLS0tLS1Db25leGlvbiBhIEJCREQgLS0tLS0tLS0tLS0tXCJcblsxXSBcIkNvbmVjdGFuZG8uLi5cIlxuWzFdIFwiLS0tLS0tLS0tLS0tLSBGZWF0dXJlcyAoSU5QVVQpIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXCJcblsxXSBcIlNFTEVDVCAqIEZST00gZGF0b3NfZGVzYS50Yl9kc19wYXNhZG9fdHJhaW5fZmVhdHVyZXNfRE9XX00gTElNSVQgMTAwMDA7XCJcblsxXSBcIkZFQVRVUkVTICh0cmFpbiBvIGZ1dHVybyk6ICAyNzQyIHggMzlcIlxuWzFdIFwiLS0tLS0tLS0tLS0tLS0tLS0tLSBUYXJnZXRzIChJTlBVVCkgLS0tLS0tLS0tLS0tLS0tLS1cIlxuWzFdIFwiU0VMRUNUICogRlJPTSBkYXRvc19kZXNhLnRiX2RzX3Bhc2Fkb190cmFpbl90YXJnZXRzX0RPV19NIExJTUlUIDEwMDAwO1wiXG5bMV0gXCJUUkFJTi1UOiAgMjc0MiB4IDFcIlxuWzFdIFwibGVlckRlc2RlQmFzZURhdG9zWUVzY3JpYmlyQ1NWIC0tLT5ucm93KGxlaWRvX2Z0KT0gMjc0MlwiXG5bMV0gXCJsZWlkb19mdDogIDI3NDIgeCA0MVwiXG5bMV0gXCItLS0tLS0tLS0tLS0tLS0gbGVlckRlc2RlQmFzZURhdG9zWUVzY3JpYmlyQ1NWOiBGSU4gLS0tLS0tLS0tLS0tXCJcblsxXSBcImRhdGEuZnJhbWUgQTogMjc0MiB4IDQxXCJcblsxXSBcImRhdGEuZnJhbWUgQjogMjc0MiB4IDI5XCJcblsxXSBcImRhdGEuZnJhbWUgQzogMjcxNSB4IDI5XCJcblsxXSBcIk51bWVybyBkZSBmaWxhcyBkZSBDIHF1ZSB0ZW5pYW4gYWxndW4gTkE6XCJcblsxXSAyN1xuWzFdIFwiZGF0YS5mcmFtZSBFOiAyNzE1IHggNDFcIlxuWzFdIFwiLS0tLS0tLS0tLS0tLS0tIGNyZWFyRmVhdHVyZXN5VGFyZ2V0RGVsUGFzYWRvUGFyYURpc3RhbmNpYXMgLS0tLS0tLS0tLS0tXCJcblsxXSBcInBhc2Fkb19mdDogMjcxNSB4IDQxXCJcblsxXSBcInF1aXRhckNvbHVtbmFzRGVPdHJhc0Rpc3RhbmNpYXM6IFRSVUVcIlxuWzFdIFwicXVpdGFyTmFzOiBUUlVFXCJcblsxXSBcInBhc2Fkb19mdF9jb3J0YXNfY29uTkFzOiAxMjI4IHggNDFcIlxuWzFdIFwicGFzYWRvX2Z0X21lZGlhc19jb25OQXM6IDE0NjggeCA0MVwiXG5bMV0gXCJwYXNhZG9fZnRfbGFyZ2FzX2Nvbk5BczogMTkgeCA0MVwiXG5bMV0gXCItLVF1aXRhbmRvIGNvbHVtbmFzIGRlIG90cmFzIERJU1RBTkNJQVMuLi5cIlxuWzFdIFwicGFzYWRvX2Z0X2NvcnRhc19jb2xkaXM6IDEyMjggeCAzM1wiXG5bMV0gXCJwYXNhZG9fZnRfbWVkaWFzX2NvbGRpczogMTQ2OCB4IDMzXCJcblsxXSBcInBhc2Fkb19mdF9sYXJnYXNfY29sZGlzOiAxOSB4IDMzXCJcblsxXSBcIi0tIFF1aXRhbmRvIE5BcyAoYXVucXVlIG1hbnRlbmdvIGNvbHVtbmEgSU5ESUNFX09SREVOKS4uLlwiXG5bMV0gXCJDb21wcm9iYWNpb24gZGUgTkFzLi4uXCJcblsxXSBcIkNPUlRBUyAodHJhaW4rdGVzdCk6IDY4NyB4IDMzXCJcblsxXSBcIk1FRElBUyAodHJhaW4rdGVzdCk6IDE0NTcgeCAzM1wiXG5bMV0gXCJMQVJHQVMgKHRyYWluK3Rlc3QpOiAxOSB4IDMzXCJcblsxXSBcIi0tLS0tLS0gUmVkdWN0b3IgKFBDQSwgVFNORS4uLikgLS0tLS0tXCJcblsxXSBcIi0tLS0tLS0tIHJlZHVjaXJEaW1lbnNpb25lc1lPYnRlbmVyUmVkdWN0b3JlczogSU5JQ0lPIC0tLS0tLS0tLS0tXCJcblsxXSBcInRpcG9SZWR1Y2Npb246IFBDQVwiXG5bMV0gXCJMaXN0YTogM1wiXG5bMV0gXCJSZWR1Y2llbmRvIEZFQVRVUkVTIHBvciBjYWRhIGRhdGFzZXQgcG9yIGRpc3RhbmNpYS4uLlwiXG5bMV0gXCIgKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKiByZWR1Y2lyQ29uUENBOiBJTklDSU8gKioqKioqKioqKioqKioqKioqKioqKioqKioqIFwiXG5bMV0gXCJpbnB1dF9mdDogNjg3IHggMzJcIlxuWzFdIFwicGF0aF9tb2RlbG9fcGNhOiAvaG9tZS9jYXJsb3NsaW51eC9EZXNrdG9wL0RBVE9TX0xJTVBJTy9nYWxnb3MvcGNhX21vZGVsb19jb3J0YXNfRE9XX01cIlxuWzFdIFwidW1icmFsX3ZhcmlhbnphOiAwLjg1XCJcblsxXSBcInRpcG9QQ0E6IHByY29tcFwiXG5bMV0gXCJpbnB1dF9mX2Z1bGwgKHNpbiBUQVJHRVQpOiA2ODcgeCAzMVwiXG5bMV0gXCJyZWR1Y2lyQ29uUENBKCkgLS0+IEFMR09SSVRNTy4uLlwiXG5bMV0gXCJHdWFyZGFuZG8gbW9kZWxvIFBDQSBmaWNoZXJvOiAvaG9tZS9jYXJsb3NsaW51eC9EZXNrdG9wL0RBVE9TX0xJTVBJTy9nYWxnb3MvcGNhX21vZGVsb19jb3J0YXNfRE9XX01cIlxuWzFdIFwiICoqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqIHJlZHVjaXJDb25QQ0E6IEZJTiAqKioqKioqKioqKioqKioqKioqKioqKioqKioqIFwiXG5bMV0gXCIgKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKiByZWR1Y2lyQ29uUENBOiBJTklDSU8gKioqKioqKioqKioqKioqKioqKioqKioqKioqIFwiXG5bMV0gXCJpbnB1dF9mdDogMTQ1NyB4IDMyXCJcblsxXSBcInBhdGhfbW9kZWxvX3BjYTogL2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9EQVRPU19MSU1QSU8vZ2FsZ29zL3BjYV9tb2RlbG9fbWVkaWFzX0RPV19NXCJcblsxXSBcInVtYnJhbF92YXJpYW56YTogMC44NVwiXG5bMV0gXCJ0aXBvUENBOiBwcmNvbXBcIlxuWzFdIFwiaW5wdXRfZl9mdWxsIChzaW4gVEFSR0VUKTogMTQ1NyB4IDMxXCJcblsxXSBcInJlZHVjaXJDb25QQ0EoKSAtLT4gQUxHT1JJVE1PLi4uXCJcblsxXSBcIkd1YXJkYW5kbyBtb2RlbG8gUENBIGZpY2hlcm86IC9ob21lL2Nhcmxvc2xpbnV4L0Rlc2t0b3AvREFUT1NfTElNUElPL2dhbGdvcy9wY2FfbW9kZWxvX21lZGlhc19ET1dfTVwiXG5bMV0gXCIgKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKiogcmVkdWNpckNvblBDQTogRklOICoqKioqKioqKioqKioqKioqKioqKioqKioqKiogXCJcblsxXSBcIiAqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqIHJlZHVjaXJDb25QQ0E6IElOSUNJTyAqKioqKioqKioqKioqKioqKioqKioqKioqKiogXCJcblsxXSBcImlucHV0X2Z0OiAxOSB4IDMyXCJcblsxXSBcInBhdGhfbW9kZWxvX3BjYTogL2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9EQVRPU19MSU1QSU8vZ2FsZ29zL3BjYV9tb2RlbG9fbGFyZ2FzX0RPV19NXCJcblsxXSBcInVtYnJhbF92YXJpYW56YTogMC44NVwiXG5bMV0gXCJ0aXBvUENBOiBwcmNvbXBcIlxuWzFdIFwiaW5wdXRfZl9mdWxsIChzaW4gVEFSR0VUKTogMTkgeCAzMVwiXG5bMV0gXCJyZWR1Y2lyQ29uUENBKCkgLS0+IEFMR09SSVRNTy4uLlwiXG5bMV0gXCJHdWFyZGFuZG8gbW9kZWxvIFBDQSBmaWNoZXJvOiAvaG9tZS9jYXJsb3NsaW51eC9EZXNrdG9wL0RBVE9TX0xJTVBJTy9nYWxnb3MvcGNhX21vZGVsb19sYXJnYXNfRE9XX01cIlxuWzFdIFwiICoqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqIHJlZHVjaXJDb25QQ0E6IEZJTiAqKioqKioqKioqKioqKioqKioqKioqKioqKioqIFwiXG5bMV0gXCJDYXJnYW5kbyByZWR1Y3RvcmVzIFBDQSAoZGVzZGUgZmljaGVyb3MpLi4uXCJcblsxXSBcIi9ob21lL2Nhcmxvc2xpbnV4L0Rlc2t0b3AvREFUT1NfTElNUElPL2dhbGdvcy9wY2FfbW9kZWxvX2NvcnRhc19ET1dfTVwiXG5bMV0gXCIvaG9tZS9jYXJsb3NsaW51eC9EZXNrdG9wL0RBVE9TX0xJTVBJTy9nYWxnb3MvcGNhX21vZGVsb19tZWRpYXNfRE9XX01cIlxuWzFdIFwiL2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9EQVRPU19MSU1QSU8vZ2FsZ29zL3BjYV9tb2RlbG9fbGFyZ2FzX0RPV19NXCJcblsxXSBcIkRldnVlbHZlIGxvcyByZWR1Y3RvcmVzICh0cmFuc2Zvcm1hZG9yZXMpLi4uXCJcblsxXSBcIi0tLS0tLS0tIHJlZHVjaXJEaW1lbnNpb25lc1lPYnRlbmVyUmVkdWN0b3JlczogRklOIC0tLS0tLS0tLS0tXCJcblsxXSBcImRhdGEuZnJhbWUgcGFzYWRvX2Z0X2NvcnRhc190cmFuc2Zvcm1hZGE6IDY4NyB4IDhcIlxuWzFdIFwiZGF0YS5mcmFtZSBwYXNhZG9fZnRfbWVkaWFzX3RyYW5zZm9ybWFkYTogMTQ1NyB4IDlcIlxuWzFdIFwiZGF0YS5mcmFtZSBwYXNhZG9fZnRfbGFyZ2FzX3RyYW5zZm9ybWFkYTogMTkgeCA1XCJcblsxXSBcIi0tLS0tLS0tLS0tLS0tLSBlamVjdXRhclJlZHVjY2lvbkRpbWVuc2lvbmVzOiBGSU4gLS0tLS0tLS0tLS0tXCJcblsxXSBcIi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tIGNhbGN1bGFyTW9kZWxvc1ByZWRpY3Rpdm9zUGFyYURpc3RhbmNpYXNZR3VhcmRhcmxvczogSU5JQ0lPIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cIlxuWzFdIFwidGFnOiBET1dfTVwiXG5bMV0gXCIjUl9PVVQjLS1NT0RFTE9TX1BSRUQgSU5QVVQgW3RhZ3xQT1JDRU5UQUpFX1RFU1R8cGFzYWRvX2Z0X2NvcnRhc3xwYXNhZG9fZnRfbWVkaWFzfHBhc2Fkb19mdF9sYXJnYXNdID1ET1dfTXwwLjF8Njg3eDh8MTQ1N3g5fDE5eDVcIlxuWzFdIFwicGFzYWRvX2Z0X2NvcnRhcz0gNjg3IHggOFwiXG5bMV0gXCIqKioqKioqKioqKioqKioqKiogYW5hbGlzaXNfbW9kZWxvc19zdXBlcmxlYXJuZXIgPT0+IENPUlRBUyAqKioqKioqKioqKioqKioqKipcIlxuWzFdIFwibWF0cml6ZW50cmFkYT0gNjg3IHggOFwiXG5bMV0gXCJlamVjdXRhck11bHRpY29yZT0gRkFMU0VcIlxuWzFdIFwidGVzdHNldD0gNjggeCA4XCJcblsxXSBcInRyYWluc2V0PSA2MTkgeCA4XCJcblsxXSBcInhfdHJhaW49IDYxOSB4IDdcIlxuWzFdIFwieV90cmFpbj0gNjE5XCJcblsxXSBcInhfdGVzdD0gNjggeCA3XCJcblsxXSBcInlfdGVzdD0gNjhcIlxuWzFdIFwiI1JfT1VUIy0tTU9ERUxPU19QUkVEIFtkaXN0YW5jaWFfc3RyfGVqZWN1dGFyTXVsdGljb3JlfHhfdHJhaW58eF90ZXN0XSA9Q09SVEFTfEZBTFNFfDYxOXg3fDY4eDd8XCJcblsxXSBcIi0tLS0tLS0gQWxnb3JpdG1vcyB1c2Fkb3MgLS0tLS0tLVwiXG4gICAgIFssMV0gICAgICAgICAgWywyXSAgICAgICAgICAgIFssM10gICAgICAgIFssNF0gICAgICAgICAgWyw1XSAgICAgICAgICAgIFxuWzEsXSBcIlNMLmdsbW5ldF8xXCIgXCJTTC5iYXllc2dsbV8xXCIgXCJTTC5nbG1uZXRcIiBcIlNMLmJheWVzZ2xtXCIgXCJTTC5jYXJldC5ycGFydFwiXG4gICAgIFssNl0gICAgIFssN10gICAgICBbLDhdICAgICAgICAgXG5bMSxdIFwiU0wuZ2xtXCIgXCJTTC5ubmV0XCIgXCJTTC5wb2x5bWFyc1wiXG5bMV0gXCJDcm9zcy12YWxpZGF0aW9uIChJTlRFUk5BLCBkZW50cm8gZGUgY2FkYSBhbGdvcml0bW8pOiAyXCJcblsxXSBcIkNyb3NzLXZhbGlkYXRpb24gKEVYVEVSTkEpOiAyXCJcblsxXSBcIi0tLS0tLS0tIFVOSUNPUkUgKGNvbiBjcm9zcyB2YWxpZGF0aW9uKSAtLS0tLS0tLS0tXCJcbiJ9 -->
 <pre><code>[1] &quot;---------------Conexion a BBDD ------------&quot;
 [1] &quot;Conectando...&quot;
 [1] &quot;------------- Features (INPUT) -----------------------&quot;
-[1] &quot;SELECT * FROM datos_desa.tb_ds_pasado_train_features_DOW_LAB LIMIT 10000;&quot;</code></pre>
+[1] &quot;SELECT * FROM datos_desa.tb_ds_pasado_train_features_DOW_M LIMIT 10000;&quot;
+[1] &quot;FEATURES (train o futuro):  2742 x 39&quot;
+[1] &quot;------------------- Targets (INPUT) -----------------&quot;
+[1] &quot;SELECT * FROM datos_desa.tb_ds_pasado_train_targets_DOW_M LIMIT 10000;&quot;
+[1] &quot;TRAIN-T:  2742 x 1&quot;
+[1] &quot;------------- VALIDATION-Features (INPUT) -----------------------&quot;
+[1] &quot;SELECT * FROM datos_desa.tb_ds_pasado_validation_features_DOW_M LIMIT 10000;&quot;
+[1] &quot;VALIDATION-F:  1356 x 39&quot;
+[1] &quot;leerDesdeBaseDatosYEscribirCSV ---&gt;nrow(leido_ft)= 2742&quot;
+[1] &quot;leido_ft:  2742 x 41&quot;
+[1] &quot;leerDesdeBaseDatosYEscribirCSV ---&gt;nrow(pasado_vf_sinmes)= 1356&quot;
+[1] &quot;--------------- leerDesdeBaseDatosYEscribirCSV: FIN ------------&quot;
+[1] &quot;--------------- ejecutarReduccionDimensiones: INICIO ------------&quot;
+[1] &quot;tag=DOW_M&quot;
+[1] &quot;limiteSql=DOW_M&quot;
+[1] &quot;tipoReduccion=PCA&quot;
+[1] &quot;path_modelo_pca_prefijo=/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_&quot;
+[1] &quot;pca_umbral_varianza=0.85&quot;
+[1] &quot;tsne_num_features_output=12&quot;
+[1] &quot;--------------- establecerConfigGeneral ------------&quot;
+[1] &quot;--------------- leerDesdeBaseDatosYEscribirCSV: INICIO ------------&quot;
+[1] &quot;tag= DOW_M&quot;
+[1] &quot;limiteSql= 10000&quot;
+[1] &quot;incluyeTargets= TRUE&quot;
+[1] &quot;incluyeValidation= FALSE&quot;
+[1] &quot;---------------Conexion a BBDD ------------&quot;
+[1] &quot;Conectando...&quot;
+[1] &quot;------------- Features (INPUT) -----------------------&quot;
+[1] &quot;SELECT * FROM datos_desa.tb_ds_pasado_train_features_DOW_M LIMIT 10000;&quot;
+[1] &quot;FEATURES (train o futuro):  2742 x 39&quot;
+[1] &quot;------------------- Targets (INPUT) -----------------&quot;
+[1] &quot;SELECT * FROM datos_desa.tb_ds_pasado_train_targets_DOW_M LIMIT 10000;&quot;
+[1] &quot;TRAIN-T:  2742 x 1&quot;
+[1] &quot;leerDesdeBaseDatosYEscribirCSV ---&gt;nrow(leido_ft)= 2742&quot;
+[1] &quot;leido_ft:  2742 x 41&quot;
+[1] &quot;--------------- leerDesdeBaseDatosYEscribirCSV: FIN ------------&quot;
+[1] &quot;data.frame A: 2742 x 41&quot;
+[1] &quot;data.frame B: 2742 x 29&quot;
+[1] &quot;data.frame C: 2715 x 29&quot;
+[1] &quot;Numero de filas de C que tenian algun NA:&quot;
+[1] 27
+[1] &quot;data.frame E: 2715 x 41&quot;
+[1] &quot;--------------- crearFeaturesyTargetDelPasadoParaDistancias ------------&quot;
+[1] &quot;pasado_ft: 2715 x 41&quot;
+[1] &quot;quitarColumnasDeOtrasDistancias: TRUE&quot;
+[1] &quot;quitarNas: TRUE&quot;
+[1] &quot;pasado_ft_cortas_conNAs: 1228 x 41&quot;
+[1] &quot;pasado_ft_medias_conNAs: 1468 x 41&quot;
+[1] &quot;pasado_ft_largas_conNAs: 19 x 41&quot;
+[1] &quot;--Quitando columnas de otras DISTANCIAS...&quot;
+[1] &quot;pasado_ft_cortas_coldis: 1228 x 33&quot;
+[1] &quot;pasado_ft_medias_coldis: 1468 x 33&quot;
+[1] &quot;pasado_ft_largas_coldis: 19 x 33&quot;
+[1] &quot;-- Quitando NAs (aunque mantengo columna INDICE_ORDEN)...&quot;
+[1] &quot;Comprobacion de NAs...&quot;
+[1] &quot;CORTAS (train+test): 687 x 33&quot;
+[1] &quot;MEDIAS (train+test): 1457 x 33&quot;
+[1] &quot;LARGAS (train+test): 19 x 33&quot;
+[1] &quot;------- Reductor (PCA, TSNE...) ------&quot;
+[1] &quot;-------- reducirDimensionesYObtenerReductores: INICIO -----------&quot;
+[1] &quot;tipoReduccion: PCA&quot;
+[1] &quot;Lista: 3&quot;
+[1] &quot;Reduciendo FEATURES por cada dataset por distancia...&quot;
+[1] &quot; **************************************** reducirConPCA: INICIO *************************** &quot;
+[1] &quot;input_ft: 687 x 32&quot;
+[1] &quot;path_modelo_pca: /home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_cortas_DOW_M&quot;
+[1] &quot;umbral_varianza: 0.85&quot;
+[1] &quot;tipoPCA: prcomp&quot;
+[1] &quot;input_f_full (sin TARGET): 687 x 31&quot;
+[1] &quot;reducirConPCA() --&gt; ALGORITMO...&quot;
+[1] &quot;Guardando modelo PCA fichero: /home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_cortas_DOW_M&quot;
+[1] &quot; ************************************** reducirConPCA: FIN **************************** &quot;
+[1] &quot; **************************************** reducirConPCA: INICIO *************************** &quot;
+[1] &quot;input_ft: 1457 x 32&quot;
+[1] &quot;path_modelo_pca: /home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_medias_DOW_M&quot;
+[1] &quot;umbral_varianza: 0.85&quot;
+[1] &quot;tipoPCA: prcomp&quot;
+[1] &quot;input_f_full (sin TARGET): 1457 x 31&quot;
+[1] &quot;reducirConPCA() --&gt; ALGORITMO...&quot;
+[1] &quot;Guardando modelo PCA fichero: /home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_medias_DOW_M&quot;
+[1] &quot; ************************************** reducirConPCA: FIN **************************** &quot;
+[1] &quot; **************************************** reducirConPCA: INICIO *************************** &quot;
+[1] &quot;input_ft: 19 x 32&quot;
+[1] &quot;path_modelo_pca: /home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_largas_DOW_M&quot;
+[1] &quot;umbral_varianza: 0.85&quot;
+[1] &quot;tipoPCA: prcomp&quot;
+[1] &quot;input_f_full (sin TARGET): 19 x 31&quot;
+[1] &quot;reducirConPCA() --&gt; ALGORITMO...&quot;
+[1] &quot;Guardando modelo PCA fichero: /home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_largas_DOW_M&quot;
+[1] &quot; ************************************** reducirConPCA: FIN **************************** &quot;
+[1] &quot;Cargando reductores PCA (desde ficheros)...&quot;
+[1] &quot;/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_cortas_DOW_M&quot;
+[1] &quot;/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_medias_DOW_M&quot;
+[1] &quot;/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_largas_DOW_M&quot;
+[1] &quot;Devuelve los reductores (transformadores)...&quot;
+[1] &quot;-------- reducirDimensionesYObtenerReductores: FIN -----------&quot;
+[1] &quot;data.frame pasado_ft_cortas_transformada: 687 x 8&quot;
+[1] &quot;data.frame pasado_ft_medias_transformada: 1457 x 9&quot;
+[1] &quot;data.frame pasado_ft_largas_transformada: 19 x 5&quot;
+[1] &quot;--------------- ejecutarReduccionDimensiones: FIN ------------&quot;
+[1] &quot;----------------------------------------- calcularModelosPredictivosParaDistanciasYGuardarlos: INICIO ----------------------------&quot;
+[1] &quot;tag: DOW_M&quot;
+[1] &quot;#R_OUT#--MODELOS_PRED INPUT [tag|PORCENTAJE_TEST|pasado_ft_cortas|pasado_ft_medias|pasado_ft_largas] =DOW_M|0.1|687x8|1457x9|19x5&quot;
+[1] &quot;pasado_ft_cortas= 687 x 8&quot;
+[1] &quot;****************** analisis_modelos_superlearner ==&gt; CORTAS ******************&quot;
+[1] &quot;matrizentrada= 687 x 8&quot;
+[1] &quot;ejecutarMulticore= FALSE&quot;
+[1] &quot;testset= 68 x 8&quot;
+[1] &quot;trainset= 619 x 8&quot;
+[1] &quot;x_train= 619 x 7&quot;
+[1] &quot;y_train= 619&quot;
+[1] &quot;x_test= 68 x 7&quot;
+[1] &quot;y_test= 68&quot;
+[1] &quot;#R_OUT#--MODELOS_PRED [distancia_str|ejecutarMulticore|x_train|x_test] =CORTAS|FALSE|619x7|68x7|&quot;
+[1] &quot;------- Algoritmos usados -------&quot;
+     [,1]          [,2]            [,3]        [,4]          [,5]            
+[1,] &quot;SL.glmnet_1&quot; &quot;SL.bayesglm_1&quot; &quot;SL.glmnet&quot; &quot;SL.bayesglm&quot; &quot;SL.caret.rpart&quot;
+     [,6]     [,7]      [,8]         
+[1,] &quot;SL.glm&quot; &quot;SL.nnet&quot; &quot;SL.polymars&quot;
+[1] &quot;Cross-validation (INTERNA, dentro de cada algoritmo): 2&quot;
+[1] &quot;Cross-validation (EXTERNA): 2&quot;
+[1] &quot;-------- UNICORE (con cross validation) ----------&quot;</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gLmxvY2FsKGNvbm4sIHN0YXRlbWVudCwgLi4uKSA6IFxuICBjb3VsZCBub3QgcnVuIHN0YXRlbWVudDogVGFibGUgJ2RhdG9zX2Rlc2EudGJfZHNfcGFzYWRvX3RyYWluX2ZlYXR1cmVzX0RPV19MQUInIGRvZXNuJ3QgZXhpc3RcbkNhbGxzOiBlamVjdXRhckNhZGVuYUVudHJlbmFtaWVudG9WYWxpZGF0aW9uIC4uLiBsZWVyRGVzZGVCYXNlRGF0b3NZRXNjcmliaXJDU1YgLT4gZGJTZW5kUXVlcnkgLT4gZGJTZW5kUXVlcnkgLT4gLmxvY2FsIC0+IC5DYWxsXG5FeGVjdXRpb24gaGFsdGVkXG4ifQ== -->
-<pre><code>Error in .local(conn, statement, ...) : 
-  could not run statement: Table 'datos_desa.tb_ds_pasado_train_features_DOW_LAB' doesn't exist
-Calls: ejecutarCadenaEntrenamientoValidation ... leerDesdeBaseDatosYEscribirCSV -&gt; dbSendQuery -&gt; dbSendQuery -&gt; .local -&gt; .Call
-Execution halted</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBjYXJldFxuTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBsYXR0aWNlXG4ifQ== -->
+<pre><code>Loading required package: caret
+Loading required package: lattice</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiKyBGb2xkMDE6IGNwPTAuMDMyMzIgXG4tIEZvbGQwMTogY3A9MC4wMzIzMiBcbisgRm9sZDAyOiBjcD0wLjAzMjMyIFxuLSBGb2xkMDI6IGNwPTAuMDMyMzIgXG4rIEZvbGQwMzogY3A9MC4wMzIzMiBcbi0gRm9sZDAzOiBjcD0wLjAzMjMyIFxuKyBGb2xkMDQ6IGNwPTAuMDMyMzIgXG4tIEZvbGQwNDogY3A9MC4wMzIzMiBcbisgRm9sZDA1OiBjcD0wLjAzMjMyIFxuLSBGb2xkMDU6IGNwPTAuMDMyMzIgXG4rIEZvbGQwNjogY3A9MC4wMzIzMiBcbi0gRm9sZDA2OiBjcD0wLjAzMjMyIFxuKyBGb2xkMDc6IGNwPTAuMDMyMzIgXG4tIEZvbGQwNzogY3A9MC4wMzIzMiBcbisgRm9sZDA4OiBjcD0wLjAzMjMyIFxuLSBGb2xkMDg6IGNwPTAuMDMyMzIgXG4rIEZvbGQwOTogY3A9MC4wMzIzMiBcbi0gRm9sZDA5OiBjcD0wLjAzMjMyIFxuKyBGb2xkMTA6IGNwPTAuMDMyMzIgXG4tIEZvbGQxMDogY3A9MC4wMzIzMiBcbkFnZ3JlZ2F0aW5nIHJlc3VsdHNcblNlbGVjdGluZyB0dW5pbmcgcGFyYW1ldGVyc1xuRml0dGluZyBjcCA9IDAuMDMyMyBvbiBmdWxsIHRyYWluaW5nIHNldFxuKyBGb2xkMDE6IGNwPTAuMDI2NjUgXG4tIEZvbGQwMTogY3A9MC4wMjY2NSBcbisgRm9sZDAyOiBjcD0wLjAyNjY1IFxuLSBGb2xkMDI6IGNwPTAuMDI2NjUgXG4rIEZvbGQwMzogY3A9MC4wMjY2NSBcbi0gRm9sZDAzOiBjcD0wLjAyNjY1IFxuKyBGb2xkMDQ6IGNwPTAuMDI2NjUgXG4tIEZvbGQwNDogY3A9MC4wMjY2NSBcbisgRm9sZDA1OiBjcD0wLjAyNjY1IFxuLSBGb2xkMDU6IGNwPTAuMDI2NjUgXG4rIEZvbGQwNjogY3A9MC4wMjY2NSBcbi0gRm9sZDA2OiBjcD0wLjAyNjY1IFxuKyBGb2xkMDc6IGNwPTAuMDI2NjUgXG4tIEZvbGQwNzogY3A9MC4wMjY2NSBcbisgRm9sZDA4OiBjcD0wLjAyNjY1IFxuLSBGb2xkMDg6IGNwPTAuMDI2NjUgXG4rIEZvbGQwOTogY3A9MC4wMjY2NSBcbi0gRm9sZDA5OiBjcD0wLjAyNjY1IFxuKyBGb2xkMTA6IGNwPTAuMDI2NjUgXG4tIEZvbGQxMDogY3A9MC4wMjY2NSBcbkFnZ3JlZ2F0aW5nIHJlc3VsdHNcblNlbGVjdGluZyB0dW5pbmcgcGFyYW1ldGVyc1xuRml0dGluZyBjcCA9IDAuMDI2NyBvbiBmdWxsIHRyYWluaW5nIHNldFxuKyBGb2xkMDE6IGNwPTAuMDI1MTIgXG4tIEZvbGQwMTogY3A9MC4wMjUxMiBcbisgRm9sZDAyOiBjcD0wLjAyNTEyIFxuLSBGb2xkMDI6IGNwPTAuMDI1MTIgXG4rIEZvbGQwMzogY3A9MC4wMjUxMiBcbi0gRm9sZDAzOiBjcD0wLjAyNTEyIFxuKyBGb2xkMDQ6IGNwPTAuMDI1MTIgXG4tIEZvbGQwNDogY3A9MC4wMjUxMiBcbisgRm9sZDA1OiBjcD0wLjAyNTEyIFxuLSBGb2xkMDU6IGNwPTAuMDI1MTIgXG4rIEZvbGQwNjogY3A9MC4wMjUxMiBcbi0gRm9sZDA2OiBjcD0wLjAyNTEyIFxuKyBGb2xkMDc6IGNwPTAuMDI1MTIgXG4tIEZvbGQwNzogY3A9MC4wMjUxMiBcbisgRm9sZDA4OiBjcD0wLjAyNTEyIFxuLSBGb2xkMDg6IGNwPTAuMDI1MTIgXG4rIEZvbGQwOTogY3A9MC4wMjUxMiBcbi0gRm9sZDA5OiBjcD0wLjAyNTEyIFxuKyBGb2xkMTA6IGNwPTAuMDI1MTIgXG4tIEZvbGQxMDogY3A9MC4wMjUxMiBcbkFnZ3JlZ2F0aW5nIHJlc3VsdHNcblNlbGVjdGluZyB0dW5pbmcgcGFyYW1ldGVyc1xuRml0dGluZyBjcCA9IDAuMDI1MSBvbiBmdWxsIHRyYWluaW5nIHNldFxuWzFdIFwiJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJFwiXG4gWzFdIFwiI1JfT1VUIy0tIGNhbGxcIiAgICAgICAgICAgICAgXCIjUl9PVVQjLS0gbGlicmFyeU5hbWVzXCIgICAgIFxuIFszXSBcIiNSX09VVCMtLSBTTC5saWJyYXJ5XCIgICAgICAgIFwiI1JfT1VUIy0tIFNMLnByZWRpY3RcIiAgICAgICBcbiBbNV0gXCIjUl9PVVQjLS0gY29lZlwiICAgICAgICAgICAgICBcIiNSX09VVCMtLSBsaWJyYXJ5LnByZWRpY3RcIiAgXG4gWzddIFwiI1JfT1VUIy0tIFpcIiAgICAgICAgICAgICAgICAgXCIjUl9PVVQjLS0gY3ZSaXNrXCIgICAgICAgICAgIFxuIFs5XSBcIiNSX09VVCMtLSBmYW1pbHlcIiAgICAgICAgICAgIFwiI1JfT1VUIy0tIGZpdExpYnJhcnlcIiAgICAgICBcblsxMV0gXCIjUl9PVVQjLS0gdmFyTmFtZXNcIiAgICAgICAgICBcIiNSX09VVCMtLSB2YWxpZFJvd3NcIiAgICAgICAgXG5bMTNdIFwiI1JfT1VUIy0tIG1ldGhvZFwiICAgICAgICAgICAgXCIjUl9PVVQjLS0gd2hpY2hTY3JlZW5cIiAgICAgIFxuWzE1XSBcIiNSX09VVCMtLSBjb250cm9sXCIgICAgICAgICAgIFwiI1JfT1VUIy0tIGN2Q29udHJvbFwiICAgICAgICBcblsxN10gXCIjUl9PVVQjLS0gZXJyb3JzSW5DVkxpYnJhcnlcIiBcIiNSX09VVCMtLSBlcnJvcnNJbkxpYnJhcnlcIiAgXG5bMTldIFwiI1JfT1VUIy0tIG1ldGFPcHRpbWl6ZXJcIiAgICAgXCIjUl9PVVQjLS0gZW52XCIgICAgICAgICAgICAgIFxuWzIxXSBcIiNSX09VVCMtLSB0aW1lc1wiICAgICAgICAgICAgXG5cbkNhbGw6ICBcblN1cGVyTGVhcm5lcjo6U3VwZXJMZWFybmVyKFkgPSB5X3RyYWluLCBYID0geF90cmFpbiwgZmFtaWx5ID0gZ2F1c3NpYW4oKSwgIFxuICAgIFNMLmxpYnJhcnkgPSBhbGdvcml0bW9zUHJlZGljdGl2b3NVc2Fkb3MsIG1ldGhvZCA9IFwibWV0aG9kLk5OTFNcIiwgaWQgPSBOVUxMLCAgXG4gICAgdmVyYm9zZSA9IEZBTFNFLCBjb250cm9sID0gbGlzdCgpLCBjdkNvbnRyb2wgPSBsaXN0KFYgPSBudW1fdiwgc2h1ZmZsZSA9IEZBTFNFKSkgXG5cblxuXG4gICAgICAgICAgICAgICAgICAgICAgICAgIFJpc2sgICAgICAgQ29lZlxuU0wuZ2xtbmV0XzFfQWxsICAgIDAuMDA1NDc4OTA4IDAuODQ2NDY1MDdcblNMLmJheWVzZ2xtXzFfQWxsICAwLjAwNTUwNDc0MiAwLjAwMDAwMDAwXG5TTC5nbG1uZXRfQWxsICAgICAgMC4wMDU0ODAwMjIgMC4wMDAwMDAwMFxuU0wuYmF5ZXNnbG1fQWxsICAgIDAuMDA1NTA0NzQyIDAuMDAwMDAwMDBcblNMLmNhcmV0LnJwYXJ0X0FsbCAwLjAwOTY3ODUzMyAwLjA2MDU0MzM4XG5TTC5nbG1fQWxsICAgICAgICAgMC4wMDU1MDUxMDAgMC4wMDAwMDAwMFxuU0wubm5ldF9BbGwgICAgICAgIDAuMDA1NzU4NTQwIDAuMDkyOTkxNTRcblNMLnBvbHltYXJzX0FsbCAgICAwLjAwNTkyMzgyMiAwLjAwMDAwMDAwXG5bMV0gXCIkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkXCJcblsxXSBcIkd1YXJkYW5kbyBtb2RlbG8gUFJFRElDVElWTzogIC9ob21lL2Nhcmxvc2xpbnV4L0Rlc2t0b3AvREFUT1NfTElNUElPL2dhbGdvcy9tb2RlbG9fY29ydGFzX0RPV19NXCJcblsxXSBcInBhc2Fkb19mdF9tZWRpYXM9IDE0NTcgeCA5XCJcblsxXSBcIioqKioqKioqKioqKioqKioqKiBhbmFsaXNpc19tb2RlbG9zX3N1cGVybGVhcm5lciA9PT4gTUVESUFTICoqKioqKioqKioqKioqKioqKlwiXG5bMV0gXCJtYXRyaXplbnRyYWRhPSAxNDU3IHggOVwiXG5bMV0gXCJlamVjdXRhck11bHRpY29yZT0gRkFMU0VcIlxuWzFdIFwidGVzdHNldD0gMTQ1IHggOVwiXG5bMV0gXCJ0cmFpbnNldD0gMTMxMiB4IDlcIlxuWzFdIFwieF90cmFpbj0gMTMxMiB4IDhcIlxuWzFdIFwieV90cmFpbj0gMTMxMlwiXG5bMV0gXCJ4X3Rlc3Q9IDE0NSB4IDhcIlxuWzFdIFwieV90ZXN0PSAxNDVcIlxuWzFdIFwiI1JfT1VUIy0tTU9ERUxPU19QUkVEIFtkaXN0YW5jaWFfc3RyfGVqZWN1dGFyTXVsdGljb3JlfHhfdHJhaW58eF90ZXN0XSA9TUVESUFTfEZBTFNFfDEzMTJ4OHwxNDV4OHxcIlxuWzFdIFwiLS0tLS0tLSBBbGdvcml0bW9zIHVzYWRvcyAtLS0tLS0tXCJcbiAgICAgWywxXSAgICAgICAgICBbLDJdICAgICAgICAgICAgWywzXSAgICAgICAgWyw0XSAgICAgICAgICBbLDVdICAgICAgICAgICAgXG5bMSxdIFwiU0wuZ2xtbmV0XzFcIiBcIlNMLmJheWVzZ2xtXzFcIiBcIlNMLmdsbW5ldFwiIFwiU0wuYmF5ZXNnbG1cIiBcIlNMLmNhcmV0LnJwYXJ0XCJcbiAgICAgWyw2XSAgICAgWyw3XSAgICAgIFssOF0gICAgICAgICBcblsxLF0gXCJTTC5nbG1cIiBcIlNMLm5uZXRcIiBcIlNMLnBvbHltYXJzXCJcblsxXSBcIkNyb3NzLXZhbGlkYXRpb24gKElOVEVSTkEsIGRlbnRybyBkZSBjYWRhIGFsZ29yaXRtbyk6IDJcIlxuWzFdIFwiQ3Jvc3MtdmFsaWRhdGlvbiAoRVhURVJOQSk6IDJcIlxuWzFdIFwiLS0tLS0tLS0gVU5JQ09SRSAoY29uIGNyb3NzIHZhbGlkYXRpb24pIC0tLS0tLS0tLS1cIlxuKyBGb2xkMDE6IGNwPTAuMDU2ODEgXG4tIEZvbGQwMTogY3A9MC4wNTY4MSBcbisgRm9sZDAyOiBjcD0wLjA1NjgxIFxuLSBGb2xkMDI6IGNwPTAuMDU2ODEgXG4rIEZvbGQwMzogY3A9MC4wNTY4MSBcbi0gRm9sZDAzOiBjcD0wLjA1NjgxIFxuKyBGb2xkMDQ6IGNwPTAuMDU2ODEgXG4tIEZvbGQwNDogY3A9MC4wNTY4MSBcbisgRm9sZDA1OiBjcD0wLjA1NjgxIFxuLSBGb2xkMDU6IGNwPTAuMDU2ODEgXG4rIEZvbGQwNjogY3A9MC4wNTY4MSBcbi0gRm9sZDA2OiBjcD0wLjA1NjgxIFxuKyBGb2xkMDc6IGNwPTAuMDU2ODEgXG4tIEZvbGQwNzogY3A9MC4wNTY4MSBcbisgRm9sZDA4OiBjcD0wLjA1NjgxIFxuLSBGb2xkMDg6IGNwPTAuMDU2ODEgXG4rIEZvbGQwOTogY3A9MC4wNTY4MSBcbi0gRm9sZDA5OiBjcD0wLjA1NjgxIFxuKyBGb2xkMTA6IGNwPTAuMDU2ODEgXG4tIEZvbGQxMDogY3A9MC4wNTY4MSBcbkFnZ3JlZ2F0aW5nIHJlc3VsdHNcblNlbGVjdGluZyB0dW5pbmcgcGFyYW1ldGVyc1xuRml0dGluZyBjcCA9IDAuMDU2OCBvbiBmdWxsIHRyYWluaW5nIHNldFxuKyBGb2xkMDE6IGNwPTAuMDM0MDcgXG4tIEZvbGQwMTogY3A9MC4wMzQwNyBcbisgRm9sZDAyOiBjcD0wLjAzNDA3IFxuLSBGb2xkMDI6IGNwPTAuMDM0MDcgXG4rIEZvbGQwMzogY3A9MC4wMzQwNyBcbi0gRm9sZDAzOiBjcD0wLjAzNDA3IFxuKyBGb2xkMDQ6IGNwPTAuMDM0MDcgXG4tIEZvbGQwNDogY3A9MC4wMzQwNyBcbisgRm9sZDA1OiBjcD0wLjAzNDA3IFxuLSBGb2xkMDU6IGNwPTAuMDM0MDcgXG4rIEZvbGQwNjogY3A9MC4wMzQwNyBcbi0gRm9sZDA2OiBjcD0wLjAzNDA3IFxuKyBGb2xkMDc6IGNwPTAuMDM0MDcgXG4tIEZvbGQwNzogY3A9MC4wMzQwNyBcbisgRm9sZDA4OiBjcD0wLjAzNDA3IFxuLSBGb2xkMDg6IGNwPTAuMDM0MDcgXG4rIEZvbGQwOTogY3A9MC4wMzQwNyBcbi0gRm9sZDA5OiBjcD0wLjAzNDA3IFxuKyBGb2xkMTA6IGNwPTAuMDM0MDcgXG4tIEZvbGQxMDogY3A9MC4wMzQwNyBcbkFnZ3JlZ2F0aW5nIHJlc3VsdHNcblNlbGVjdGluZyB0dW5pbmcgcGFyYW1ldGVyc1xuRml0dGluZyBjcCA9IDAuMDM0MSBvbiBmdWxsIHRyYWluaW5nIHNldFxuKyBGb2xkMDE6IGNwPTAuMDYwMzkgXG4tIEZvbGQwMTogY3A9MC4wNjAzOSBcbisgRm9sZDAyOiBjcD0wLjA2MDM5IFxuLSBGb2xkMDI6IGNwPTAuMDYwMzkgXG4rIEZvbGQwMzogY3A9MC4wNjAzOSBcbi0gRm9sZDAzOiBjcD0wLjA2MDM5IFxuKyBGb2xkMDQ6IGNwPTAuMDYwMzkgXG4tIEZvbGQwNDogY3A9MC4wNjAzOSBcbisgRm9sZDA1OiBjcD0wLjA2MDM5IFxuLSBGb2xkMDU6IGNwPTAuMDYwMzkgXG4rIEZvbGQwNjogY3A9MC4wNjAzOSBcbi0gRm9sZDA2OiBjcD0wLjA2MDM5IFxuKyBGb2xkMDc6IGNwPTAuMDYwMzkgXG4tIEZvbGQwNzogY3A9MC4wNjAzOSBcbisgRm9sZDA4OiBjcD0wLjA2MDM5IFxuLSBGb2xkMDg6IGNwPTAuMDYwMzkgXG4rIEZvbGQwOTogY3A9MC4wNjAzOSBcbi0gRm9sZDA5OiBjcD0wLjA2MDM5IFxuKyBGb2xkMTA6IGNwPTAuMDYwMzkgXG4tIEZvbGQxMDogY3A9MC4wNjAzOSBcbkFnZ3JlZ2F0aW5nIHJlc3VsdHNcblNlbGVjdGluZyB0dW5pbmcgcGFyYW1ldGVyc1xuRml0dGluZyBjcCA9IDAuMDYwNCBvbiBmdWxsIHRyYWluaW5nIHNldFxuWzFdIFwiJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJFwiXG4gWzFdIFwiI1JfT1VUIy0tIGNhbGxcIiAgICAgICAgICAgICAgXCIjUl9PVVQjLS0gbGlicmFyeU5hbWVzXCIgICAgIFxuIFszXSBcIiNSX09VVCMtLSBTTC5saWJyYXJ5XCIgICAgICAgIFwiI1JfT1VUIy0tIFNMLnByZWRpY3RcIiAgICAgICBcbiBbNV0gXCIjUl9PVVQjLS0gY29lZlwiICAgICAgICAgICAgICBcIiNSX09VVCMtLSBsaWJyYXJ5LnByZWRpY3RcIiAgXG4gWzddIFwiI1JfT1VUIy0tIFpcIiAgICAgICAgICAgICAgICAgXCIjUl9PVVQjLS0gY3ZSaXNrXCIgICAgICAgICAgIFxuIFs5XSBcIiNSX09VVCMtLSBmYW1pbHlcIiAgICAgICAgICAgIFwiI1JfT1VUIy0tIGZpdExpYnJhcnlcIiAgICAgICBcblsxMV0gXCIjUl9PVVQjLS0gdmFyTmFtZXNcIiAgICAgICAgICBcIiNSX09VVCMtLSB2YWxpZFJvd3NcIiAgICAgICAgXG5bMTNdIFwiI1JfT1VUIy0tIG1ldGhvZFwiICAgICAgICAgICAgXCIjUl9PVVQjLS0gd2hpY2hTY3JlZW5cIiAgICAgIFxuWzE1XSBcIiNSX09VVCMtLSBjb250cm9sXCIgICAgICAgICAgIFwiI1JfT1VUIy0tIGN2Q29udHJvbFwiICAgICAgICBcblsxN10gXCIjUl9PVVQjLS0gZXJyb3JzSW5DVkxpYnJhcnlcIiBcIiNSX09VVCMtLSBlcnJvcnNJbkxpYnJhcnlcIiAgXG5bMTldIFwiI1JfT1VUIy0tIG1ldGFPcHRpbWl6ZXJcIiAgICAgXCIjUl9PVVQjLS0gZW52XCIgICAgICAgICAgICAgIFxuWzIxXSBcIiNSX09VVCMtLSB0aW1lc1wiICAgICAgICAgICAgXG5cbkNhbGw6ICBcblN1cGVyTGVhcm5lcjo6U3VwZXJMZWFybmVyKFkgPSB5X3RyYWluLCBYID0geF90cmFpbiwgZmFtaWx5ID0gZ2F1c3NpYW4oKSwgIFxuICAgIFNMLmxpYnJhcnkgPSBhbGdvcml0bW9zUHJlZGljdGl2b3NVc2Fkb3MsIG1ldGhvZCA9IFwibWV0aG9kLk5OTFNcIiwgaWQgPSBOVUxMLCAgXG4gICAgdmVyYm9zZSA9IEZBTFNFLCBjb250cm9sID0gbGlzdCgpLCBjdkNvbnRyb2wgPSBsaXN0KFYgPSBudW1fdiwgc2h1ZmZsZSA9IEZBTFNFKSkgXG5cblxuXG4gICAgICAgICAgICAgICAgICAgICAgICAgIFJpc2sgICAgICBDb2VmXG5TTC5nbG1uZXRfMV9BbGwgICAgMC4wMDQyNDcwNjkgMC4wMDAwMDAwXG5TTC5iYXllc2dsbV8xX0FsbCAgMC4wMDQyNDYwMDIgMC4wMDAwMDAwXG5TTC5nbG1uZXRfQWxsICAgICAgMC4wMDQyNDcwNjkgMC4wMDAwMDAwXG5TTC5iYXllc2dsbV9BbGwgICAgMC4wMDQyNDYwMDIgMC4wMDAwMDAwXG5TTC5jYXJldC5ycGFydF9BbGwgMC4wMDc0MDk3NDUgMC4wOTM0NDQ5XG5TTC5nbG1fQWxsICAgICAgICAgMC4wMDQyNDYwNTEgMC4yNzc2Mjc5XG5TTC5ubmV0X0FsbCAgICAgICAgMC4wMTMwNDczNjggMC4wMDAwMDAwXG5TTC5wb2x5bWFyc19BbGwgICAgMC4wMDQwNDY0MDEgMC42Mjg5MjcyXG5bMV0gXCIkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkXCJcblsxXSBcIkd1YXJkYW5kbyBtb2RlbG8gUFJFRElDVElWTzogIC9ob21lL2Nhcmxvc2xpbnV4L0Rlc2t0b3AvREFUT1NfTElNUElPL2dhbGdvcy9tb2RlbG9fbWVkaWFzX0RPV19NXCJcblsxXSBcInBhc2Fkb19mdF9sYXJnYXM9IDE5IHggNVwiXG5bMV0gXCIqKioqKioqKioqKioqKioqKiogYW5hbGlzaXNfbW9kZWxvc19zdXBlcmxlYXJuZXIgPT0+IExBUkdBUyAqKioqKioqKioqKioqKioqKipcIlxuWzFdIFwibWF0cml6ZW50cmFkYT0gMTkgeCA1XCJcblsxXSBcImVqZWN1dGFyTXVsdGljb3JlPSBGQUxTRVwiXG5bMV0gXCJ0ZXN0c2V0PSAxIHggNVwiXG5bMV0gXCJ0cmFpbnNldD0gMTggeCA1XCJcblsxXSBcInhfdHJhaW49IDE4IHggNFwiXG5bMV0gXCJ5X3RyYWluPSAxOFwiXG5bMV0gXCJ4X3Rlc3Q9IDEgeCA0XCJcblsxXSBcInlfdGVzdD0gMVwiXG5bMV0gXCIjUl9PVVQjLS1NT0RFTE9TX1BSRUQgW2Rpc3RhbmNpYV9zdHJ8ZWplY3V0YXJNdWx0aWNvcmV8eF90cmFpbnx4X3Rlc3RdID1MQVJHQVN8RkFMU0V8MTh4NHwxeDR8XCJcblsxXSBcIi0tLS0tLS0gQWxnb3JpdG1vcyB1c2Fkb3MgLS0tLS0tLVwiXG4gICAgIFssMV0gICAgICAgICAgWywyXSAgICAgICAgICAgIFssM10gICAgICAgIFssNF0gICAgICAgICAgWyw1XSAgICAgICAgICAgIFxuWzEsXSBcIlNMLmdsbW5ldF8xXCIgXCJTTC5iYXllc2dsbV8xXCIgXCJTTC5nbG1uZXRcIiBcIlNMLmJheWVzZ2xtXCIgXCJTTC5jYXJldC5ycGFydFwiXG4gICAgIFssNl0gICAgIFssN10gICAgICBbLDhdICAgICAgICAgXG5bMSxdIFwiU0wuZ2xtXCIgXCJTTC5ubmV0XCIgXCJTTC5wb2x5bWFyc1wiXG5bMV0gXCJDcm9zcy12YWxpZGF0aW9uIChJTlRFUk5BLCBkZW50cm8gZGUgY2FkYSBhbGdvcml0bW8pOiAyXCJcblsxXSBcIkNyb3NzLXZhbGlkYXRpb24gKEVYVEVSTkEpOiAyXCJcblsxXSBcIi0tLS0tLS0tIFVOSUNPUkUgKGNvbiBjcm9zcyB2YWxpZGF0aW9uKSAtLS0tLS0tLS0tXCJcbisgRm9sZDE6IGNwPTAgXG4tIEZvbGQxOiBjcD0wIFxuKyBGb2xkMjogY3A9MCBcbi0gRm9sZDI6IGNwPTAgXG4rIEZvbGQzOiBjcD0wIFxuLSBGb2xkMzogY3A9MCBcbisgRm9sZDQ6IGNwPTAgXG4tIEZvbGQ0OiBjcD0wIFxuKyBGb2xkNTogY3A9MCBcbi0gRm9sZDU6IGNwPTAgXG4rIEZvbGQ2OiBjcD0wIFxuLSBGb2xkNjogY3A9MCBcbisgRm9sZDc6IGNwPTAgXG4tIEZvbGQ3OiBjcD0wIFxuKyBGb2xkODogY3A9MCBcbi0gRm9sZDg6IGNwPTAgXG4rIEZvbGQ5OiBjcD0wIFxuLSBGb2xkOTogY3A9MCBcbkFnZ3JlZ2F0aW5nIHJlc3VsdHNcbkZpdHRpbmcgZmluYWwgbW9kZWwgb24gZnVsbCB0cmFpbmluZyBzZXRcbisgRm9sZDE6IGNwPTAgXG4tIEZvbGQxOiBjcD0wIFxuKyBGb2xkMjogY3A9MCBcbi0gRm9sZDI6IGNwPTAgXG4rIEZvbGQzOiBjcD0wIFxuLSBGb2xkMzogY3A9MCBcbisgRm9sZDQ6IGNwPTAgXG4tIEZvbGQ0OiBjcD0wIFxuKyBGb2xkNTogY3A9MCBcbi0gRm9sZDU6IGNwPTAgXG4rIEZvbGQ2OiBjcD0wIFxuLSBGb2xkNjogY3A9MCBcbisgRm9sZDc6IGNwPTAgXG4tIEZvbGQ3OiBjcD0wIFxuKyBGb2xkODogY3A9MCBcbi0gRm9sZDg6IGNwPTAgXG4rIEZvbGQ5OiBjcD0wIFxuLSBGb2xkOTogY3A9MCBcbkFnZ3JlZ2F0aW5nIHJlc3VsdHNcbkZpdHRpbmcgZmluYWwgbW9kZWwgb24gZnVsbCB0cmFpbmluZyBzZXRcbisgRm9sZDAxOiBjcD0wIFxuLSBGb2xkMDE6IGNwPTAgXG4rIEZvbGQwMjogY3A9MCBcbi0gRm9sZDAyOiBjcD0wIFxuKyBGb2xkMDM6IGNwPTAgXG4tIEZvbGQwMzogY3A9MCBcbisgRm9sZDA0OiBjcD0wIFxuLSBGb2xkMDQ6IGNwPTAgXG4rIEZvbGQwNTogY3A9MCBcbi0gRm9sZDA1OiBjcD0wIFxuKyBGb2xkMDY6IGNwPTAgXG4tIEZvbGQwNjogY3A9MCBcbisgRm9sZDA3OiBjcD0wIFxuLSBGb2xkMDc6IGNwPTAgXG4rIEZvbGQwODogY3A9MCBcbi0gRm9sZDA4OiBjcD0wIFxuKyBGb2xkMDk6IGNwPTAgXG4tIEZvbGQwOTogY3A9MCBcbisgRm9sZDEwOiBjcD0wIFxuLSBGb2xkMTA6IGNwPTAgXG5BZ2dyZWdhdGluZyByZXN1bHRzXG5GaXR0aW5nIGZpbmFsIG1vZGVsIG9uIGZ1bGwgdHJhaW5pbmcgc2V0XG5bMV0gXCIkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkXCJcbiBbMV0gXCIjUl9PVVQjLS0gY2FsbFwiICAgICAgICAgICAgICBcIiNSX09VVCMtLSBsaWJyYXJ5TmFtZXNcIiAgICAgXG4gWzNdIFwiI1JfT1VUIy0tIFNMLmxpYnJhcnlcIiAgICAgICAgXCIjUl9PVVQjLS0gU0wucHJlZGljdFwiICAgICAgIFxuIFs1XSBcIiNSX09VVCMtLSBjb2VmXCIgICAgICAgICAgICAgIFwiI1JfT1VUIy0tIGxpYnJhcnkucHJlZGljdFwiICBcbiBbN10gXCIjUl9PVVQjLS0gWlwiICAgICAgICAgICAgICAgICBcIiNSX09VVCMtLSBjdlJpc2tcIiAgICAgICAgICAgXG4gWzldIFwiI1JfT1VUIy0tIGZhbWlseVwiICAgICAgICAgICAgXCIjUl9PVVQjLS0gZml0TGlicmFyeVwiICAgICAgIFxuWzExXSBcIiNSX09VVCMtLSB2YXJOYW1lc1wiICAgICAgICAgIFwiI1JfT1VUIy0tIHZhbGlkUm93c1wiICAgICAgICBcblsxM10gXCIjUl9PVVQjLS0gbWV0aG9kXCIgICAgICAgICAgICBcIiNSX09VVCMtLSB3aGljaFNjcmVlblwiICAgICAgXG5bMTVdIFwiI1JfT1VUIy0tIGNvbnRyb2xcIiAgICAgICAgICAgXCIjUl9PVVQjLS0gY3ZDb250cm9sXCIgICAgICAgIFxuWzE3XSBcIiNSX09VVCMtLSBlcnJvcnNJbkNWTGlicmFyeVwiIFwiI1JfT1VUIy0tIGVycm9yc0luTGlicmFyeVwiICBcblsxOV0gXCIjUl9PVVQjLS0gbWV0YU9wdGltaXplclwiICAgICBcIiNSX09VVCMtLSBlbnZcIiAgICAgICAgICAgICAgXG5bMjFdIFwiI1JfT1VUIy0tIHRpbWVzXCIgICAgICAgICAgICBcblxuQ2FsbDogIFxuU3VwZXJMZWFybmVyOjpTdXBlckxlYXJuZXIoWSA9IHlfdHJhaW4sIFggPSB4X3RyYWluLCBmYW1pbHkgPSBnYXVzc2lhbigpLCAgXG4gICAgU0wubGlicmFyeSA9IGFsZ29yaXRtb3NQcmVkaWN0aXZvc1VzYWRvcywgbWV0aG9kID0gXCJtZXRob2QuTk5MU1wiLCBpZCA9IE5VTEwsICBcbiAgICB2ZXJib3NlID0gRkFMU0UsIGNvbnRyb2wgPSBsaXN0KCksIGN2Q29udHJvbCA9IGxpc3QoViA9IG51bV92LCBzaHVmZmxlID0gRkFMU0UpKSBcblxuXG5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgUmlzayAgICAgICBDb2VmXG5TTC5nbG1uZXRfMV9BbGwgICAgMC4wMDIwMDU1MzkgMC4wMzI2OTM4MVxuU0wuYmF5ZXNnbG1fMV9BbGwgIDAuMDAzNjczNjg0IDAuMDAwMDAwMDBcblNMLmdsbW5ldF9BbGwgICAgICAwLjAwMTg5OTQzMCAwLjAwMDAwMDAwXG5TTC5iYXllc2dsbV9BbGwgICAgMC4wMDM2NzM2ODQgMC4wMDAwMDAwMFxuU0wuY2FyZXQucnBhcnRfQWxsIDAuMDAxNzAwNTAxIDAuMDAwMDAwMDBcblNMLmdsbV9BbGwgICAgICAgICAwLjAwNDIyNzk4MiAwLjAwMDAwMDAwXG5TTC5ubmV0X0FsbCAgICAgICAgMC4wMDQzNjgwMjkgMC4wMDAwMDAwMFxuU0wucG9seW1hcnNfQWxsICAgIDAuMDAxNzAwNTAxIDAuOTY3MzA2MTlcblsxXSBcIiQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCRcIlxuWzFdIFwiR3VhcmRhbmRvIG1vZGVsbyBQUkVESUNUSVZPOiAgL2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9EQVRPU19MSU1QSU8vZ2FsZ29zL21vZGVsb19sYXJnYXNfRE9XX01cIlxuWzFdIFwiLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0gY2FsY3VsYXJNb2RlbG9zUHJlZGljdGl2b3NQYXJhRGlzdGFuY2lhc1lHdWFyZGFybG9zOiBGSU4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVwiXG5bMV0gXCItLS0tLSBWQUxJREFUSU9OIChwYXNhZG8tZmVhdHVyZXMpOiBBcGxpY2FuZG8gcmVkdWNjaW9uIFBDQSB5IG1vZGVsb3MgcHJlZGljdGl2b3MgcGFyYSBhZGl2aW5hciBlbCB0YXJnZXQgLS0tXCJcblsxXSBcIkFwbGljYW5kbyBQQ0Egc29icmUgVmFsaWRhdGlvbiAocGFzYWRvLWZlYXR1cmVzKS4uLlwiXG5bMV0gXCJ2YWxpZGF0aW9uIC1GIGNvcnRhczogNTg4IHggMzJcIlxuWzFdIFwidmFsaWRhdGlvbiAtRiBtZWRpYXM6IDc2OCB4IDMyXCJcblsxXSBcInZhbGlkYXRpb24gLUYgbGFyZ2FzOiAwIHggMzJcIlxuWzFdIFwiUmVkdWNpZW5kbyBkaW1lbnNpb25lcy4uLi5cIlxuWzFdIFwiU2FsaWRhIChpbmNsdXllIElORElDRV9PUkRFTikuLi5cIlxuWzFdIFwiUHJlZGVjaWVuZG8gZWwgdGFyZ2V0IHNvYnJlIGVsIHZhbGlkYXRpb24gKHBhc2Fkby1mZWF0dXJlcyksIHVzYW5kbyBtb2RlbG9zIHByZWRpY3Rpdm9zLi4uXCJcblsxXSBcIkNhcmdhbmRvIG1vZGVsb3MgUFJFRElDVElWT1MgRU5UUkVOQURPUyAoZGVzZGUgZmljaGVybykuLi5cIlxuXG5DYWxsOiAgXG5TdXBlckxlYXJuZXI6OlN1cGVyTGVhcm5lcihZID0geV90cmFpbiwgWCA9IHhfdHJhaW4sIGZhbWlseSA9IGdhdXNzaWFuKCksICBcbiAgICBTTC5saWJyYXJ5ID0gYWxnb3JpdG1vc1ByZWRpY3Rpdm9zVXNhZG9zLCBtZXRob2QgPSBcIm1ldGhvZC5OTkxTXCIsIGlkID0gTlVMTCwgIFxuICAgIHZlcmJvc2UgPSBGQUxTRSwgY29udHJvbCA9IGxpc3QoKSwgY3ZDb250cm9sID0gbGlzdChWID0gbnVtX3YsIHNodWZmbGUgPSBGQUxTRSkpIFxuXG5cblxuICAgICAgICAgICAgICAgICAgICAgICAgICBSaXNrICAgICAgIENvZWZcblNMLmdsbW5ldF8xX0FsbCAgICAwLjAwNTQ3ODkwOCAwLjg0NjQ2NTA3XG5TTC5iYXllc2dsbV8xX0FsbCAgMC4wMDU1MDQ3NDIgMC4wMDAwMDAwMFxuU0wuZ2xtbmV0X0FsbCAgICAgIDAuMDA1NDgwMDIyIDAuMDAwMDAwMDBcblNMLmJheWVzZ2xtX0FsbCAgICAwLjAwNTUwNDc0MiAwLjAwMDAwMDAwXG5TTC5jYXJldC5ycGFydF9BbGwgMC4wMDk2Nzg1MzMgMC4wNjA1NDMzOFxuU0wuZ2xtX0FsbCAgICAgICAgIDAuMDA1NTA1MTAwIDAuMDAwMDAwMDBcblNMLm5uZXRfQWxsICAgICAgICAwLjAwNTc1ODU0MCAwLjA5Mjk5MTU0XG5TTC5wb2x5bWFyc19BbGwgICAgMC4wMDU5MjM4MjIgMC4wMDAwMDAwMFxuXG5DYWxsOiAgXG5TdXBlckxlYXJuZXI6OlN1cGVyTGVhcm5lcihZID0geV90cmFpbiwgWCA9IHhfdHJhaW4sIGZhbWlseSA9IGdhdXNzaWFuKCksICBcbiAgICBTTC5saWJyYXJ5ID0gYWxnb3JpdG1vc1ByZWRpY3Rpdm9zVXNhZG9zLCBtZXRob2QgPSBcIm1ldGhvZC5OTkxTXCIsIGlkID0gTlVMTCwgIFxuICAgIHZlcmJvc2UgPSBGQUxTRSwgY29udHJvbCA9IGxpc3QoKSwgY3ZDb250cm9sID0gbGlzdChWID0gbnVtX3YsIHNodWZmbGUgPSBGQUxTRSkpIFxuXG5cblxuICAgICAgICAgICAgICAgICAgICAgICAgICBSaXNrICAgICAgQ29lZlxuU0wuZ2xtbmV0XzFfQWxsICAgIDAuMDA0MjQ3MDY5IDAuMDAwMDAwMFxuU0wuYmF5ZXNnbG1fMV9BbGwgIDAuMDA0MjQ2MDAyIDAuMDAwMDAwMFxuU0wuZ2xtbmV0X0FsbCAgICAgIDAuMDA0MjQ3MDY5IDAuMDAwMDAwMFxuU0wuYmF5ZXNnbG1fQWxsICAgIDAuMDA0MjQ2MDAyIDAuMDAwMDAwMFxuU0wuY2FyZXQucnBhcnRfQWxsIDAuMDA3NDA5NzQ1IDAuMDkzNDQ0OVxuU0wuZ2xtX0FsbCAgICAgICAgIDAuMDA0MjQ2MDUxIDAuMjc3NjI3OVxuU0wubm5ldF9BbGwgICAgICAgIDAuMDEzMDQ3MzY4IDAuMDAwMDAwMFxuU0wucG9seW1hcnNfQWxsICAgIDAuMDA0MDQ2NDAxIDAuNjI4OTI3MlxuXG5DYWxsOiAgXG5TdXBlckxlYXJuZXI6OlN1cGVyTGVhcm5lcihZID0geV90cmFpbiwgWCA9IHhfdHJhaW4sIGZhbWlseSA9IGdhdXNzaWFuKCksICBcbiAgICBTTC5saWJyYXJ5ID0gYWxnb3JpdG1vc1ByZWRpY3Rpdm9zVXNhZG9zLCBtZXRob2QgPSBcIm1ldGhvZC5OTkxTXCIsIGlkID0gTlVMTCwgIFxuICAgIHZlcmJvc2UgPSBGQUxTRSwgY29udHJvbCA9IGxpc3QoKSwgY3ZDb250cm9sID0gbGlzdChWID0gbnVtX3YsIHNodWZmbGUgPSBGQUxTRSkpIFxuXG5cblxuICAgICAgICAgICAgICAgICAgICAgICAgICBSaXNrICAgICAgIENvZWZcblNMLmdsbW5ldF8xX0FsbCAgICAwLjAwMjAwNTUzOSAwLjAzMjY5MzgxXG5TTC5iYXllc2dsbV8xX0FsbCAgMC4wMDM2NzM2ODQgMC4wMDAwMDAwMFxuU0wuZ2xtbmV0X0FsbCAgICAgIDAuMDAxODk5NDMwIDAuMDAwMDAwMDBcblNMLmJheWVzZ2xtX0FsbCAgICAwLjAwMzY3MzY4NCAwLjAwMDAwMDAwXG5TTC5jYXJldC5ycGFydF9BbGwgMC4wMDE3MDA1MDEgMC4wMDAwMDAwMFxuU0wuZ2xtX0FsbCAgICAgICAgIDAuMDA0MjI3OTgyIDAuMDAwMDAwMDBcblNMLm5uZXRfQWxsICAgICAgICAwLjAwNDM2ODAyOSAwLjAwMDAwMDAwXG5TTC5wb2x5bWFyc19BbGwgICAgMC4wMDE3MDA1MDEgMC45NjczMDYxOVxuWzFdIFwiLS0tLS0tLS0tLS0tLS0tIHByZWRlY2lyKCk6IElOSUNJTyAtLS0tLS0tLS0tLS0tLS0tLVwiXG5bMV0gXCJ0YWc9IERPV19NXCJcblsxXSBcImlucHV0X2ZfdHJhbnNmb3JtYWRhczogIDNcIlxuWzFdIFwib3V0cHV0X2ZpbGVfcHJlZmlqbz0gL2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9EQVRPU19MSU1QSU8vZ2FsZ29zL3Bhc2Fkb192YWxpZGF0aW9uX3RhcmdldHNfcHJlZGljaG9zX1wiXG5bMV0gXCJ0aXBvPSBWQUxJREFUSU9OXCJcblsxXSBcIiAtLS0tLS0tLS0tLS0tLS1FbnRyYWRhcyAoZmVhdHVyZXM6IG1hbnRlbmVyIGVsIE9SREVOKS0tLS0tLS0tLS0tXCJcblsxXSBcImlucHV0X2ZfdHJhbnNmb3JtYWRhX2NvcnRhczogIDU4OCB4IDhcIlxuWzFdIFwiaW5wdXRfZl90cmFuc2Zvcm1hZGFfbWVkaWFzOiAgNzY4IHggOVwiXG5bMV0gXCJpbnB1dF9mX3RyYW5zZm9ybWFkYV9sYXJnYXM6ICAwIHggNVwiXG5bMV0gXCJPbWl0aWVuZG8gbnVsb3MuLi5cIlxuWzFdIFwiQ09SVEFTLUYgKHNpbiBOQXMpOiAzNzYgeCA4XCJcblsxXSBcIk1FRElBUy1GIChzaW4gTkFzKTogNzU1IHggOVwiXG5bMV0gXCJMQVJHQVMtRiAoc2luIE5Bcyk6IDAgeCA1XCJcblsxXSBcImlucHV0X2ZfY29ydGFzX3NpbmluZGljZTogMzc2IHggN1wiXG4gICAgICAgICAgUEMxICAgICAgIFBDMiAgICAgICAgICBQQzMgICAgICAgIFBDNCAgICAgICAgIFBDNSAgICAgICAgICBQQzZcbjcgICAwLjY4OTU2NjggMC43NDk3NTU0ICAwLjM4OTg0ODAyNSAtMC4xNDA4NTM4ICAwLjA4ODI3ODgyIC0wLjAwNjk0MzEzOFxuOCAgIDAuMTQzNzI2NSAwLjgyMTYzMTAgIDAuMzE5NDE0NDU5IC0wLjEyNzA5MDIgIDAuMjE5MjIyMDMgLTAuMTc4NjMyMzI1XG45ICAtMC4yOTQ5ODg2IDAuODYxOTAwOSAtMC41NzMwNDE4NDMgIDAuMTI0NDgzMyAgMC4wNzY2MDg0MyAtMC4wMDE5MDA5MDNcbjEwIC0wLjU4MzcxMjYgMC43MjMxMDQyICAwLjQ0NTg4NDU0MiAtMC4xNzk4MzA2ICAwLjIwODkzMjkwIC0wLjExMDg4Mzg1N1xuMTEgIDAuNjY2OTU4MiAwLjYyODYzNzQgIDAuMDAxNzI4Njg3IC0wLjEyMDU1OTAgIDAuMDg0NzY0MjIgLTAuMDE4NzY3MjkzXG4xMiAtMC4yMzM0OTcwIDAuNjY3NTc2NCAgMC4wNTk0ODQ5ODQgLTAuMTY2ODk5MiAtMC4yNjIwMjQxMSAtMC4yNzExNTU0MTdcbiAgICAgICAgICAgUEM3XG43ICAtMC4wNzkwMTc3N1xuOCAgLTAuMTEwODg1MThcbjkgICAwLjM4NzY1MjY2XG4xMCAtMC4xMjI0NjU1NlxuMTEgLTAuMDE5MDI1MDlcbjEyIC0wLjA0OTU4NTA2XG5bMV0gXCJQcmVkaWNpZW5kbyB1c2FuZG8gdW4gbW9kZWxvIHlhIGVudHJlbmFkbyB5IHVuIG51ZXZvIGRhdGFzZXQuLi5cIlxuWzFdIFwicHJlZGljY2lvbmVzX3RfY29ydGFzOiAzNzYgeCAxXCJcbiAgICAgICAgICBbLDFdXG5bMSxdIDAuNzM0NTcyNlxuWzIsXSAwLjc2NDc4OTRcblszLF0gMC44MzI0OTkxXG5bNCxdIDAuNjg5NTIzOVxuWzUsXSAwLjY5MzAzNDNcblsxXSBcImlucHV0X2ZfbWVkaWFzX3NpbmluZGljZTogNzU1IHggOFwiXG4gICAgICAgICBQQzEgICAgICAgUEMyICAgICAgICBQQzMgICAgICAgIFBDNCAgICAgICAgICBQQzUgICAgICAgICBQQzZcbjEgLTAuMDQ0MTc1NCAwLjQwMDE0MzggIDAuMjkyMDk0MyAwLjA5MDQyMjIxICAwLjA5ODE1Mjk3OSAtMC4xNDg3NDk4NFxuMiAgMC4zMjAwMDQ2IDAuNDg5NTYwNSAgMC42NjYyMTM3IDAuMDY3ODkzNzggIDAuMTE1MDEzNjA0IC0wLjAyOTg4NDk3XG4zICAwLjY1MTQzNTYgMC4yNzc0Mjc2IC0wLjI0MjgzOTEgMC4wNzAyOTM3NCAtMC4wMDUwNDA0ODYgLTAuMTQ0NTY4NThcbjQgLTAuNjQ3MjgyMSAwLjE2MDk0NDkgLTAuNDUwMjAwNyAwLjE1MzU3OTA0ICAwLjE3Mzg0Mzg2MCAgMC4xMzI2ODQ4M1xuNSAtMC42MDAzOTAyIDAuMjczODk5MyAgMC4xNzQzNTYzIDAuMDE2NTc1ODAgLTAuMjAwODIyMjg4IC0wLjQ1NjM0ODg5XG42ICAwLjMxOTExNDQgMC41NzEzOTk4IC0wLjI3OTQ3MTUgMC4xMzg4Nzg2OSAtMC4yMTcxMTYyNDIgLTAuMDczNTkzNTRcbiAgICAgICAgICBQQzcgICAgICAgICBQQzhcbjEgIDAuMDEwOTY3MDUgLTAuMTcwOTcwNThcbjIgLTAuMDYwMjA0NzYgLTAuMTMxMjQyMThcbjMgIDAuMjMyNzYwNTIgLTAuMjM1ODc1MjZcbjQgIDAuMzY1ODQ1NTYgLTAuMjQwMTMyMDZcbjUgIDAuMTg0NDQ1NDIgLTAuMjQ4NzY5OTVcbjYgLTAuMTA1MjM5NDEgLTAuMDg2NTAxNzdcblsxXSBcIlByZWRpY2llbmRvIHVzYW5kbyB1biBtb2RlbG8geWEgZW50cmVuYWRvIHkgdW4gbnVldm8gZGF0YXNldC4uLlwiXG5bMV0gXCJwcmVkaWNjaW9uZXNfdF9tZWRpYXM6IDc1NSB4IDFcIlxuWzFdIFwiaW5wdXRfZl9sYXJnYXNfc2luaW5kaWNlOiAwIHggNFwiXG5bMV0gUEMxIFBDMiBQQzMgUEM0XG48MCByb3dzPiAob3IgMC1sZW5ndGggcm93Lm5hbWVzKVxuWzFdIFwiUHJlZGljaWVuZG8gdXNhbmRvIHVuIG1vZGVsbyB5YSBlbnRyZW5hZG8geSB1biBudWV2byBkYXRhc2V0Li4uXCJcblsxXSBcInByZWRpY2Npb25lc190X2xhcmdhczogMCB4IDFcIlxuWzFdIFwiQ0JJTkQ6IGVudHJhZGEgKGNvbiBJTkRJQ0VfT1JERU4pICsgc2FsaWRhLi4uXCJcblsxXSBcIkNvZ2Vtb3Mgc29sbyBsYXMgY29sdW1uYXMgcXVlIHF1ZXJlbW9zIChpbmRpY2UgeSB0YXJnZXQpLi4uXCJcblsxXSBcIkp1bnRhbW9zIGNvcnRhcywgbWVkaWFzIHkgbGFyZ2FzLi4uXCJcblsxXSBcIkRpbSBkZSBwYXNhZG9faXQ6IDExMzEgeCAyXCJcblsxXSBcIk9yZGVuYW1vcyBwb3IgSU5ESUNFX09SREVOLi4uXCJcblsxXSBcIkRpbSBkZSBwYXNhZG9faXRfb3JkZW5hZG86IDExMzEgeCAyXCJcblsxXSBcIlJlbGxlbmFtb3MgbGFzIGZpbGFzIHF1ZSBlcmFuIE5BcyAocmVsbGVuYW5kbyBlbiBsb3MgaHVlY29zIGRlbCBpbmRpY2UsIGhhc3RhIGVsIG51bWVybyBkZSBlbGVtZW50b3MgZGUgZW50cmFkYSkuLi5cIlxuWzFdIFwiRGltIGRlIGRmX251bG9zOiAxMzU2IHggMlwiXG5bMV0gXCJEaW1lbnNpb25lcyBkZSBqdW50b3M6IDEzNTYgeCAzXCJcblsxXSBcIkZpY2hlcm8gZGUgc2FsaWRhLi4uXCJcblsxXSBcIkVzY3JpYmllbmRvIGEgZmljaGVybyAodGFyZ2V0IHByZWRpY2hvKSBjb24gMTM1NiBmaWxhcy4uLlwiXG5bMV0gXCJSdXRhIHJlc3VsdGFkbzogL2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9EQVRPU19MSU1QSU8vZ2FsZ29zL3Bhc2Fkb192YWxpZGF0aW9uX3RhcmdldHNfcHJlZGljaG9zX0RPV19NLnR4dFwiXG5bMV0gXCItLS0tLS0tLS0tLS0tLS0gcHJlZGVjaXIoKTogRklOIC0tLS0tLS0tLS0tLS0tLS0tXCJcblsxXSBcIi0tLS0tLS0tLS0tLS0tLSBlamVjdXRhckNhZGVuYUVudHJlbmFtaWVudG9WYWxpZGF0aW9uOiBGSU4gLS0tLS0tLS0tLS0tXCJcbiJ9 -->
+<pre><code>+ Fold01: cp=0.03232 
+- Fold01: cp=0.03232 
++ Fold02: cp=0.03232 
+- Fold02: cp=0.03232 
++ Fold03: cp=0.03232 
+- Fold03: cp=0.03232 
++ Fold04: cp=0.03232 
+- Fold04: cp=0.03232 
++ Fold05: cp=0.03232 
+- Fold05: cp=0.03232 
++ Fold06: cp=0.03232 
+- Fold06: cp=0.03232 
++ Fold07: cp=0.03232 
+- Fold07: cp=0.03232 
++ Fold08: cp=0.03232 
+- Fold08: cp=0.03232 
++ Fold09: cp=0.03232 
+- Fold09: cp=0.03232 
++ Fold10: cp=0.03232 
+- Fold10: cp=0.03232 
+Aggregating results
+Selecting tuning parameters
+Fitting cp = 0.0323 on full training set
++ Fold01: cp=0.02665 
+- Fold01: cp=0.02665 
++ Fold02: cp=0.02665 
+- Fold02: cp=0.02665 
++ Fold03: cp=0.02665 
+- Fold03: cp=0.02665 
++ Fold04: cp=0.02665 
+- Fold04: cp=0.02665 
++ Fold05: cp=0.02665 
+- Fold05: cp=0.02665 
++ Fold06: cp=0.02665 
+- Fold06: cp=0.02665 
++ Fold07: cp=0.02665 
+- Fold07: cp=0.02665 
++ Fold08: cp=0.02665 
+- Fold08: cp=0.02665 
++ Fold09: cp=0.02665 
+- Fold09: cp=0.02665 
++ Fold10: cp=0.02665 
+- Fold10: cp=0.02665 
+Aggregating results
+Selecting tuning parameters
+Fitting cp = 0.0267 on full training set
++ Fold01: cp=0.02512 
+- Fold01: cp=0.02512 
++ Fold02: cp=0.02512 
+- Fold02: cp=0.02512 
++ Fold03: cp=0.02512 
+- Fold03: cp=0.02512 
++ Fold04: cp=0.02512 
+- Fold04: cp=0.02512 
++ Fold05: cp=0.02512 
+- Fold05: cp=0.02512 
++ Fold06: cp=0.02512 
+- Fold06: cp=0.02512 
++ Fold07: cp=0.02512 
+- Fold07: cp=0.02512 
++ Fold08: cp=0.02512 
+- Fold08: cp=0.02512 
++ Fold09: cp=0.02512 
+- Fold09: cp=0.02512 
++ Fold10: cp=0.02512 
+- Fold10: cp=0.02512 
+Aggregating results
+Selecting tuning parameters
+Fitting cp = 0.0251 on full training set
+[1] &quot;$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$&quot;
+ [1] &quot;#R_OUT#-- call&quot;              &quot;#R_OUT#-- libraryNames&quot;     
+ [3] &quot;#R_OUT#-- SL.library&quot;        &quot;#R_OUT#-- SL.predict&quot;       
+ [5] &quot;#R_OUT#-- coef&quot;              &quot;#R_OUT#-- library.predict&quot;  
+ [7] &quot;#R_OUT#-- Z&quot;                 &quot;#R_OUT#-- cvRisk&quot;           
+ [9] &quot;#R_OUT#-- family&quot;            &quot;#R_OUT#-- fitLibrary&quot;       
+[11] &quot;#R_OUT#-- varNames&quot;          &quot;#R_OUT#-- validRows&quot;        
+[13] &quot;#R_OUT#-- method&quot;            &quot;#R_OUT#-- whichScreen&quot;      
+[15] &quot;#R_OUT#-- control&quot;           &quot;#R_OUT#-- cvControl&quot;        
+[17] &quot;#R_OUT#-- errorsInCVLibrary&quot; &quot;#R_OUT#-- errorsInLibrary&quot;  
+[19] &quot;#R_OUT#-- metaOptimizer&quot;     &quot;#R_OUT#-- env&quot;              
+[21] &quot;#R_OUT#-- times&quot;            
+
+Call:  
+SuperLearner::SuperLearner(Y = y_train, X = x_train, family = gaussian(),  
+    SL.library = algoritmosPredictivosUsados, method = &quot;method.NNLS&quot;, id = NULL,  
+    verbose = FALSE, control = list(), cvControl = list(V = num_v, shuffle = FALSE)) 
+
+                          Risk       Coef
+SL.glmnet_1_All    0.005478908 0.84646507
+SL.bayesglm_1_All  0.005504742 0.00000000
+SL.glmnet_All      0.005480022 0.00000000
+SL.bayesglm_All    0.005504742 0.00000000
+SL.caret.rpart_All 0.009678533 0.06054338
+SL.glm_All         0.005505100 0.00000000
+SL.nnet_All        0.005758540 0.09299154
+SL.polymars_All    0.005923822 0.00000000
+[1] &quot;$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$&quot;
+[1] &quot;Guardando modelo PREDICTIVO:  /home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_cortas_DOW_M&quot;
+[1] &quot;pasado_ft_medias= 1457 x 9&quot;
+[1] &quot;****************** analisis_modelos_superlearner ==&gt; MEDIAS ******************&quot;
+[1] &quot;matrizentrada= 1457 x 9&quot;
+[1] &quot;ejecutarMulticore= FALSE&quot;
+[1] &quot;testset= 145 x 9&quot;
+[1] &quot;trainset= 1312 x 9&quot;
+[1] &quot;x_train= 1312 x 8&quot;
+[1] &quot;y_train= 1312&quot;
+[1] &quot;x_test= 145 x 8&quot;
+[1] &quot;y_test= 145&quot;
+[1] &quot;#R_OUT#--MODELOS_PRED [distancia_str|ejecutarMulticore|x_train|x_test] =MEDIAS|FALSE|1312x8|145x8|&quot;
+[1] &quot;------- Algoritmos usados -------&quot;
+     [,1]          [,2]            [,3]        [,4]          [,5]            
+[1,] &quot;SL.glmnet_1&quot; &quot;SL.bayesglm_1&quot; &quot;SL.glmnet&quot; &quot;SL.bayesglm&quot; &quot;SL.caret.rpart&quot;
+     [,6]     [,7]      [,8]         
+[1,] &quot;SL.glm&quot; &quot;SL.nnet&quot; &quot;SL.polymars&quot;
+[1] &quot;Cross-validation (INTERNA, dentro de cada algoritmo): 2&quot;
+[1] &quot;Cross-validation (EXTERNA): 2&quot;
+[1] &quot;-------- UNICORE (con cross validation) ----------&quot;
++ Fold01: cp=0.05681 
+- Fold01: cp=0.05681 
++ Fold02: cp=0.05681 
+- Fold02: cp=0.05681 
++ Fold03: cp=0.05681 
+- Fold03: cp=0.05681 
++ Fold04: cp=0.05681 
+- Fold04: cp=0.05681 
++ Fold05: cp=0.05681 
+- Fold05: cp=0.05681 
++ Fold06: cp=0.05681 
+- Fold06: cp=0.05681 
++ Fold07: cp=0.05681 
+- Fold07: cp=0.05681 
++ Fold08: cp=0.05681 
+- Fold08: cp=0.05681 
++ Fold09: cp=0.05681 
+- Fold09: cp=0.05681 
++ Fold10: cp=0.05681 
+- Fold10: cp=0.05681 
+Aggregating results
+Selecting tuning parameters
+Fitting cp = 0.0568 on full training set
++ Fold01: cp=0.03407 
+- Fold01: cp=0.03407 
++ Fold02: cp=0.03407 
+- Fold02: cp=0.03407 
++ Fold03: cp=0.03407 
+- Fold03: cp=0.03407 
++ Fold04: cp=0.03407 
+- Fold04: cp=0.03407 
++ Fold05: cp=0.03407 
+- Fold05: cp=0.03407 
++ Fold06: cp=0.03407 
+- Fold06: cp=0.03407 
++ Fold07: cp=0.03407 
+- Fold07: cp=0.03407 
++ Fold08: cp=0.03407 
+- Fold08: cp=0.03407 
++ Fold09: cp=0.03407 
+- Fold09: cp=0.03407 
++ Fold10: cp=0.03407 
+- Fold10: cp=0.03407 
+Aggregating results
+Selecting tuning parameters
+Fitting cp = 0.0341 on full training set
++ Fold01: cp=0.06039 
+- Fold01: cp=0.06039 
++ Fold02: cp=0.06039 
+- Fold02: cp=0.06039 
++ Fold03: cp=0.06039 
+- Fold03: cp=0.06039 
++ Fold04: cp=0.06039 
+- Fold04: cp=0.06039 
++ Fold05: cp=0.06039 
+- Fold05: cp=0.06039 
++ Fold06: cp=0.06039 
+- Fold06: cp=0.06039 
++ Fold07: cp=0.06039 
+- Fold07: cp=0.06039 
++ Fold08: cp=0.06039 
+- Fold08: cp=0.06039 
++ Fold09: cp=0.06039 
+- Fold09: cp=0.06039 
++ Fold10: cp=0.06039 
+- Fold10: cp=0.06039 
+Aggregating results
+Selecting tuning parameters
+Fitting cp = 0.0604 on full training set
+[1] &quot;$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$&quot;
+ [1] &quot;#R_OUT#-- call&quot;              &quot;#R_OUT#-- libraryNames&quot;     
+ [3] &quot;#R_OUT#-- SL.library&quot;        &quot;#R_OUT#-- SL.predict&quot;       
+ [5] &quot;#R_OUT#-- coef&quot;              &quot;#R_OUT#-- library.predict&quot;  
+ [7] &quot;#R_OUT#-- Z&quot;                 &quot;#R_OUT#-- cvRisk&quot;           
+ [9] &quot;#R_OUT#-- family&quot;            &quot;#R_OUT#-- fitLibrary&quot;       
+[11] &quot;#R_OUT#-- varNames&quot;          &quot;#R_OUT#-- validRows&quot;        
+[13] &quot;#R_OUT#-- method&quot;            &quot;#R_OUT#-- whichScreen&quot;      
+[15] &quot;#R_OUT#-- control&quot;           &quot;#R_OUT#-- cvControl&quot;        
+[17] &quot;#R_OUT#-- errorsInCVLibrary&quot; &quot;#R_OUT#-- errorsInLibrary&quot;  
+[19] &quot;#R_OUT#-- metaOptimizer&quot;     &quot;#R_OUT#-- env&quot;              
+[21] &quot;#R_OUT#-- times&quot;            
+
+Call:  
+SuperLearner::SuperLearner(Y = y_train, X = x_train, family = gaussian(),  
+    SL.library = algoritmosPredictivosUsados, method = &quot;method.NNLS&quot;, id = NULL,  
+    verbose = FALSE, control = list(), cvControl = list(V = num_v, shuffle = FALSE)) 
+
+                          Risk      Coef
+SL.glmnet_1_All    0.004247069 0.0000000
+SL.bayesglm_1_All  0.004246002 0.0000000
+SL.glmnet_All      0.004247069 0.0000000
+SL.bayesglm_All    0.004246002 0.0000000
+SL.caret.rpart_All 0.007409745 0.0934449
+SL.glm_All         0.004246051 0.2776279
+SL.nnet_All        0.013047368 0.0000000
+SL.polymars_All    0.004046401 0.6289272
+[1] &quot;$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$&quot;
+[1] &quot;Guardando modelo PREDICTIVO:  /home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_medias_DOW_M&quot;
+[1] &quot;pasado_ft_largas= 19 x 5&quot;
+[1] &quot;****************** analisis_modelos_superlearner ==&gt; LARGAS ******************&quot;
+[1] &quot;matrizentrada= 19 x 5&quot;
+[1] &quot;ejecutarMulticore= FALSE&quot;
+[1] &quot;testset= 1 x 5&quot;
+[1] &quot;trainset= 18 x 5&quot;
+[1] &quot;x_train= 18 x 4&quot;
+[1] &quot;y_train= 18&quot;
+[1] &quot;x_test= 1 x 4&quot;
+[1] &quot;y_test= 1&quot;
+[1] &quot;#R_OUT#--MODELOS_PRED [distancia_str|ejecutarMulticore|x_train|x_test] =LARGAS|FALSE|18x4|1x4|&quot;
+[1] &quot;------- Algoritmos usados -------&quot;
+     [,1]          [,2]            [,3]        [,4]          [,5]            
+[1,] &quot;SL.glmnet_1&quot; &quot;SL.bayesglm_1&quot; &quot;SL.glmnet&quot; &quot;SL.bayesglm&quot; &quot;SL.caret.rpart&quot;
+     [,6]     [,7]      [,8]         
+[1,] &quot;SL.glm&quot; &quot;SL.nnet&quot; &quot;SL.polymars&quot;
+[1] &quot;Cross-validation (INTERNA, dentro de cada algoritmo): 2&quot;
+[1] &quot;Cross-validation (EXTERNA): 2&quot;
+[1] &quot;-------- UNICORE (con cross validation) ----------&quot;
++ Fold1: cp=0 
+- Fold1: cp=0 
++ Fold2: cp=0 
+- Fold2: cp=0 
++ Fold3: cp=0 
+- Fold3: cp=0 
++ Fold4: cp=0 
+- Fold4: cp=0 
++ Fold5: cp=0 
+- Fold5: cp=0 
++ Fold6: cp=0 
+- Fold6: cp=0 
++ Fold7: cp=0 
+- Fold7: cp=0 
++ Fold8: cp=0 
+- Fold8: cp=0 
++ Fold9: cp=0 
+- Fold9: cp=0 
+Aggregating results
+Fitting final model on full training set
++ Fold1: cp=0 
+- Fold1: cp=0 
++ Fold2: cp=0 
+- Fold2: cp=0 
++ Fold3: cp=0 
+- Fold3: cp=0 
++ Fold4: cp=0 
+- Fold4: cp=0 
++ Fold5: cp=0 
+- Fold5: cp=0 
++ Fold6: cp=0 
+- Fold6: cp=0 
++ Fold7: cp=0 
+- Fold7: cp=0 
++ Fold8: cp=0 
+- Fold8: cp=0 
++ Fold9: cp=0 
+- Fold9: cp=0 
+Aggregating results
+Fitting final model on full training set
++ Fold01: cp=0 
+- Fold01: cp=0 
++ Fold02: cp=0 
+- Fold02: cp=0 
++ Fold03: cp=0 
+- Fold03: cp=0 
++ Fold04: cp=0 
+- Fold04: cp=0 
++ Fold05: cp=0 
+- Fold05: cp=0 
++ Fold06: cp=0 
+- Fold06: cp=0 
++ Fold07: cp=0 
+- Fold07: cp=0 
++ Fold08: cp=0 
+- Fold08: cp=0 
++ Fold09: cp=0 
+- Fold09: cp=0 
++ Fold10: cp=0 
+- Fold10: cp=0 
+Aggregating results
+Fitting final model on full training set
+[1] &quot;$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$&quot;
+ [1] &quot;#R_OUT#-- call&quot;              &quot;#R_OUT#-- libraryNames&quot;     
+ [3] &quot;#R_OUT#-- SL.library&quot;        &quot;#R_OUT#-- SL.predict&quot;       
+ [5] &quot;#R_OUT#-- coef&quot;              &quot;#R_OUT#-- library.predict&quot;  
+ [7] &quot;#R_OUT#-- Z&quot;                 &quot;#R_OUT#-- cvRisk&quot;           
+ [9] &quot;#R_OUT#-- family&quot;            &quot;#R_OUT#-- fitLibrary&quot;       
+[11] &quot;#R_OUT#-- varNames&quot;          &quot;#R_OUT#-- validRows&quot;        
+[13] &quot;#R_OUT#-- method&quot;            &quot;#R_OUT#-- whichScreen&quot;      
+[15] &quot;#R_OUT#-- control&quot;           &quot;#R_OUT#-- cvControl&quot;        
+[17] &quot;#R_OUT#-- errorsInCVLibrary&quot; &quot;#R_OUT#-- errorsInLibrary&quot;  
+[19] &quot;#R_OUT#-- metaOptimizer&quot;     &quot;#R_OUT#-- env&quot;              
+[21] &quot;#R_OUT#-- times&quot;            
+
+Call:  
+SuperLearner::SuperLearner(Y = y_train, X = x_train, family = gaussian(),  
+    SL.library = algoritmosPredictivosUsados, method = &quot;method.NNLS&quot;, id = NULL,  
+    verbose = FALSE, control = list(), cvControl = list(V = num_v, shuffle = FALSE)) 
+
+                          Risk       Coef
+SL.glmnet_1_All    0.002005539 0.03269381
+SL.bayesglm_1_All  0.003673684 0.00000000
+SL.glmnet_All      0.001899430 0.00000000
+SL.bayesglm_All    0.003673684 0.00000000
+SL.caret.rpart_All 0.001700501 0.00000000
+SL.glm_All         0.004227982 0.00000000
+SL.nnet_All        0.004368029 0.00000000
+SL.polymars_All    0.001700501 0.96730619
+[1] &quot;$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$&quot;
+[1] &quot;Guardando modelo PREDICTIVO:  /home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_largas_DOW_M&quot;
+[1] &quot;----------------------------------------- calcularModelosPredictivosParaDistanciasYGuardarlos: FIN ----------------------------&quot;
+[1] &quot;----- VALIDATION (pasado-features): Aplicando reduccion PCA y modelos predictivos para adivinar el target ---&quot;
+[1] &quot;Aplicando PCA sobre Validation (pasado-features)...&quot;
+[1] &quot;validation -F cortas: 588 x 32&quot;
+[1] &quot;validation -F medias: 768 x 32&quot;
+[1] &quot;validation -F largas: 0 x 32&quot;
+[1] &quot;Reduciendo dimensiones....&quot;
+[1] &quot;Salida (incluye INDICE_ORDEN)...&quot;
+[1] &quot;Predeciendo el target sobre el validation (pasado-features), usando modelos predictivos...&quot;
+[1] &quot;Cargando modelos PREDICTIVOS ENTRENADOS (desde fichero)...&quot;
+
+Call:  
+SuperLearner::SuperLearner(Y = y_train, X = x_train, family = gaussian(),  
+    SL.library = algoritmosPredictivosUsados, method = &quot;method.NNLS&quot;, id = NULL,  
+    verbose = FALSE, control = list(), cvControl = list(V = num_v, shuffle = FALSE)) 
+
+                          Risk       Coef
+SL.glmnet_1_All    0.005478908 0.84646507
+SL.bayesglm_1_All  0.005504742 0.00000000
+SL.glmnet_All      0.005480022 0.00000000
+SL.bayesglm_All    0.005504742 0.00000000
+SL.caret.rpart_All 0.009678533 0.06054338
+SL.glm_All         0.005505100 0.00000000
+SL.nnet_All        0.005758540 0.09299154
+SL.polymars_All    0.005923822 0.00000000
+
+Call:  
+SuperLearner::SuperLearner(Y = y_train, X = x_train, family = gaussian(),  
+    SL.library = algoritmosPredictivosUsados, method = &quot;method.NNLS&quot;, id = NULL,  
+    verbose = FALSE, control = list(), cvControl = list(V = num_v, shuffle = FALSE)) 
+
+                          Risk      Coef
+SL.glmnet_1_All    0.004247069 0.0000000
+SL.bayesglm_1_All  0.004246002 0.0000000
+SL.glmnet_All      0.004247069 0.0000000
+SL.bayesglm_All    0.004246002 0.0000000
+SL.caret.rpart_All 0.007409745 0.0934449
+SL.glm_All         0.004246051 0.2776279
+SL.nnet_All        0.013047368 0.0000000
+SL.polymars_All    0.004046401 0.6289272
+
+Call:  
+SuperLearner::SuperLearner(Y = y_train, X = x_train, family = gaussian(),  
+    SL.library = algoritmosPredictivosUsados, method = &quot;method.NNLS&quot;, id = NULL,  
+    verbose = FALSE, control = list(), cvControl = list(V = num_v, shuffle = FALSE)) 
+
+                          Risk       Coef
+SL.glmnet_1_All    0.002005539 0.03269381
+SL.bayesglm_1_All  0.003673684 0.00000000
+SL.glmnet_All      0.001899430 0.00000000
+SL.bayesglm_All    0.003673684 0.00000000
+SL.caret.rpart_All 0.001700501 0.00000000
+SL.glm_All         0.004227982 0.00000000
+SL.nnet_All        0.004368029 0.00000000
+SL.polymars_All    0.001700501 0.96730619
+[1] &quot;--------------- predecir(): INICIO -----------------&quot;
+[1] &quot;tag= DOW_M&quot;
+[1] &quot;input_f_transformadas:  3&quot;
+[1] &quot;output_file_prefijo= /home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pasado_validation_targets_predichos_&quot;
+[1] &quot;tipo= VALIDATION&quot;
+[1] &quot; ---------------Entradas (features: mantener el ORDEN)-----------&quot;
+[1] &quot;input_f_transformada_cortas:  588 x 8&quot;
+[1] &quot;input_f_transformada_medias:  768 x 9&quot;
+[1] &quot;input_f_transformada_largas:  0 x 5&quot;
+[1] &quot;Omitiendo nulos...&quot;
+[1] &quot;CORTAS-F (sin NAs): 376 x 8&quot;
+[1] &quot;MEDIAS-F (sin NAs): 755 x 9&quot;
+[1] &quot;LARGAS-F (sin NAs): 0 x 5&quot;
+[1] &quot;input_f_cortas_sinindice: 376 x 7&quot;
+          PC1       PC2          PC3        PC4         PC5          PC6
+7   0.6895668 0.7497554  0.389848025 -0.1408538  0.08827882 -0.006943138
+8   0.1437265 0.8216310  0.319414459 -0.1270902  0.21922203 -0.178632325
+9  -0.2949886 0.8619009 -0.573041843  0.1244833  0.07660843 -0.001900903
+10 -0.5837126 0.7231042  0.445884542 -0.1798306  0.20893290 -0.110883857
+11  0.6669582 0.6286374  0.001728687 -0.1205590  0.08476422 -0.018767293
+12 -0.2334970 0.6675764  0.059484984 -0.1668992 -0.26202411 -0.271155417
+           PC7
+7  -0.07901777
+8  -0.11088518
+9   0.38765266
+10 -0.12246556
+11 -0.01902509
+12 -0.04958506
+[1] &quot;Prediciendo usando un modelo ya entrenado y un nuevo dataset...&quot;
+[1] &quot;predicciones_t_cortas: 376 x 1&quot;
+          [,1]
+[1,] 0.7345726
+[2,] 0.7647894
+[3,] 0.8324991
+[4,] 0.6895239
+[5,] 0.6930343
+[1] &quot;input_f_medias_sinindice: 755 x 8&quot;
+         PC1       PC2        PC3        PC4          PC5         PC6
+1 -0.0441754 0.4001438  0.2920943 0.09042221  0.098152979 -0.14874984
+2  0.3200046 0.4895605  0.6662137 0.06789378  0.115013604 -0.02988497
+3  0.6514356 0.2774276 -0.2428391 0.07029374 -0.005040486 -0.14456858
+4 -0.6472821 0.1609449 -0.4502007 0.15357904  0.173843860  0.13268483
+5 -0.6003902 0.2738993  0.1743563 0.01657580 -0.200822288 -0.45634889
+6  0.3191144 0.5713998 -0.2794715 0.13887869 -0.217116242 -0.07359354
+          PC7         PC8
+1  0.01096705 -0.17097058
+2 -0.06020476 -0.13124218
+3  0.23276052 -0.23587526
+4  0.36584556 -0.24013206
+5  0.18444542 -0.24876995
+6 -0.10523941 -0.08650177
+[1] &quot;Prediciendo usando un modelo ya entrenado y un nuevo dataset...&quot;
+[1] &quot;predicciones_t_medias: 755 x 1&quot;
+[1] &quot;input_f_largas_sinindice: 0 x 4&quot;
+[1] PC1 PC2 PC3 PC4
+&lt;0 rows&gt; (or 0-length row.names)
+[1] &quot;Prediciendo usando un modelo ya entrenado y un nuevo dataset...&quot;
+[1] &quot;predicciones_t_largas: 0 x 1&quot;
+[1] &quot;CBIND: entrada (con INDICE_ORDEN) + salida...&quot;
+[1] &quot;Cogemos solo las columnas que queremos (indice y target)...&quot;
+[1] &quot;Juntamos cortas, medias y largas...&quot;
+[1] &quot;Dim de pasado_it: 1131 x 2&quot;
+[1] &quot;Ordenamos por INDICE_ORDEN...&quot;
+[1] &quot;Dim de pasado_it_ordenado: 1131 x 2&quot;
+[1] &quot;Rellenamos las filas que eran NAs (rellenando en los huecos del indice, hasta el numero de elementos de entrada)...&quot;
+[1] &quot;Dim de df_nulos: 1356 x 2&quot;
+[1] &quot;Dimensiones de juntos: 1356 x 3&quot;
+[1] &quot;Fichero de salida...&quot;
+[1] &quot;Escribiendo a fichero (target predicho) con 1356 filas...&quot;
+[1] &quot;Ruta resultado: /home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pasado_validation_targets_predichos_DOW_M.txt&quot;
+[1] &quot;--------------- predecir(): FIN -----------------&quot;
+[1] &quot;--------------- ejecutarCadenaEntrenamientoValidation: FIN ------------&quot;</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiVGhlcmUgd2VyZSA1MCBvciBtb3JlIHdhcm5pbmdzICh1c2Ugd2FybmluZ3MoKSB0byBzZWUgdGhlIGZpcnN0IDUwKVxuIn0= -->
+<pre><code>There were 50 or more warnings (use warnings() to see the first 50)</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiPiBcbiJ9 -->
+<pre><code>&gt; </code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -322,22 +875,18 @@ Execution halted</code></pre>
 <h2>ANALISIS PRELIMINAR DE DATOS con los que hemos entrenado</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuYGBgclxuI2hlYWQocGFzYWRvX2Z0KVxuI2JveHBsb3QocGFzYWRvX2Z0LCBjZXguYXhpcyA9IDAuNSkgXG5gYGBcbmBgYFxuYGBgIn0= -->
-<p><code>r</code>r</p>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2hlYWQocGFzYWRvX2Z0KVxuI2JveHBsb3QocGFzYWRvX2Z0LCBjZXguYXhpcyA9IDAuNSkgXG5gYGAifQ== -->
 <pre class="r"><code>#head(pasado_ft)
 #boxplot(pasado_ft, cex.axis = 0.5) </code></pre>
-<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Vemos que hay variables con outliers y otras leptocúrticas (apretadas en torno a la media).</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuYGBgclxuI3N1bW1hcnkocGFzYWRvX2Z0KVxuI2xhcHBseShwYXNhZG9fZnQsIHN1bW1hcnkpXG5gYGBcbmBgYFxuYGBgIn0= -->
-<p><code>r</code>r</p>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3N1bW1hcnkocGFzYWRvX2Z0KVxuI2xhcHBseShwYXNhZG9fZnQsIHN1bW1hcnkpXG5gYGAifQ== -->
 <pre class="r"><code>#summary(pasado_ft)
 #lapply(pasado_ft, summary)</code></pre>
-<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -345,96 +894,17 @@ Execution halted</code></pre>
 <h4>CADENA COMPLETA para ENTRENAMIENTO con dataset PASADO TTV</h4>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kbyA8LSAyICMgMj10cmFpbit0ZXN0XG5gYGAifQ== -->
-<pre class="r"><code>modo &lt;- 2 # 2=train+test</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiV2FybmluZyBtZXNzYWdlOlxuUiBncmFwaGljcyBlbmdpbmUgdmVyc2lvbiAxMiBpcyBub3Qgc3VwcG9ydGVkIGJ5IHRoaXMgdmVyc2lvbiBvZiBSU3R1ZGlvLiBUaGUgUGxvdHMgdGFiIHdpbGwgYmUgZGlzYWJsZWQgdW50aWwgYSBuZXdlciB2ZXJzaW9uIG9mIFJTdHVkaW8gaXMgaW5zdGFsbGVkLiBcbiJ9 -->
-<pre><code>Warning message:
-R graphics engine version 12 is not supported by this version of RStudio. The Plots tab will be disabled until a newer version of RStudio is installed. </code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGFnIDwtIFwiRE9XX0xBQlwiXG5saW1pdGVTcWwgPC0gXCIxMDAwMFwiXG5wYXRoX21vZGVsb19wY2FfcHJlZmlqbyA8LSBcIi9ob21lL2Nhcmxvc2xpbnV4L0Rlc2t0b3AvREFUT1NfTElNUElPL2dhbGdvcy9wY2FfbW9kZWxvX1wiXG5wY2FfdW1icmFsX3ZhcmlhbnphIDwtIDAuOTVcbnRzbmVfbnVtX2ZlYXR1cmVzX291dHB1dCA8LSAxMlxuc3lzdGVtKHBhc3RlKFwiUnNjcmlwdCAvaG9tZS9jYXJsb3NsaW51eC9EZXNrdG9wL1dPUktTUEFDRVMvd2tzcF9mb3Jfci9yX2dhbGdvcy9nYWxnb3NfMDQ1X3R0dl9wYXNhZG8uUlwiLCBtb2RvLCB0YWcsIGxpbWl0ZVNxbCwgdGlwb1JlZHVjY2lvbixwYXRoX21vZGVsb19wY2FfcHJlZmlqbyxcbiAgICAgICAgICAgICBwY2FfdW1icmFsX3ZhcmlhbnphLCB0c25lX251bV9mZWF0dXJlc19vdXRwdXQsIHNlcCA9ICcgJykpXG5gYGAifQ== -->
-<pre class="r"><code>tag &lt;- &quot;DOW_LAB&quot;
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kbyA8LSAyICMgMj10cmFpbit0ZXN0XG50YWcgPC0gXCJET1dfTVwiXG5saW1pdGVTcWwgPC0gXCIxMDAwMFwiXG5wYXRoX21vZGVsb19wY2FfcHJlZmlqbyA8LSBcIi9ob21lL2Nhcmxvc2xpbnV4L0Rlc2t0b3AvREFUT1NfTElNUElPL2dhbGdvcy9wY2FfbW9kZWxvX1wiXG5wY2FfdW1icmFsX3ZhcmlhbnphIDwtIDAuOTVcbnRzbmVfbnVtX2ZlYXR1cmVzX291dHB1dCA8LSAxMlxuXG5zeXN0ZW0ocGFzdGUoXCJSc2NyaXB0IC9ob21lL2Nhcmxvc2xpbnV4L0Rlc2t0b3AvV09SS1NQQUNFUy93a3NwX2Zvcl9yL3JfZ2FsZ29zL2dhbGdvc18wNDVfdHR2X3Bhc2Fkby5SXCIsIG1vZG8sIHRhZywgbGltaXRlU3FsLCB0aXBvUmVkdWNjaW9uLHBhdGhfbW9kZWxvX3BjYV9wcmVmaWpvLFxuICAgICAgICAgICAgIHBjYV91bWJyYWxfdmFyaWFuemEsIHRzbmVfbnVtX2ZlYXR1cmVzX291dHB1dCwgc2VwID0gJyAnKSlcbmBgYCJ9 -->
+<pre class="r"><code>modo &lt;- 2 # 2=train+test
+tag &lt;- &quot;DOW_M&quot;
 limiteSql &lt;- &quot;10000&quot;
 path_modelo_pca_prefijo &lt;- &quot;/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_&quot;
 pca_umbral_varianza &lt;- 0.95
 tsne_num_features_output &lt;- 12
+
 system(paste(&quot;Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_045_ttv_pasado.R&quot;, modo, tag, limiteSql, tipoReduccion,path_modelo_pca_prefijo,
              pca_umbral_varianza, tsne_num_features_output, sep = ' '))</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiTnVtZXJvIGRlIHBhcmFtZXRyb3M6ICA3XCJcblsxXSBcIm1vZG89MlwiXG5bMV0gXCJ0YWc9RE9XX0xBQlwiXG5bMV0gXCJsaW1pdGVTcWw9MTAwMDBcIlxuWzFdIFwidGlwb1JlZHVjY2lvbj1QQ0FcIlxuWzFdIFwicGF0aF9tb2RlbG9fcGNhX3ByZWZpam89L2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9EQVRPU19MSU1QSU8vZ2FsZ29zL3BjYV9tb2RlbG9fXCJcblsxXSBcInBjYV91bWJyYWxfdmFyaWFuemE9MC45NVwiXG5bMV0gXCJ0c25lX251bV9mZWF0dXJlc19vdXRwdXQ9MTJcIlxuWzFdIFwiLS0tLS0tLS0tLS0tLS0tIGVqZWN1dGFyQ2FkZW5hRW50cmVuYW1pZW50b1RUVjogSU5JQ0lPIC0tLS0tLS0tLS0tLVwiXG5bMV0gXCJ0YWc9RE9XX0xBQlwiXG5bMV0gXCJsaW1pdGVTcWw9RE9XX0xBQlwiXG5bMV0gXCJ0aXBvUmVkdWNjaW9uPVBDQVwiXG5bMV0gXCJwY2FfdW1icmFsX3ZhcmlhbnphPTAuOTVcIlxuWzFdIFwidHNuZV9udW1fZmVhdHVyZXNfb3V0cHV0PTEyXCJcblsxXSBcIi0tLS0tLS0tLS0tLS0tLSBlc3RhYmxlY2VyQ29uZmlnR2VuZXJhbCAtLS0tLS0tLS0tLS1cIlxuIn0= -->
-<pre><code>[1] &quot;Numero de parametros:  7&quot;
-[1] &quot;modo=2&quot;
-[1] &quot;tag=DOW_LAB&quot;
-[1] &quot;limiteSql=10000&quot;
-[1] &quot;tipoReduccion=PCA&quot;
-[1] &quot;path_modelo_pca_prefijo=/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_&quot;
-[1] &quot;pca_umbral_varianza=0.95&quot;
-[1] &quot;tsne_num_features_output=12&quot;
-[1] &quot;--------------- ejecutarCadenaEntrenamientoTTV: INICIO ------------&quot;
-[1] &quot;tag=DOW_LAB&quot;
-[1] &quot;limiteSql=DOW_LAB&quot;
-[1] &quot;tipoReduccion=PCA&quot;
-[1] &quot;pca_umbral_varianza=0.95&quot;
-[1] &quot;tsne_num_features_output=12&quot;
-[1] &quot;--------------- establecerConfigGeneral ------------&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBubmxzXG5TdXBlciBMZWFybmVyXG5WZXJzaW9uOiAyLjAtMjNcblBhY2thZ2UgY3JlYXRlZCBvbiAyMDE4LTAzLTA5XG5cbnJhbmRvbUZvcmVzdCA0LjYtMTRcblR5cGUgcmZOZXdzKCkgdG8gc2VlIG5ldyBmZWF0dXJlcy9jaGFuZ2VzL2J1ZyBmaXhlcy5cbkxvYWRpbmcgcmVxdWlyZWQgcGFja2FnZTogTWF0cml4XG5Mb2FkaW5nIHJlcXVpcmVkIHBhY2thZ2U6IGZvcmVhY2hcbkxvYWRlZCBnbG1uZXQgMi4wLTE2XG5cblxuQXR0YWNoaW5nIHBhY2thZ2U6IOKAmGdncGxvdDLigJlcblxuVGhlIGZvbGxvd2luZyBvYmplY3QgaXMgbWFza2VkIGZyb20g4oCYcGFja2FnZTpyYW5kb21Gb3Jlc3TigJk6XG5cbiAgICBtYXJnaW5cblxuTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBNQVNTXG5Mb2FkaW5nIHJlcXVpcmVkIHBhY2thZ2U6IGxtZTRcbkxvYWRpbmcgcmVxdWlyZWQgcGFja2FnZTogbWV0aG9kc1xuXG5hcm0gKFZlcnNpb24gMS4xMC0xLCBidWlsdDogMjAxOC00LTEyKVxuXG5Xb3JraW5nIGRpcmVjdG9yeSBpcyAvaG9tZS9jYXJsb3NsaW51eC9EZXNrdG9wL1dPUktTUEFDRVMvd2tzcF9mb3Jfci9yX2dhbGdvc1xuIn0= -->
-<pre><code>Loading required package: nnls
-Super Learner
-Version: 2.0-23
-Package created on 2018-03-09
-
-randomForest 4.6-14
-Type rfNews() to see new features/changes/bug fixes.
-Loading required package: Matrix
-Loading required package: foreach
-Loaded glmnet 2.0-16
-
-
-Attaching package: ‘ggplot2’
-
-The following object is masked from ‘package:randomForest’:
-
-    margin
-
-Loading required package: MASS
-Loading required package: lme4
-Loading required package: methods
-
-arm (Version 1.10-1, built: 2018-4-12)
-
-Working directory is /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiLS0tLS0tLS0tLS0tLS0tIGVqZWN1dGFyUmVkdWNjaW9uRGltZW5zaW9uZXM6IElOSUNJTyAtLS0tLS0tLS0tLS1cIlxuWzFdIFwidGFnPURPV19MQUJcIlxuWzFdIFwibGltaXRlU3FsPURPV19MQUJcIlxuWzFdIFwidGlwb1JlZHVjY2lvbj1QQ0FcIlxuWzFdIFwicGF0aF9tb2RlbG9fcGNhX3ByZWZpam89L2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9EQVRPU19MSU1QSU8vZ2FsZ29zL3BjYV9tb2RlbG9fXCJcblsxXSBcInBjYV91bWJyYWxfdmFyaWFuemE9MC45NVwiXG5bMV0gXCJ0c25lX251bV9mZWF0dXJlc19vdXRwdXQ9MTJcIlxuWzFdIFwiLS0tLS0tLS0tLS0tLS0tIGVzdGFibGVjZXJDb25maWdHZW5lcmFsIC0tLS0tLS0tLS0tLVwiXG5bMV0gXCItLS0tLS0tLS0tLS0tLS0gbGVlckRlc2RlQmFzZURhdG9zWUVzY3JpYmlyQ1NWOiBJTklDSU8gLS0tLS0tLS0tLS0tXCJcblsxXSBcInRhZz0gRE9XX0xBQlwiXG5bMV0gXCJsaW1pdGVTcWw9IDEwMDAwXCJcblsxXSBcImluY2x1eWVUYXJnZXRzPSBUUlVFXCJcblsxXSBcImluY2x1eWVWYWxpZGF0aW9uPSBGQUxTRVwiXG4ifQ== -->
-<pre><code>[1] &quot;--------------- ejecutarReduccionDimensiones: INICIO ------------&quot;
-[1] &quot;tag=DOW_LAB&quot;
-[1] &quot;limiteSql=DOW_LAB&quot;
-[1] &quot;tipoReduccion=PCA&quot;
-[1] &quot;path_modelo_pca_prefijo=/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_&quot;
-[1] &quot;pca_umbral_varianza=0.95&quot;
-[1] &quot;tsne_num_features_output=12&quot;
-[1] &quot;--------------- establecerConfigGeneral ------------&quot;
-[1] &quot;--------------- leerDesdeBaseDatosYEscribirCSV: INICIO ------------&quot;
-[1] &quot;tag= DOW_LAB&quot;
-[1] &quot;limiteSql= 10000&quot;
-[1] &quot;incluyeTargets= TRUE&quot;
-[1] &quot;incluyeValidation= FALSE&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBEQklcbiJ9 -->
-<pre><code>Loading required package: DBI</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiLS0tLS0tLS0tLS0tLS0tQ29uZXhpb24gYSBCQkREIC0tLS0tLS0tLS0tLVwiXG5bMV0gXCJDb25lY3RhbmRvLi4uXCJcblsxXSBcIi0tLS0tLS0tLS0tLS0gRmVhdHVyZXMgKElOUFVUKSAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVwiXG5bMV0gXCJTRUxFQ1QgKiBGUk9NIGRhdG9zX2Rlc2EudGJfZHNfcGFzYWRvX3R0dl9mZWF0dXJlc19ET1dfTEFCIExJTUlUIDEwMDAwO1wiXG4ifQ== -->
-<pre><code>[1] &quot;---------------Conexion a BBDD ------------&quot;
-[1] &quot;Conectando...&quot;
-[1] &quot;------------- Features (INPUT) -----------------------&quot;
-[1] &quot;SELECT * FROM datos_desa.tb_ds_pasado_ttv_features_DOW_LAB LIMIT 10000;&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gLmxvY2FsKGNvbm4sIHN0YXRlbWVudCwgLi4uKSA6IFxuICBjb3VsZCBub3QgcnVuIHN0YXRlbWVudDogVGFibGUgJ2RhdG9zX2Rlc2EudGJfZHNfcGFzYWRvX3R0dl9mZWF0dXJlc19ET1dfTEFCJyBkb2Vzbid0IGV4aXN0XG5DYWxsczogZWplY3V0YXJDYWRlbmFFbnRyZW5hbWllbnRvVFRWIC4uLiBsZWVyRGVzZGVCYXNlRGF0b3NZRXNjcmliaXJDU1YgLT4gZGJTZW5kUXVlcnkgLT4gZGJTZW5kUXVlcnkgLT4gLmxvY2FsIC0+IC5DYWxsXG5FeGVjdXRpb24gaGFsdGVkXG4ifQ== -->
-<pre><code>Error in .local(conn, statement, ...) : 
-  could not run statement: Table 'datos_desa.tb_ds_pasado_ttv_features_DOW_LAB' doesn't exist
-Calls: ejecutarCadenaEntrenamientoTTV ... leerDesdeBaseDatosYEscribirCSV -&gt; dbSendQuery -&gt; dbSendQuery -&gt; .local -&gt; .Call
-Execution halted</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -442,437 +912,24 @@ Execution halted</code></pre>
 <h4>CADENA COMPLETA para PREDICTOR del FUTURO</h4>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kbyA8LSAzICMgMz1wcmVkaWNjaW9uX2Z1dHVyb1xudGFnIDwtIFwiRE9XX0xBQlwiXG5saW1pdGVTcWwgPC0gXCIxMDAwXCJcbnBhdGhfbW9kZWxvX3BjYV9wcmVmaWpvIDwtIFwiL2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9EQVRPU19MSU1QSU8vZ2FsZ29zL3BjYV9tb2RlbG9fXCJcbnBjYV91bWJyYWxfdmFyaWFuemEgPC0gMC45NVxudHNuZV9udW1fZmVhdHVyZXNfb3V0cHV0IDwtIDEyXG5zeXN0ZW0ocGFzdGUoXCJSc2NyaXB0IC9ob21lL2Nhcmxvc2xpbnV4L0Rlc2t0b3AvV09SS1NQQUNFUy93a3NwX2Zvcl9yL3JfZ2FsZ29zL2dhbGdvc18wNTBfcHJlZGljdG9yX2Z1dHVyby5SXCIsIG1vZG8sIHRhZywgbGltaXRlU3FsLCB0aXBvUmVkdWNjaW9uLHBhdGhfbW9kZWxvX3BjYV9wcmVmaWpvLFxuICAgICAgICAgICAgIHBjYV91bWJyYWxfdmFyaWFuemEsIHRzbmVfbnVtX2ZlYXR1cmVzX291dHB1dCwgc2VwID0gJyAnKSlcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kbyA8LSAzICMgMz1wcmVkaWNjaW9uX2Z1dHVyb1xudGFnIDwtIFwiRE9XX01cIlxubGltaXRlU3FsIDwtIFwiMTAwMFwiXG5wYXRoX21vZGVsb19wY2FfcHJlZmlqbyA8LSBcIi9ob21lL2Nhcmxvc2xpbnV4L0Rlc2t0b3AvREFUT1NfTElNUElPL2dhbGdvcy9wY2FfbW9kZWxvX1wiXG5wY2FfdW1icmFsX3ZhcmlhbnphIDwtIDAuOTVcbnRzbmVfbnVtX2ZlYXR1cmVzX291dHB1dCA8LSAxMlxuXG5zeXN0ZW0ocGFzdGUoXCJSc2NyaXB0IC9ob21lL2Nhcmxvc2xpbnV4L0Rlc2t0b3AvV09SS1NQQUNFUy93a3NwX2Zvcl9yL3JfZ2FsZ29zL2dhbGdvc18wNTBfcHJlZGljdG9yX2Z1dHVyby5SXCIsIG1vZG8sIHRhZywgbGltaXRlU3FsLCB0aXBvUmVkdWNjaW9uLHBhdGhfbW9kZWxvX3BjYV9wcmVmaWpvLFxuICAgICAgICAgICAgIHBjYV91bWJyYWxfdmFyaWFuemEsIHRzbmVfbnVtX2ZlYXR1cmVzX291dHB1dCwgc2VwID0gJyAnKSlcbmBgYCJ9 -->
 <pre class="r"><code>modo &lt;- 3 # 3=prediccion_futuro
-tag &lt;- &quot;DOW_LAB&quot;
+tag &lt;- &quot;DOW_M&quot;
 limiteSql &lt;- &quot;1000&quot;
 path_modelo_pca_prefijo &lt;- &quot;/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_&quot;
 pca_umbral_varianza &lt;- 0.95
 tsne_num_features_output &lt;- 12
+
 system(paste(&quot;Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_050_predictor_futuro.R&quot;, modo, tag, limiteSql, tipoReduccion,path_modelo_pca_prefijo,
              pca_umbral_varianza, tsne_num_features_output, sep = ' '))</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiTnVtZXJvIGRlIHBhcmFtZXRyb3M6ICA3XCJcblsxXSBcIm1vZG89M1wiXG5bMV0gXCJ0YWc9RE9XX0xBQlwiXG5bMV0gXCJsaW1pdGVTcWw9MTAwMFwiXG5bMV0gXCJ0aXBvUmVkdWNjaW9uPVBDQVwiXG5bMV0gXCJwYXRoX21vZGVsb19wY2FfcHJlZmlqbz0vaG9tZS9jYXJsb3NsaW51eC9EZXNrdG9wL0RBVE9TX0xJTVBJTy9nYWxnb3MvcGNhX21vZGVsb19cIlxuWzFdIFwicGNhX3VtYnJhbF92YXJpYW56YT0wLjk1XCJcblsxXSBcInRzbmVfbnVtX2ZlYXR1cmVzX291dHB1dD0xMlwiXG5bMV0gXCItLS0tLS0tLS0tLS0tLS0gZWplY3V0YXJDYWRlbmFQcmVkZWNpckZ1dHVybyAtLS0tLS0tLS0tLS1cIlxuWzFdIFwidGFnPURPV19MQUJcIlxuWzFdIFwibGltaXRlU3FsPTEwMDBcIlxuWzFdIFwidGlwb1JlZHVjY2lvbj1QQ0FcIlxuWzFdIFwicGNhX3VtYnJhbF92YXJpYW56YT0wLjk1XCJcblsxXSBcInRzbmVfbnVtX2ZlYXR1cmVzX291dHB1dD0xMlwiXG5bMV0gXCItLS0tLS0tLS0tLS0tLS0gZXN0YWJsZWNlckNvbmZpZ0dlbmVyYWwgLS0tLS0tLS0tLS0tXCJcbiJ9 -->
-<pre><code>[1] &quot;Numero de parametros:  7&quot;
-[1] &quot;modo=3&quot;
-[1] &quot;tag=DOW_LAB&quot;
-[1] &quot;limiteSql=1000&quot;
-[1] &quot;tipoReduccion=PCA&quot;
-[1] &quot;path_modelo_pca_prefijo=/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_&quot;
-[1] &quot;pca_umbral_varianza=0.95&quot;
-[1] &quot;tsne_num_features_output=12&quot;
-[1] &quot;--------------- ejecutarCadenaPredecirFuturo ------------&quot;
-[1] &quot;tag=DOW_LAB&quot;
-[1] &quot;limiteSql=1000&quot;
-[1] &quot;tipoReduccion=PCA&quot;
-[1] &quot;pca_umbral_varianza=0.95&quot;
-[1] &quot;tsne_num_features_output=12&quot;
-[1] &quot;--------------- establecerConfigGeneral ------------&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBubmxzXG5TdXBlciBMZWFybmVyXG5WZXJzaW9uOiAyLjAtMjNcblBhY2thZ2UgY3JlYXRlZCBvbiAyMDE4LTAzLTA5XG5cbnJhbmRvbUZvcmVzdCA0LjYtMTRcblR5cGUgcmZOZXdzKCkgdG8gc2VlIG5ldyBmZWF0dXJlcy9jaGFuZ2VzL2J1ZyBmaXhlcy5cbkxvYWRpbmcgcmVxdWlyZWQgcGFja2FnZTogTWF0cml4XG5Mb2FkaW5nIHJlcXVpcmVkIHBhY2thZ2U6IGZvcmVhY2hcbkxvYWRlZCBnbG1uZXQgMi4wLTE2XG5cblxuQXR0YWNoaW5nIHBhY2thZ2U6IOKAmGdncGxvdDLigJlcblxuVGhlIGZvbGxvd2luZyBvYmplY3QgaXMgbWFza2VkIGZyb20g4oCYcGFja2FnZTpyYW5kb21Gb3Jlc3TigJk6XG5cbiAgICBtYXJnaW5cblxuTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBNQVNTXG5Mb2FkaW5nIHJlcXVpcmVkIHBhY2thZ2U6IGxtZTRcbkxvYWRpbmcgcmVxdWlyZWQgcGFja2FnZTogbWV0aG9kc1xuXG5hcm0gKFZlcnNpb24gMS4xMC0xLCBidWlsdDogMjAxOC00LTEyKVxuXG5Xb3JraW5nIGRpcmVjdG9yeSBpcyAvaG9tZS9jYXJsb3NsaW51eC9EZXNrdG9wL1dPUktTUEFDRVMvd2tzcF9mb3Jfci9yX2dhbGdvc1xuIn0= -->
-<pre><code>Loading required package: nnls
-Super Learner
-Version: 2.0-23
-Package created on 2018-03-09
-
-randomForest 4.6-14
-Type rfNews() to see new features/changes/bug fixes.
-Loading required package: Matrix
-Loading required package: foreach
-Loaded glmnet 2.0-16
-
-
-Attaching package: ‘ggplot2’
-
-The following object is masked from ‘package:randomForest’:
-
-    margin
-
-Loading required package: MASS
-Loading required package: lme4
-Loading required package: methods
-
-arm (Version 1.10-1, built: 2018-4-12)
-
-Working directory is /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiLS0tLS0tLS0tLS0tLS0tIGxlZXJEZXNkZUJhc2VEYXRvc1lFc2NyaWJpckNTVjogSU5JQ0lPIC0tLS0tLS0tLS0tLVwiXG5bMV0gXCJ0YWc9IERPV19MQUJcIlxuWzFdIFwibGltaXRlU3FsPSAxMDAwXCJcblsxXSBcImluY2x1eWVUYXJnZXRzPSBGQUxTRVwiXG5bMV0gXCJpbmNsdXllVmFsaWRhdGlvbj0gRkFMU0VcIlxuIn0= -->
-<pre><code>[1] &quot;--------------- leerDesdeBaseDatosYEscribirCSV: INICIO ------------&quot;
-[1] &quot;tag= DOW_LAB&quot;
-[1] &quot;limiteSql= 1000&quot;
-[1] &quot;incluyeTargets= FALSE&quot;
-[1] &quot;incluyeValidation= FALSE&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBEQklcbiJ9 -->
-<pre><code>Loading required package: DBI</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiLS0tLS0tLS0tLS0tLS0tQ29uZXhpb24gYSBCQkREIC0tLS0tLS0tLS0tLVwiXG5bMV0gXCJDb25lY3RhbmRvLi4uXCJcblsxXSBcIi0tLS0tLS0tLS0tLS0gRmVhdHVyZXMgKElOUFVUKSAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVwiXG5bMV0gXCJTRUxFQ1QgKiBGUk9NIGRhdG9zX2Rlc2EudGJfZHNfZnV0dXJvX2ZlYXR1cmVzX0RPV19MQUIgTElNSVQgMTAwMDtcIlxuWzFdIFwiRkVBVFVSRVMgKHRyYWluIG8gZnV0dXJvKTogIDEwMDAgeCAzOVwiXG4gWzFdIFwicGVzb19nYWxnb19ub3JtXCIgICAgICAgICAgICAgICAgICAgICAgICBcbiBbMl0gXCJlZWRfbm9ybVwiICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFxuIFszXSBcImV4cGVyaWVuY2lhXCIgICAgICAgICAgICAgICAgICAgICAgICAgICAgXG4gWzRdIFwidHJhcF9mYWN0b3JcIiAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiBbNV0gXCJleHBlcmllbmNpYV9lbl9jbGFzZVwiICAgICAgICAgICAgICAgICAgIFxuIFs2XSBcInBvc2ljaW9uX21lZGlhX2VuX2NsYXNlX3Bvcl9leHBlcmllbmNpYVwiXG4gWzddIFwiZGlmX3Blc29cIiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiBbOF0gXCJlbnRyZW5hZG9yX3Bvc2ljaW9uX25vcm1cIiAgICAgICAgICAgICAgIFxuIFs5XSBcInRyYXBfbm9ybVwiICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXG5bMTBdIFwicmVtYXJrc19wdW50b3NfaGlzdG9yaWNvXCIgICAgICAgICAgICAgICBcblsxMV0gXCJyZW1hcmtzX3B1bnRvc19oaXN0b3JpY29fMTBkXCIgICAgICAgICAgIFxuWzEyXSBcInJlbWFya3NfcHVudG9zX2hpc3Rvcmljb18yMGRcIiAgICAgICAgICAgXG5bMTNdIFwicmVtYXJrc19wdW50b3NfaGlzdG9yaWNvXzUwZFwiICAgICAgICAgICBcblsxNF0gXCJ2ZWxfcmVhbF9jb3J0YXNfbWVkaWFuYV9ub3JtXCIgICAgICAgICAgIFxuWzE1XSBcInZlbF9yZWFsX2NvcnRhc19tYXhfbm9ybVwiICAgICAgICAgICAgICAgXG5bMTZdIFwidmVsX2dvaW5nX2NvcnRhc19tZWRpYW5hX25vcm1cIiAgICAgICAgICBcblsxN10gXCJ2ZWxfZ29pbmdfY29ydGFzX21heF9ub3JtXCIgICAgICAgICAgICAgIFxuWzE4XSBcInZlbF9yZWFsX2xvbmdtZWRpYXNfbWVkaWFuYV9ub3JtXCIgICAgICAgXG5bMTldIFwidmVsX3JlYWxfbG9uZ21lZGlhc19tYXhfbm9ybVwiICAgICAgICAgICBcblsyMF0gXCJ2ZWxfZ29pbmdfbG9uZ21lZGlhc19tZWRpYW5hX25vcm1cIiAgICAgIFxuWzIxXSBcInZlbF9nb2luZ19sb25nbWVkaWFzX21heF9ub3JtXCIgICAgICAgICAgXG5bMjJdIFwidmVsX3JlYWxfbGFyZ2FzX21lZGlhbmFfbm9ybVwiICAgICAgICAgICBcblsyM10gXCJ2ZWxfcmVhbF9sYXJnYXNfbWF4X25vcm1cIiAgICAgICAgICAgICAgIFxuWzI0XSBcInZlbF9nb2luZ19sYXJnYXNfbWVkaWFuYV9ub3JtXCIgICAgICAgICAgXG5bMjVdIFwidmVsX2dvaW5nX2xhcmdhc19tYXhfbm9ybVwiICAgICAgICAgICAgICBcblsyNl0gXCJkaXN0YW5jaWFfbm9ybVwiICAgICAgICAgICAgICAgICAgICAgICAgIFxuWzI3XSBcIm51bV9nYWxnb3Nfbm9ybVwiICAgICAgICAgICAgICAgICAgICAgICAgXG5bMjhdIFwiaG9yYV9ub3JtXCIgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcblsyOV0gXCJ2ZW51ZV9nb2luZ19zdGRcIiAgICAgICAgICAgICAgICAgICAgICAgIFxuWzMwXSBcInZlbnVlX2dvaW5nX2F2Z1wiICAgICAgICAgICAgICAgICAgICAgICAgXG5bMzFdIFwiZG93X2RcIiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcblszMl0gXCJkb3dfbFwiICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFxuWzMzXSBcImRvd19tXCIgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXG5bMzRdIFwiZG93X3hcIiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcblszNV0gXCJkb3dfalwiICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFxuWzM2XSBcImRvd192XCIgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXG5bMzddIFwiZG93X3NcIiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcblszOF0gXCJkb3dfZmluZGVcIiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFxuWzM5XSBcImRvd19sYWJvcmFibGVcIiAgICAgICAgICAgICAgICAgICAgICAgICAgXG5bMV0gXCItLS0tLS0tLS0tLS0tLS0gbGVlckRlc2RlQmFzZURhdG9zWUVzY3JpYmlyQ1NWOiBGSU4gLS0tLS0tLS0tLS0tXCJcblsxXSBcImZ1dHVyb19mOiAxMDAwIHggNDBcIlxuICBwZXNvX2dhbGdvX25vcm0gZWVkX25vcm0gZXhwZXJpZW5jaWEgdHJhcF9mYWN0b3IgZXhwZXJpZW5jaWFfZW5fY2xhc2VcbjEgICAgICAgIDAuMjE4MTgyICAgMC43NjUwICAgICAgICAgMS4wICAgIDAuMjcyMjQxICAgICAgICAgICAgICAgICAwLjE1XG4yICAgICAgICAwLjU1OTA5MSAgIDAuNzY1MCAgICAgICAgIDEuMCAgICAxLjAwMDAwMCAgICAgICAgICAgICAgICAgMC4xMFxuMyAgICAgICAgMC4zNTAwMDAgICAwLjkxODEgICAgICAgICAxLjAgICAgMC40OTQ5ODMgICAgICAgICAgICAgICAgIDAuODBcbjQgICAgICAgIDAuNzAwMDAwICAgMC45NTYzICAgICAgICAgMS4wICAgIDAuNjIzNDExICAgICAgICAgICAgICAgICAxLjAwXG41ICAgICAgICAwLjQ2MzYzNiAgIDAuNjMyNSAgICAgICAgIDAuMSAgICAwLjg0NDgxNiAgICAgICAgICAgICAgICAgMC4xMFxuICBwb3NpY2lvbl9tZWRpYV9lbl9jbGFzZV9wb3JfZXhwZXJpZW5jaWEgZGlmX3Blc28gZW50cmVuYWRvcl9wb3NpY2lvbl9ub3JtXG4xICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDAuNzk4NDQ0MiAwLjM1NTk1MSAgICAgICAgICAgICAgICAgMC40NDI1NDNcbjIgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgMC43OTg0NDQyIDAuMzA4MzUxICAgICAgICAgICAgICAgICAwLjUxNjE2NVxuMyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAwLjY5NjMwMjkgMC4xMjA5MjAgICAgICAgICAgICAgICAgIDAuNDQyNTQzXG40ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDAuNjk2MzAyOSAwLjQ5NDc1NSAgICAgICAgICAgICAgICAgMC40NDI1NDNcbjUgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgMC43OTg0NDQyIDAuMDczMzE5ICAgICAgICAgICAgICAgICAwLjUyMzIzOFxuICB0cmFwX25vcm0gcmVtYXJrc19wdW50b3NfaGlzdG9yaWNvIHJlbWFya3NfcHVudG9zX2hpc3Rvcmljb18xMGRcbjEgICAgICAgMS4wICAgICAgICAgICAgICAgIDAuMjUzMDM5MiAgICAgICAgICAgICAgICAgICAgIDAuMzQ2NjY3XG4yICAgICAgIDAuMCAgICAgICAgICAgICAgICAwLjMyMjI1NDkgICAgICAgICAgICAgICAgICAgICAwLjY0MDAwMFxuMyAgICAgICAwLjYgICAgICAgICAgICAgICAgMC4yNTkyOTgzICAgICAgICAgICAgICAgICAgICAgMC40MzAwMDBcbjQgICAgICAgMC4yICAgICAgICAgICAgICAgIDAuMTg2NzY0NyAgICAgICAgICAgICAgICAgICAgIDAuMDMwMDAwXG41ICAgICAgIDAuNCAgICAgICAgICAgICAgICAwLjE2MzMzMzAgICAgICAgICAgICAgICAgICAgICAwLjE2MzMzM1xuICByZW1hcmtzX3B1bnRvc19oaXN0b3JpY29fMjBkIHJlbWFya3NfcHVudG9zX2hpc3Rvcmljb181MGRcbjEgICAgICAgICAgICAgICAgICAgICAwLjE5ODg4OSAgICAgICAgICAgICAgICAgICAgIDAuMTk4ODg5XG4yICAgICAgICAgICAgICAgICAgICAgMC40NDUwMDAgICAgICAgICAgICAgICAgICAgICAwLjQwMTAwMFxuMyAgICAgICAgICAgICAgICAgICAgIDAuMzMwMDAwICAgICAgICAgICAgICAgICAgICAgMC4zMTAwMDBcbjQgICAgICAgICAgICAgICAgICAgICAwLjAzMDAwMCAgICAgICAgICAgICAgICAgICAgIDAuMjQyMDAwXG41ICAgICAgICAgICAgICAgICAgICAgMC4xNjMzMzMgICAgICAgICAgICAgICAgICAgICAwLjE2MzMzM1xuICB2ZWxfcmVhbF9jb3J0YXNfbWVkaWFuYV9ub3JtIHZlbF9yZWFsX2NvcnRhc19tYXhfbm9ybVxuMSAgICAgICAgICAgICAgICAgICAgIDAuNzgxODA2ICAgICAgICAgICAgICAgICAwLjgxNTQyMlxuMiAgICAgICAgICAgICAgICAgICAgIDAuNzU1Nzg1ICAgICAgICAgICAgICAgICAwLjc1NTc4NVxuMyAgICAgICAgICAgICAgICAgICAgIDAuNzUxMDk1ICAgICAgICAgICAgICAgICAwLjgxNTQyMlxuNCAgICAgICAgICAgICAgICAgICAgIDAuNzU1Nzg1ICAgICAgICAgICAgICAgICAwLjc4NDE4N1xuNSAgICAgICAgICAgICAgICAgICAgIDAuNzMwMDk3ICAgICAgICAgICAgICAgICAwLjczMDA5N1xuICB2ZWxfZ29pbmdfY29ydGFzX21lZGlhbmFfbm9ybSB2ZWxfZ29pbmdfY29ydGFzX21heF9ub3JtXG4xICAgICAgICAgICAgICAgICAgICAgIDAuNzYxMTY2ICAgICAgICAgICAgICAgICAgMC43OTM4OTVcbjIgICAgICAgICAgICAgICAgICAgICAgMC43MzU4MzIgICAgICAgICAgICAgICAgICAwLjczNTgzMlxuMyAgICAgICAgICAgICAgICAgICAgICAwLjczMTI2NiAgICAgICAgICAgICAgICAgIDAuNzkzODk1XG40ICAgICAgICAgICAgICAgICAgICAgIDAuNzU4ODQ4ICAgICAgICAgICAgICAgICAgMC43ODIxNDNcbjUgICAgICAgICAgICAgICAgICAgICAgMC42OTk1NTcgICAgICAgICAgICAgICAgICAwLjY5OTU1N1xuICB2ZWxfcmVhbF9sb25nbWVkaWFzX21lZGlhbmFfbm9ybSB2ZWxfcmVhbF9sb25nbWVkaWFzX21heF9ub3JtXG4xICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIE5BICAgICAgICAgICAgICAgICAgICAgICAgICAgTkFcbjIgICAgICAgICAgICAgICAgICAgICAgICAgMC43NjMwMzQgICAgICAgICAgICAgICAgICAgICAwLjc5ODc4MVxuMyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBOQSAgICAgICAgICAgICAgICAgICAgICAgICAgIE5BXG40ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIE5BICAgICAgICAgICAgICAgICAgICAgICAgICAgTkFcbjUgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgTkEgICAgICAgICAgICAgICAgICAgICAgICAgICBOQVxuICB2ZWxfZ29pbmdfbG9uZ21lZGlhc19tZWRpYW5hX25vcm0gdmVsX2dvaW5nX2xvbmdtZWRpYXNfbWF4X25vcm1cbjEgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIE5BICAgICAgICAgICAgICAgICAgICAgICAgICAgIE5BXG4yICAgICAgICAgICAgICAgICAgICAgICAgICAwLjc3MDg4NCAgICAgICAgICAgICAgICAgICAgICAwLjc2NjY5NVxuMyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgTkEgICAgICAgICAgICAgICAgICAgICAgICAgICAgTkFcbjQgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIE5BICAgICAgICAgICAgICAgICAgICAgICAgICAgIE5BXG41ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBOQSAgICAgICAgICAgICAgICAgICAgICAgICAgICBOQVxuICB2ZWxfcmVhbF9sYXJnYXNfbWVkaWFuYV9ub3JtIHZlbF9yZWFsX2xhcmdhc19tYXhfbm9ybVxuMSAgICAgICAgICAgICAgICAgICAgICAgICAgIE5BICAgICAgICAgICAgICAgICAgICAgICBOQVxuMiAgICAgICAgICAgICAgICAgICAgICAgICAgIE5BICAgICAgICAgICAgICAgICAgICAgICBOQVxuMyAgICAgICAgICAgICAgICAgICAgICAgICAgIE5BICAgICAgICAgICAgICAgICAgICAgICBOQVxuNCAgICAgICAgICAgICAgICAgICAgICAgICAgIE5BICAgICAgICAgICAgICAgICAgICAgICBOQVxuNSAgICAgICAgICAgICAgICAgICAgICAgICAgIE5BICAgICAgICAgICAgICAgICAgICAgICBOQVxuICB2ZWxfZ29pbmdfbGFyZ2FzX21lZGlhbmFfbm9ybSB2ZWxfZ29pbmdfbGFyZ2FzX21heF9ub3JtIGRpc3RhbmNpYV9ub3JtXG4xICAgICAgICAgICAgICAgICAgICAgICAgICAgIE5BICAgICAgICAgICAgICAgICAgICAgICAgTkEgICAgICAgICAwLjA4NDZcbjIgICAgICAgICAgICAgICAgICAgICAgICAgICAgTkEgICAgICAgICAgICAgICAgICAgICAgICBOQSAgICAgICAgIDAuMDg0NlxuMyAgICAgICAgICAgICAgICAgICAgICAgICAgICBOQSAgICAgICAgICAgICAgICAgICAgICAgIE5BICAgICAgICAgMC4wODQ2XG40ICAgICAgICAgICAgICAgICAgICAgICAgICAgIE5BICAgICAgICAgICAgICAgICAgICAgICAgTkEgICAgICAgICAwLjA4NDZcbjUgICAgICAgICAgICAgICAgICAgICAgICAgICAgTkEgICAgICAgICAgICAgICAgICAgICAgICBOQSAgICAgICAgIDAuMDg0NlxuICBudW1fZ2FsZ29zX25vcm0gaG9yYV9ub3JtIHZlbnVlX2dvaW5nX3N0ZCB2ZW51ZV9nb2luZ19hdmcgZG93X2QgZG93X2wgZG93X21cbjEgICAgICAgICAgICAgICAxICAgIDAuNjY2NyAgICAgICAgICAgICAgTkEgICAgICAgICAgICAgIE5BICAgICAwICAgICAwICAgICAwXG4yICAgICAgICAgICAgICAgMSAgICAwLjY2NjcgICAgICAgICAgICAgIE5BICAgICAgICAgICAgICBOQSAgICAgMCAgICAgMCAgICAgMFxuMyAgICAgICAgICAgICAgIDEgICAgMC42NjY3ICAgICAgICAgICAgICBOQSAgICAgICAgICAgICAgTkEgICAgIDAgICAgIDAgICAgIDBcbjQgICAgICAgICAgICAgICAxICAgIDAuNjY2NyAgICAgICAgICAgICAgTkEgICAgICAgICAgICAgIE5BICAgICAwICAgICAwICAgICAwXG41ICAgICAgICAgICAgICAgMSAgICAwLjY2NjcgICAgICAgICAgICAgIE5BICAgICAgICAgICAgICBOQSAgICAgMCAgICAgMCAgICAgMFxuICBkb3dfeCBkb3dfaiBkb3dfdiBkb3dfcyBkb3dfZmluZGUgZG93X2xhYm9yYWJsZSBJTkRJQ0VfT1JERU5cbjEgICAgIDEgICAgIDAgICAgIDAgICAgIDAgICAgICAgICAwICAgICAgICAgICAgIDEgICAgICAgICAgICAxXG4yICAgICAxICAgICAwICAgICAwICAgICAwICAgICAgICAgMCAgICAgICAgICAgICAxICAgICAgICAgICAgMlxuMyAgICAgMSAgICAgMCAgICAgMCAgICAgMCAgICAgICAgIDAgICAgICAgICAgICAgMSAgICAgICAgICAgIDNcbjQgICAgIDEgICAgIDAgICAgIDAgICAgIDAgICAgICAgICAwICAgICAgICAgICAgIDEgICAgICAgICAgICA0XG41ICAgICAxICAgICAwICAgICAwICAgICAwICAgICAgICAgMCAgICAgICAgICAgICAxICAgICAgICAgICAgNVxuWzFdIFwiZGF0YS5mcmFtZSBBOiAxMDAwIHggNDBcIlxuWzFdIFwiZGF0YS5mcmFtZSBCOiAxMDAwIHggMjhcIlxuWzFdIFwiZGF0YS5mcmFtZSBDOiA2MjggeCAyOFwiXG5bMV0gXCJOdW1lcm8gZGUgZmlsYXMgZGUgQyBxdWUgdGVuaWFuIGFsZ3VuIE5BOlwiXG4gIFsxXSAgIDEgICAyICAgMyAgIDQgICA1ICAgNiAgIDcgICA4ICAgOSAgMTAgIDExICAxMiAgMTYgIDE5ICAyMCAgMjEgIDIyICAyM1xuIFsxOV0gIDI0ICAyNSAgMjYgIDI4ICAyOSAgMzQgIDM4ICA0NCAgNDUgIDQ2ICA1NyAgNTkgIDYwICA2MiAgNjggIDY5ICA3MCAgNzJcbiBbMzddICA3MyAgNzcgIDgxICA4NiAgODggIDkwICA5NiAxMDQgMTA3IDExMyAxMTQgMTE4IDExOSAxMjMgMTI3IDEzMiAxMzkgMTQzXG4gWzU1XSAxNDQgMTQ5IDE1OSAxNjIgMTY0IDE2NSAxNjcgMTY4IDE3MyAxNzUgMTc3IDE4MCAxODUgMTg2IDE5MyAxOTcgMTk5IDIwOVxuIFs3M10gMjEwIDIxNSAyMjAgMjIxIDIyNyAyMzAgMjMxIDIzNCAyNDAgMjU0IDI1NyAyNTggMjYyIDI2MyAyNjkgMjcxIDI3MiAyNzdcbiBbOTFdIDI4MSAyODMgMjg3IDI4OCAyOTAgMjk1IDI5NiAyOTkgMzEwIDMxMSAzMjIgMzI0IDMyOSAzMzggMzM5IDM0MiAzNDMgMzQ1XG5bMTA5XSAzNDcgMzU3IDM1OSAzNjIgMzY5IDM3MiAzNzMgMzc2IDM4MCAzODEgMzgyIDM4NCAzODUgMzg2IDM5NiA0MTUgNDI2IDQyN1xuWzEyN10gNDMwIDQzNiA0NDAgNDUxIDQ1MyA0NTcgNDYwIDQ2NyA0NjggNDczIDQ3NSA0NzkgNDgwIDQ4NCA0ODcgNDkyIDUwMSA1MDNcblsxNDVdIDUxMCA1MTIgNTE1IDUxNiA1MTcgNTE4IDUyMSA1MjQgNTI1IDUzMSA1NDMgNTQ2IDU0OCA1NTAgNTUzIDU1OSA1NjAgNTYxXG5bMTYzXSA1NjMgNTY0IDU2NSA1NjYgNTcwIDU3NCA1NzggNTgwIDU4MiA1ODMgNTg0IDU4NSA1ODYgNTg3IDU4OCA1OTQgNjAwIDYwMVxuWzE4MV0gNjAzIDYwNSA2MDcgNjA5IDYxMiA2MTYgNjE3IDYxOCA2MTkgNjI0IDYyNiA2MjggNjMwIDYzMyA2MzUgNjQyIDY0NiA2NDlcblsxOTldIDY1NyA2NjEgNjYyIDY2MyA2NjcgNjcxIDY3MiA2NzUgNjc3IDY4MCA2ODggNjg5IDY5MiA2OTkgNzAwIDcwMSA3MDMgNzA0XG5bMjE3XSA3MDUgNzA2IDcwOCA3MTMgNzE2IDcxNyA3MTkgNzIzIDcyNCA3MjUgNzI2IDcyNyA3MjggNzMyIDczMyA3NDAgNzQyIDc0NVxuWzIzNV0gNzQ2IDc0NyA3NTEgNzU2IDc1OSA3NjEgNzYyIDc2MyA3NjQgNzY2IDc2NyA3NzEgNzc0IDc4NSA3ODggNzkxIDc5MiA3OTNcblsyNTNdIDc5NiA4MDAgODAyIDgwOCA4MTMgODE0IDgxNyA4MjYgODMwIDgzMSA4MzIgODMzIDgzNCA4MzUgODM2IDg0MSA4NDIgODQzXG5bMjcxXSA4NDQgODQ1IDg0NiA4NDcgODQ4IDg0OSA4NTQgODU1IDg1NiA4NTcgODU4IDg1OSA4NjAgODY4IDg2OSA4NzEgODcyIDg3M1xuWzI4OV0gODc0IDg3NSA4NzYgODc3IDg3OCA4NzkgODgwIDg4MSA4ODIgODgzIDg4NCA4ODYgODg4IDg5MCA4OTIgODk0IDg5NyA4OThcblszMDddIDg5OSA5MDAgOTAxIDkwMiA5MDMgOTA0IDkwNSA5MDYgOTA3IDkwOCA5MTIgOTE1IDkxOCA5MjAgOTIxIDkyMiA5MjMgOTI0XG5bMzI1XSA5MjUgOTI2IDkyNyA5MjggOTI5IDkzMCA5MzEgOTMyIDk0MCA5NDQgOTQ1IDk0NiA5NDcgOTQ4IDk0OSA5NTAgOTUxIDk1MlxuWzM0M10gOTUzIDk1NCA5NTUgOTU2IDk2MyA5NjYgOTY5IDk3MCA5NzEgOTcyIDk3MyA5NzQgOTc1IDk3NiA5NzcgOTc4IDk3OSA5ODBcblszNjFdIDk4MyA5ODQgOTg1IDk5MCA5OTEgOTkzIDk5NCA5OTUgOTk2IDk5NyA5OTggOTk5XG5bMV0gXCJkYXRhLmZyYW1lIEU6IDYyOCB4IDQwXCJcblsxXSBcIi0tLS0tLS0tLS0tLS0tLSBjcmVhckZlYXR1cmVzeVRhcmdldERlbFBhc2Fkb1BhcmFEaXN0YW5jaWFzIC0tLS0tLS0tLS0tLVwiXG5bMV0gXCJwYXNhZG9fZnQ6IDYyOCB4IDQwXCJcblsxXSBcInF1aXRhckNvbHVtbmFzRGVPdHJhc0Rpc3RhbmNpYXM6IFRSVUVcIlxuWzFdIFwicXVpdGFyTmFzOiBUUlVFXCJcblsxXSBcInBhc2Fkb19mdF9jb3J0YXM6IDYyOCB4IDQwXCJcblsxXSBcInBhc2Fkb19mdF9jb3J0YXNfY29uTkFzOiAzNTggeCA0MFwiXG5bMV0gXCJwYXNhZG9fZnRfbWVkaWFzX2Nvbk5BczogMjcwIHggNDBcIlxuWzFdIFwicGFzYWRvX2Z0X2xhcmdhc19jb25OQXM6IDAgeCA0MFwiXG5bMV0gXCItLVF1aXRhbmRvIGNvbHVtbmFzIGRlIG90cmFzIERJU1RBTkNJQVMuLi5cIlxuWzFdIFwicGFzYWRvX2Z0X2NvcnRhc19jb2xkaXM6IDM1OCB4IDMyXCJcblsxXSBcInBhc2Fkb19mdF9tZWRpYXNfY29sZGlzOiAyNzAgeCAzMlwiXG5bMV0gXCJwYXNhZG9fZnRfbGFyZ2FzX2NvbGRpczogMCB4IDMyXCJcblsxXSBcIi0tIFF1aXRhbmRvIE5BcyAoYXVucXVlIG1hbnRlbmdvIGNvbHVtbmEgSU5ESUNFX09SREVOKS4uLlwiXG5bMV0gXCJDb21wcm9iYWNpb24gZGUgTkFzLi4uXCJcblsxXSBcIkNPUlRBUyAodHJhaW4rdGVzdCk6IDE1MCB4IDMyXCJcblsxXSBcIk1FRElBUyAodHJhaW4rdGVzdCk6IDI2MyB4IDMyXCJcblsxXSBcIkxBUkdBUyAodHJhaW4rdGVzdCk6IDAgeCAzMlwiXG5bMV0gXCIjIyMjIyMjIyBSRURVQ0lSIERJTUVOU0lPTkVTICMjIyMjIyMjIyNcIlxuWzFdIFwiQ2FyZ2FuZG8gcmVkdWN0b3JlcyBQQ0EgKGRlc2RlIGZpY2hlcm8pLi4uXCJcblsxXSBcIlVtYnJhbCBkZXNlYWRvIGRlIHZhcmlhbnphIGFjdW11bGFkYTogMC45NVwiXG5bMV0gXCJQb3IgdGFudG8sIG5lY2VzaXRhbW9zIGNvZ2VyIDEyIHZhcmlhYmxlcyB0cmFuc2Zvcm1hZGFzIFBDeC4uLlwiXG5bMV0gXCJVbWJyYWwgZGVzZWFkbyBkZSB2YXJpYW56YSBhY3VtdWxhZGE6IDAuOTVcIlxuWzFdIFwiUG9yIHRhbnRvLCBuZWNlc2l0YW1vcyBjb2dlciAxMyB2YXJpYWJsZXMgdHJhbnNmb3JtYWRhcyBQQ3guLi5cIlxuWzFdIFwiVW1icmFsIGRlc2VhZG8gZGUgdmFyaWFuemEgYWN1bXVsYWRhOiAwLjk1XCJcblsxXSBcIlBvciB0YW50bywgbmVjZXNpdGFtb3MgY29nZXIgOSB2YXJpYWJsZXMgdHJhbnNmb3JtYWRhcyBQQ3guLi5cIlxuWzFdIFwiUmVkdWNpZW5kbyBkaW1lbnNpb25lcy4uLi5cIlxuWzFdIFwiQ09SVEFTOiByZWR1Y2lyIGxhcyBGRUFUVVJFUy4uLlwiXG5bMV0gXCJNRURJQVM6IHJlZHVjaXIgbGFzIEZFQVRVUkVTLi4uXCJcblsxXSBcIkxBUkdBUzogcmVkdWNpciBsYXMgRkVBVFVSRVMuLi5cIlxuWzFdIFwiTWV0aWVuZG8gY29sdW1uYSBJTkRJQ0VfT1JERU4uLi5cIlxuICAgICAgIENvbXAuMSAgICAgQ29tcC4yICAgICAgQ29tcC4zICAgIENvbXAuNCAgICAgIENvbXAuNSAgICAgIENvbXAuNlxuNDMgMC4xMDI1NjIzNCAtMC4zMTU5Njg1IC0wLjU0NzIyMjY5IDAuOTMzNTc1NiAtMC4wMTYyODMyOSAtMC4yMzE2Mjg5NlxuNDcgMC4xMjQ1MTM0NiAtMC40MTk1MDgyICAwLjI5MDU3MDgzIDAuOTAzOTg4MSAtMC4wMzYwMDg5NyAtMC4wOTE2MTI1MVxuNDggMC4xMTYzODI2NyAtMC4zNjA4NjczIC0wLjA5NTc4NDU4IDAuOTA5MDY4NCAgMC4wNjg0MTkxMSAgMC4zMjU1NTg0MlxuNTEgMC4wNjA5NjU2OSAtMC4zMDA4Nzg5IC0wLjYxMzczNzMxIDAuOTI5NzA1NCAtMC4yNDU5NjY3MSAtMC40Njc0Mzg4MlxuNjcgMC4xMTkxOTk4MyAtMC40OTQwMjQxICAwLjY3MzM0NTYyIDAuODczMjc2MCAtMC4wMzU2NjMxNyAtMC4wOTU2NTYyMVxuICAgICAgICAgQ29tcC43ICAgICAgQ29tcC44ICAgICBDb21wLjkgICAgICBDb21wLjEwICAgICBDb21wLjExICAgICBDb21wLjEyXG40MyAtMC40MTQ4NTY4NzIgIDAuMTg1MzM4MDMgLTAuMjM2MTQ2NiAtMC4xNDkyMTQ0MjcgLTAuMTI3OTM4MjAgLTAuMDI2MjEyMjlcbjQ3IC0wLjM2NzY0Mjg1OSAgMC4wNTQ5NDMxNSAgMC4yMzg3NzUyIC0wLjAwNzAzMTcwNiAgMC4wNDE5MjQwMiAtMC4xODk4NjM3MlxuNDggLTAuMjU4MjY5NzgwICAwLjE4ODU3MDU4IC0wLjE4ODY4NjYgLTAuMDE3ODMyODkzIC0wLjAzNDc0MzQ2IC0wLjA0NjkxNjYzXG41MSAgMC4wNTc2MjMzMzIgLTAuMTAzNzg1NTYgLTAuMTQ4NDQ3MSAgMC4xOTk3MTI0NTIgIDAuMTMwMDI5NzIgLTAuMDk3MzQ2OTVcbjY3ICAwLjAwNDE5NTI1NSAtMC4yMDg4MTAwNyAgMC4zNzg4MDkyIC0wLjA5Mzc1MDY3MiAgMC4xOTE4NDMyNyAtMC4yMDg0MjQwNFxuICAgSU5ESUNFX09SREVOXG40MyAgICAgICAgICAgNDNcbjQ3ICAgICAgICAgICA0N1xuNDggICAgICAgICAgIDQ4XG41MSAgICAgICAgICAgNTFcbjY3ICAgICAgICAgICA2N1xuICAgICAgICBDb21wLjEgICAgIENvbXAuMiAgICAgQ29tcC4zICAgIENvbXAuNCAgICAgQ29tcC41ICAgICAgQ29tcC42XG4xMyAtMC4wNTY4NTI1MCAtMC4yNDEyNzEyIC0wLjY5NDYwMDQgMC45ODEwMTkxIC0wLjMyMjE1MzMgLTAuMDIwNzYzMjlcbjE0IC0wLjA1NzYxODEwIC0wLjI0NzIzOTAgLTAuMjkxMzQ5MCAwLjk5NDQ4MTggLTAuNDk0NDc5OCAgMC4yNzgzMzU1MlxuMTUgLTAuMDY3NDQ4MzkgLTAuMjc1NTQ4NiAgMC41NzU2Njg1IDAuOTgwNDQ3NSAtMC4zOTI0MDQ2ICAwLjIzMDc2NjAzXG4xNyAtMC4wNjU0NTA1NCAtMC4yNzc4ODAzICAwLjUyNzYyOTAgMC45ODUzMzI4IC0wLjMyMTMxMjMgLTAuMDQ1MTU4MzBcbjE4IC0wLjA1NTI3ODg4IC0wLjI0NDE2NTIgLTAuMjg0OTQzNiAwLjk5MDkzNTUgLTAuNDk2NjEwNCAgMC4yNzA0MDM4OFxuICAgICAgIENvbXAuNyAgICAgQ29tcC44ICAgICAgQ29tcC45ICAgIENvbXAuMTAgICAgICBDb21wLjExICAgICBDb21wLjEyXG4xMyAtMC4xOTQ5NjQxIC0wLjE4MTk2NDYgIDAuMDEwODg0MzAgLTAuMjE4ODkyOSAgMC4wODI1MzY0MDkgIDAuMjc2ODkxMDhcbjE0IC0wLjMxMzU3NDEgLTAuMTM4MDc3MiAgMC4xNzQwMzQ3NyAgMC4yNDUzODY5ICAwLjAzNjQ1MjAzMCAtMC4wMzMyNzEyN1xuMTUgLTAuMjA4NDI2NyAtMC4yNDQyOTcxIC0wLjA2NzYwMzA2IC0wLjEzOTgwNTggIDAuMDIzNDQ0NDkyICAwLjE5NjUyNDAzXG4xNyAtMC4xNjE1NzYyIC0wLjI1MjQyMzMgIDAuNDUyOTU4NzQgLTAuMjUyMTI0OCAgMC4wMDcwOTA0MTggIDAuMDQ3NjM2ODBcbjE4IC0wLjI5ODM3MTAgLTAuMTUwNzM0NSAgMC4wNjYxMzQ2OCAtMC4xMzQyNDQyIC0wLjExODk1MTgzMSAgMC4wNDk0NDA2NFxuICAgICAgQ29tcC4xMyBJTkRJQ0VfT1JERU5cbjEzICAwLjA1NjQ5MzIgICAgICAgICAgIDEzXG4xNCAgMC4xMzU0ODYxICAgICAgICAgICAxNFxuMTUgLTAuMTQ0MTQxNiAgICAgICAgICAgMTVcbjE3ICAwLjE3NDkxNzUgICAgICAgICAgIDE3XG4xOCAtMC4xMjY2NDk3ICAgICAgICAgICAxOFxuIFsxXSBDb21wLjEgICAgICAgQ29tcC4yICAgICAgIENvbXAuMyAgICAgICBDb21wLjQgICAgICAgQ29tcC41ICAgICAgXG4gWzZdIENvbXAuNiAgICAgICBDb21wLjcgICAgICAgQ29tcC44ICAgICAgIENvbXAuOSAgICAgICBJTkRJQ0VfT1JERU5cbjwwIHJvd3M+IChvciAwLWxlbmd0aCByb3cubmFtZXMpXG5bMV0gXCIjIyMjIyMjIyBQUkVESUNDSU9OIERFTCBGVVRVUk8gIyMjIyMjIyMjI1wiXG5bMV0gXCItLS0tLS0tLS0tLS0tLS0gcHJlZGVjaXIoKTogSU5JQ0lPIC0tLS0tLS0tLS0tLS0tLS0tXCJcblsxXSBcInRhZz0gRE9XX0xBQlwiXG5bMV0gXCJpbnB1dF9mX3RyYW5zZm9ybWFkYXM6ICAzXCJcblsxXSBcIm91dHB1dF9maWxlX3ByZWZpam89IC9ob21lL2Nhcmxvc2xpbnV4L0Rlc2t0b3AvREFUT1NfTElNUElPL2dhbGdvcy9GSUxFTE9BRF9kc19mdXR1cm9fdGFyZ2V0c18yX1wiXG5bMV0gXCJ0aXBvPSBGVVRVUk9cIlxuWzFdIFwiQ2FyZ2FuZG8gbW9kZWxvcyBQUkVESUNUSVZPUyBFTlRSRU5BRE9TIChkZXNkZSBmaWNoZXJvKS4uLlwiXG5cbkNhbGw6ICBcblN1cGVyTGVhcm5lcihZID0geV90cmFpbiwgWCA9IHhfdHJhaW4sIGZhbWlseSA9IGdhdXNzaWFuKCksIFNMLmxpYnJhcnkgPSBhbGdvcml0bW9zUHJlZGljdGl2b3NVc2Fkb3MsICBcbiAgICBtZXRob2QgPSBcIm1ldGhvZC5OTkxTXCIsIGlkID0gTlVMTCwgdmVyYm9zZSA9IFRSVUUsIGNvbnRyb2wgPSBsaXN0KCksICBcbiAgICBjdkNvbnRyb2wgPSBsaXN0KFYgPSBudW1fdiwgc2h1ZmZsZSA9IEZBTFNFKSkgXG5cblxuICAgICAgICAgICAgICAgICAgICAgICAgICBSaXNrICAgICAgIENvZWZcblNMLmdsbW5ldF8xX0FsbCAgICAwLjAwNDY1ODQ2NSAwLjAwMDAwMDAwXG5TTC5iYXllc2dsbV8xX0FsbCAgMC4wMDQ2NTQ4OTYgMC4wMDAwMDAwMFxuU0wuZ2xtbmV0X0FsbCAgICAgIDAuMDA0NjU4NDY1IDAuMDAwMDAwMDBcblNMLmJheWVzZ2xtX0FsbCAgICAwLjAwNDY1NDg5NiAwLjAwMDAwMDAwXG5TTC5jYXJldC5ycGFydF9BbGwgMC4wMjE1NzIyMjIgMC4wMDU1OTkyMlxuU0wuZ2xtX0FsbCAgICAgICAgIDAuMDA0NjU0OTA1IDAuMTc3OTk1MDZcblNMLm5uZXRfQWxsICAgICAgICAwLjAwNDYxMjMwNCAwLjUxMDc5NjA0XG5TTC5wb2x5bWFyc19BbGwgICAgMC4wMDQ4MDA5ODYgMC4zMDU2MDk2OFxuXG5DYWxsOiAgXG5TdXBlckxlYXJuZXIoWSA9IHlfdHJhaW4sIFggPSB4X3RyYWluLCBmYW1pbHkgPSBnYXVzc2lhbigpLCBTTC5saWJyYXJ5ID0gYWxnb3JpdG1vc1ByZWRpY3Rpdm9zVXNhZG9zLCAgXG4gICAgbWV0aG9kID0gXCJtZXRob2QuTk5MU1wiLCBpZCA9IE5VTEwsIHZlcmJvc2UgPSBUUlVFLCBjb250cm9sID0gbGlzdCgpLCAgXG4gICAgY3ZDb250cm9sID0gbGlzdChWID0gbnVtX3YsIHNodWZmbGUgPSBGQUxTRSkpIFxuXG5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgUmlzayAgICAgICBDb2VmXG5TTC5nbG1uZXRfMV9BbGwgICAgMC4wMDM0MDI5MjMgMC4wMDAwMDAwMFxuU0wuYmF5ZXNnbG1fMV9BbGwgIDAuMDAzNDAzNTA0IDAuMDAwMDAwMDBcblNMLmdsbW5ldF9BbGwgICAgICAwLjAwMzQwMjkyMyAwLjAwMDAwMDAwXG5TTC5iYXllc2dsbV9BbGwgICAgMC4wMDM0MDM1MDQgMC4wMDAwMDAwMFxuU0wuY2FyZXQucnBhcnRfQWxsIDAuMDEyOTkzMjM2IDAuMDE5MTkyOTlcblNMLmdsbV9BbGwgICAgICAgICAwLjAwMzQwMzUxNSAwLjEzMzI4MTU1XG5TTC5ubmV0X0FsbCAgICAgICAgMC4wMDM0NjI3MDUgMC4yNjc3ODQyMFxuU0wucG9seW1hcnNfQWxsICAgIDAuMDAzMzYzMDAzIDAuNTc5NzQxMjZcblxuQ2FsbDogIFxuU3VwZXJMZWFybmVyKFkgPSB5X3RyYWluLCBYID0geF90cmFpbiwgZmFtaWx5ID0gZ2F1c3NpYW4oKSwgU0wubGlicmFyeSA9IGFsZ29yaXRtb3NQcmVkaWN0aXZvc1VzYWRvcywgIFxuICAgIG1ldGhvZCA9IFwibWV0aG9kLk5OTFNcIiwgaWQgPSBOVUxMLCB2ZXJib3NlID0gVFJVRSwgY29udHJvbCA9IGxpc3QoKSwgIFxuICAgIGN2Q29udHJvbCA9IGxpc3QoViA9IG51bV92LCBzaHVmZmxlID0gRkFMU0UpKSBcblxuXG4gICAgICAgICAgICAgICAgICAgICAgICAgIFJpc2sgICAgICBDb2VmXG5TTC5nbG1uZXRfMV9BbGwgICAgMC4wMDQ3NTY4MDcgMC4yOTY3OTQyXG5TTC5iYXllc2dsbV8xX0FsbCAgMC4wMDUyMzczNDUgMC4wMDAwMDAwXG5TTC5nbG1uZXRfQWxsICAgICAgMC4wMDQ5NDA1OTcgMC4wMDAwMDAwXG5TTC5iYXllc2dsbV9BbGwgICAgMC4wMDUyMzczNDUgMC4wMDAwMDAwXG5TTC5jYXJldC5ycGFydF9BbGwgMC4wMDQ3MjIwNjEgMC40NzQ1MzY5XG5TTC5nbG1fQWxsICAgICAgICAgMC4wMDUzMzgzNzkgMC4wMDAwMDAwXG5TTC5ubmV0X0FsbCAgICAgICAgMC4wMjAwODgxOTUgMC4wMDAwMDAwXG5TTC5wb2x5bWFyc19BbGwgICAgMC4wMDYwMDcwNzggMC4yMjg2Njg5XG5bMV0gXCIgLS0tLS0tLS0tLS0tLS0tRW50cmFkYXMgKGZlYXR1cmVzOiBtYW50ZW5lciBlbCBPUkRFTiktLS0tLS0tLS0tLVwiXG5bMV0gXCJpbnB1dF9mX3RyYW5zZm9ybWFkYV9jb3J0YXM6ICAxNTAgeCAxM1wiXG5bMV0gXCJpbnB1dF9mX3RyYW5zZm9ybWFkYV9tZWRpYXM6ICAyNjMgeCAxNFwiXG5bMV0gXCJpbnB1dF9mX3RyYW5zZm9ybWFkYV9sYXJnYXM6ICAwIHggMTBcIlxuWzFdIFwiT21pdGllbmRvIG51bG9zLi4uXCJcblsxXSBcIkNPUlRBUy1GIChzaW4gTkFzKTogMTUwIHggMTNcIlxuWzFdIFwiTUVESUFTLUYgKHNpbiBOQXMpOiAyNjMgeCAxNFwiXG5bMV0gXCJMQVJHQVMtRiAoc2luIE5Bcyk6IDAgeCAxMFwiXG5bMV0gXCJpbnB1dF9mX2NvcnRhc19zaW5pbmRpY2U6IDE1MCB4IDEyXCJcbiAgICAgICBDb21wLjEgICAgIENvbXAuMiAgICAgIENvbXAuMyAgICBDb21wLjQgICAgICBDb21wLjUgICAgICBDb21wLjZcbjQzIDAuMTAyNTYyMzQgLTAuMzE1OTY4NSAtMC41NDcyMjI2OSAwLjkzMzU3NTYgLTAuMDE2MjgzMjkgLTAuMjMxNjI4OTZcbjQ3IDAuMTI0NTEzNDYgLTAuNDE5NTA4MiAgMC4yOTA1NzA4MyAwLjkwMzk4ODEgLTAuMDM2MDA4OTcgLTAuMDkxNjEyNTFcbjQ4IDAuMTE2MzgyNjcgLTAuMzYwODY3MyAtMC4wOTU3ODQ1OCAwLjkwOTA2ODQgIDAuMDY4NDE5MTEgIDAuMzI1NTU4NDJcbjUxIDAuMDYwOTY1NjkgLTAuMzAwODc4OSAtMC42MTM3MzczMSAwLjkyOTcwNTQgLTAuMjQ1OTY2NzEgLTAuNDY3NDM4ODJcbjY3IDAuMTE5MTk5ODMgLTAuNDk0MDI0MSAgMC42NzMzNDU2MiAwLjg3MzI3NjAgLTAuMDM1NjYzMTcgLTAuMDk1NjU2MjFcbjcxIDAuMDc2NDk4MzAgLTAuMzI2MDE5MyAtMC42MTU2MDgzNSAwLjkyNTM0ODcgLTAuMTE5OTAzNDcgLTAuNTA0MzMzNzFcbiAgICAgICAgIENvbXAuNyAgICAgIENvbXAuOCAgICAgQ29tcC45ICAgICAgQ29tcC4xMCAgICAgQ29tcC4xMSAgICAgQ29tcC4xMlxuNDMgLTAuNDE0ODU2ODcyICAwLjE4NTMzODAzIC0wLjIzNjE0NjYgLTAuMTQ5MjE0NDI3IC0wLjEyNzkzODIwIC0wLjAyNjIxMjI5XG40NyAtMC4zNjc2NDI4NTkgIDAuMDU0OTQzMTUgIDAuMjM4Nzc1MiAtMC4wMDcwMzE3MDYgIDAuMDQxOTI0MDIgLTAuMTg5ODYzNzJcbjQ4IC0wLjI1ODI2OTc4MCAgMC4xODg1NzA1OCAtMC4xODg2ODY2IC0wLjAxNzgzMjg5MyAtMC4wMzQ3NDM0NiAtMC4wNDY5MTY2M1xuNTEgIDAuMDU3NjIzMzMyIC0wLjEwMzc4NTU2IC0wLjE0ODQ0NzEgIDAuMTk5NzEyNDUyICAwLjEzMDAyOTcyIC0wLjA5NzM0Njk1XG42NyAgMC4wMDQxOTUyNTUgLTAuMjA4ODEwMDcgIDAuMzc4ODA5MiAtMC4wOTM3NTA2NzIgIDAuMTkxODQzMjcgLTAuMjA4NDI0MDRcbjcxIC0wLjA3OTQ2NDU5NSAtMC4wNTc2OTQ3OCAtMC4yNjA1ODkxIC0wLjE3MzA0NzQ0MiAgMC4xNzE2NDgzMiAtMC4wNTE1NTk0OVxuWzFdIFwiUHJlZGljaWVuZG8gdXNhbmRvIHVuIG1vZGVsbyB5YSBlbnRyZW5hZG8geSB1biBudWV2byBkYXRhc2V0Li4uXCJcbiJ9 -->
-<pre><code>[1] &quot;---------------Conexion a BBDD ------------&quot;
-[1] &quot;Conectando...&quot;
-[1] &quot;------------- Features (INPUT) -----------------------&quot;
-[1] &quot;SELECT * FROM datos_desa.tb_ds_futuro_features_DOW_LAB LIMIT 1000;&quot;
-[1] &quot;FEATURES (train o futuro):  1000 x 39&quot;
- [1] &quot;peso_galgo_norm&quot;                        
- [2] &quot;eed_norm&quot;                               
- [3] &quot;experiencia&quot;                            
- [4] &quot;trap_factor&quot;                            
- [5] &quot;experiencia_en_clase&quot;                   
- [6] &quot;posicion_media_en_clase_por_experiencia&quot;
- [7] &quot;dif_peso&quot;                               
- [8] &quot;entrenador_posicion_norm&quot;               
- [9] &quot;trap_norm&quot;                              
-[10] &quot;remarks_puntos_historico&quot;               
-[11] &quot;remarks_puntos_historico_10d&quot;           
-[12] &quot;remarks_puntos_historico_20d&quot;           
-[13] &quot;remarks_puntos_historico_50d&quot;           
-[14] &quot;vel_real_cortas_mediana_norm&quot;           
-[15] &quot;vel_real_cortas_max_norm&quot;               
-[16] &quot;vel_going_cortas_mediana_norm&quot;          
-[17] &quot;vel_going_cortas_max_norm&quot;              
-[18] &quot;vel_real_longmedias_mediana_norm&quot;       
-[19] &quot;vel_real_longmedias_max_norm&quot;           
-[20] &quot;vel_going_longmedias_mediana_norm&quot;      
-[21] &quot;vel_going_longmedias_max_norm&quot;          
-[22] &quot;vel_real_largas_mediana_norm&quot;           
-[23] &quot;vel_real_largas_max_norm&quot;               
-[24] &quot;vel_going_largas_mediana_norm&quot;          
-[25] &quot;vel_going_largas_max_norm&quot;              
-[26] &quot;distancia_norm&quot;                         
-[27] &quot;num_galgos_norm&quot;                        
-[28] &quot;hora_norm&quot;                              
-[29] &quot;venue_going_std&quot;                        
-[30] &quot;venue_going_avg&quot;                        
-[31] &quot;dow_d&quot;                                  
-[32] &quot;dow_l&quot;                                  
-[33] &quot;dow_m&quot;                                  
-[34] &quot;dow_x&quot;                                  
-[35] &quot;dow_j&quot;                                  
-[36] &quot;dow_v&quot;                                  
-[37] &quot;dow_s&quot;                                  
-[38] &quot;dow_finde&quot;                              
-[39] &quot;dow_laborable&quot;                          
-[1] &quot;--------------- leerDesdeBaseDatosYEscribirCSV: FIN ------------&quot;
-[1] &quot;futuro_f: 1000 x 40&quot;
-  peso_galgo_norm eed_norm experiencia trap_factor experiencia_en_clase
-1        0.218182   0.7650         1.0    0.272241                 0.15
-2        0.559091   0.7650         1.0    1.000000                 0.10
-3        0.350000   0.9181         1.0    0.494983                 0.80
-4        0.700000   0.9563         1.0    0.623411                 1.00
-5        0.463636   0.6325         0.1    0.844816                 0.10
-  posicion_media_en_clase_por_experiencia dif_peso entrenador_posicion_norm
-1                               0.7984442 0.355951                 0.442543
-2                               0.7984442 0.308351                 0.516165
-3                               0.6963029 0.120920                 0.442543
-4                               0.6963029 0.494755                 0.442543
-5                               0.7984442 0.073319                 0.523238
-  trap_norm remarks_puntos_historico remarks_puntos_historico_10d
-1       1.0                0.2530392                     0.346667
-2       0.0                0.3222549                     0.640000
-3       0.6                0.2592983                     0.430000
-4       0.2                0.1867647                     0.030000
-5       0.4                0.1633330                     0.163333
-  remarks_puntos_historico_20d remarks_puntos_historico_50d
-1                     0.198889                     0.198889
-2                     0.445000                     0.401000
-3                     0.330000                     0.310000
-4                     0.030000                     0.242000
-5                     0.163333                     0.163333
-  vel_real_cortas_mediana_norm vel_real_cortas_max_norm
-1                     0.781806                 0.815422
-2                     0.755785                 0.755785
-3                     0.751095                 0.815422
-4                     0.755785                 0.784187
-5                     0.730097                 0.730097
-  vel_going_cortas_mediana_norm vel_going_cortas_max_norm
-1                      0.761166                  0.793895
-2                      0.735832                  0.735832
-3                      0.731266                  0.793895
-4                      0.758848                  0.782143
-5                      0.699557                  0.699557
-  vel_real_longmedias_mediana_norm vel_real_longmedias_max_norm
-1                               NA                           NA
-2                         0.763034                     0.798781
-3                               NA                           NA
-4                               NA                           NA
-5                               NA                           NA
-  vel_going_longmedias_mediana_norm vel_going_longmedias_max_norm
-1                                NA                            NA
-2                          0.770884                      0.766695
-3                                NA                            NA
-4                                NA                            NA
-5                                NA                            NA
-  vel_real_largas_mediana_norm vel_real_largas_max_norm
-1                           NA                       NA
-2                           NA                       NA
-3                           NA                       NA
-4                           NA                       NA
-5                           NA                       NA
-  vel_going_largas_mediana_norm vel_going_largas_max_norm distancia_norm
-1                            NA                        NA         0.0846
-2                            NA                        NA         0.0846
-3                            NA                        NA         0.0846
-4                            NA                        NA         0.0846
-5                            NA                        NA         0.0846
-  num_galgos_norm hora_norm venue_going_std venue_going_avg dow_d dow_l dow_m
-1               1    0.6667              NA              NA     0     0     0
-2               1    0.6667              NA              NA     0     0     0
-3               1    0.6667              NA              NA     0     0     0
-4               1    0.6667              NA              NA     0     0     0
-5               1    0.6667              NA              NA     0     0     0
-  dow_x dow_j dow_v dow_s dow_finde dow_laborable INDICE_ORDEN
-1     1     0     0     0         0             1            1
-2     1     0     0     0         0             1            2
-3     1     0     0     0         0             1            3
-4     1     0     0     0         0             1            4
-5     1     0     0     0         0             1            5
-[1] &quot;data.frame A: 1000 x 40&quot;
-[1] &quot;data.frame B: 1000 x 28&quot;
-[1] &quot;data.frame C: 628 x 28&quot;
-[1] &quot;Numero de filas de C que tenian algun NA:&quot;
-  [1]   1   2   3   4   5   6   7   8   9  10  11  12  16  19  20  21  22  23
- [19]  24  25  26  28  29  34  38  44  45  46  57  59  60  62  68  69  70  72
- [37]  73  77  81  86  88  90  96 104 107 113 114 118 119 123 127 132 139 143
- [55] 144 149 159 162 164 165 167 168 173 175 177 180 185 186 193 197 199 209
- [73] 210 215 220 221 227 230 231 234 240 254 257 258 262 263 269 271 272 277
- [91] 281 283 287 288 290 295 296 299 310 311 322 324 329 338 339 342 343 345
-[109] 347 357 359 362 369 372 373 376 380 381 382 384 385 386 396 415 426 427
-[127] 430 436 440 451 453 457 460 467 468 473 475 479 480 484 487 492 501 503
-[145] 510 512 515 516 517 518 521 524 525 531 543 546 548 550 553 559 560 561
-[163] 563 564 565 566 570 574 578 580 582 583 584 585 586 587 588 594 600 601
-[181] 603 605 607 609 612 616 617 618 619 624 626 628 630 633 635 642 646 649
-[199] 657 661 662 663 667 671 672 675 677 680 688 689 692 699 700 701 703 704
-[217] 705 706 708 713 716 717 719 723 724 725 726 727 728 732 733 740 742 745
-[235] 746 747 751 756 759 761 762 763 764 766 767 771 774 785 788 791 792 793
-[253] 796 800 802 808 813 814 817 826 830 831 832 833 834 835 836 841 842 843
-[271] 844 845 846 847 848 849 854 855 856 857 858 859 860 868 869 871 872 873
-[289] 874 875 876 877 878 879 880 881 882 883 884 886 888 890 892 894 897 898
-[307] 899 900 901 902 903 904 905 906 907 908 912 915 918 920 921 922 923 924
-[325] 925 926 927 928 929 930 931 932 940 944 945 946 947 948 949 950 951 952
-[343] 953 954 955 956 963 966 969 970 971 972 973 974 975 976 977 978 979 980
-[361] 983 984 985 990 991 993 994 995 996 997 998 999
-[1] &quot;data.frame E: 628 x 40&quot;
-[1] &quot;--------------- crearFeaturesyTargetDelPasadoParaDistancias ------------&quot;
-[1] &quot;pasado_ft: 628 x 40&quot;
-[1] &quot;quitarColumnasDeOtrasDistancias: TRUE&quot;
-[1] &quot;quitarNas: TRUE&quot;
-[1] &quot;pasado_ft_cortas: 628 x 40&quot;
-[1] &quot;pasado_ft_cortas_conNAs: 358 x 40&quot;
-[1] &quot;pasado_ft_medias_conNAs: 270 x 40&quot;
-[1] &quot;pasado_ft_largas_conNAs: 0 x 40&quot;
-[1] &quot;--Quitando columnas de otras DISTANCIAS...&quot;
-[1] &quot;pasado_ft_cortas_coldis: 358 x 32&quot;
-[1] &quot;pasado_ft_medias_coldis: 270 x 32&quot;
-[1] &quot;pasado_ft_largas_coldis: 0 x 32&quot;
-[1] &quot;-- Quitando NAs (aunque mantengo columna INDICE_ORDEN)...&quot;
-[1] &quot;Comprobacion de NAs...&quot;
-[1] &quot;CORTAS (train+test): 150 x 32&quot;
-[1] &quot;MEDIAS (train+test): 263 x 32&quot;
-[1] &quot;LARGAS (train+test): 0 x 32&quot;
-[1] &quot;######## REDUCIR DIMENSIONES ##########&quot;
-[1] &quot;Cargando reductores PCA (desde fichero)...&quot;
-[1] &quot;Umbral deseado de varianza acumulada: 0.95&quot;
-[1] &quot;Por tanto, necesitamos coger 12 variables transformadas PCx...&quot;
-[1] &quot;Umbral deseado de varianza acumulada: 0.95&quot;
-[1] &quot;Por tanto, necesitamos coger 13 variables transformadas PCx...&quot;
-[1] &quot;Umbral deseado de varianza acumulada: 0.95&quot;
-[1] &quot;Por tanto, necesitamos coger 9 variables transformadas PCx...&quot;
-[1] &quot;Reduciendo dimensiones....&quot;
-[1] &quot;CORTAS: reducir las FEATURES...&quot;
-[1] &quot;MEDIAS: reducir las FEATURES...&quot;
-[1] &quot;LARGAS: reducir las FEATURES...&quot;
-[1] &quot;Metiendo columna INDICE_ORDEN...&quot;
-       Comp.1     Comp.2      Comp.3    Comp.4      Comp.5      Comp.6
-43 0.10256234 -0.3159685 -0.54722269 0.9335756 -0.01628329 -0.23162896
-47 0.12451346 -0.4195082  0.29057083 0.9039881 -0.03600897 -0.09161251
-48 0.11638267 -0.3608673 -0.09578458 0.9090684  0.06841911  0.32555842
-51 0.06096569 -0.3008789 -0.61373731 0.9297054 -0.24596671 -0.46743882
-67 0.11919983 -0.4940241  0.67334562 0.8732760 -0.03566317 -0.09565621
-         Comp.7      Comp.8     Comp.9      Comp.10     Comp.11     Comp.12
-43 -0.414856872  0.18533803 -0.2361466 -0.149214427 -0.12793820 -0.02621229
-47 -0.367642859  0.05494315  0.2387752 -0.007031706  0.04192402 -0.18986372
-48 -0.258269780  0.18857058 -0.1886866 -0.017832893 -0.03474346 -0.04691663
-51  0.057623332 -0.10378556 -0.1484471  0.199712452  0.13002972 -0.09734695
-67  0.004195255 -0.20881007  0.3788092 -0.093750672  0.19184327 -0.20842404
-   INDICE_ORDEN
-43           43
-47           47
-48           48
-51           51
-67           67
-        Comp.1     Comp.2     Comp.3    Comp.4     Comp.5      Comp.6
-13 -0.05685250 -0.2412712 -0.6946004 0.9810191 -0.3221533 -0.02076329
-14 -0.05761810 -0.2472390 -0.2913490 0.9944818 -0.4944798  0.27833552
-15 -0.06744839 -0.2755486  0.5756685 0.9804475 -0.3924046  0.23076603
-17 -0.06545054 -0.2778803  0.5276290 0.9853328 -0.3213123 -0.04515830
-18 -0.05527888 -0.2441652 -0.2849436 0.9909355 -0.4966104  0.27040388
-       Comp.7     Comp.8      Comp.9    Comp.10      Comp.11     Comp.12
-13 -0.1949641 -0.1819646  0.01088430 -0.2188929  0.082536409  0.27689108
-14 -0.3135741 -0.1380772  0.17403477  0.2453869  0.036452030 -0.03327127
-15 -0.2084267 -0.2442971 -0.06760306 -0.1398058  0.023444492  0.19652403
-17 -0.1615762 -0.2524233  0.45295874 -0.2521248  0.007090418  0.04763680
-18 -0.2983710 -0.1507345  0.06613468 -0.1342442 -0.118951831  0.04944064
-      Comp.13 INDICE_ORDEN
-13  0.0564932           13
-14  0.1354861           14
-15 -0.1441416           15
-17  0.1749175           17
-18 -0.1266497           18
- [1] Comp.1       Comp.2       Comp.3       Comp.4       Comp.5      
- [6] Comp.6       Comp.7       Comp.8       Comp.9       INDICE_ORDEN
-&lt;0 rows&gt; (or 0-length row.names)
-[1] &quot;######## PREDICCION DEL FUTURO ##########&quot;
-[1] &quot;--------------- predecir(): INICIO -----------------&quot;
-[1] &quot;tag= DOW_LAB&quot;
-[1] &quot;input_f_transformadas:  3&quot;
-[1] &quot;output_file_prefijo= /home/carloslinux/Desktop/DATOS_LIMPIO/galgos/FILELOAD_ds_futuro_targets_2_&quot;
-[1] &quot;tipo= FUTURO&quot;
-[1] &quot;Cargando modelos PREDICTIVOS ENTRENADOS (desde fichero)...&quot;
-
-Call:  
-SuperLearner(Y = y_train, X = x_train, family = gaussian(), SL.library = algoritmosPredictivosUsados,  
-    method = &quot;method.NNLS&quot;, id = NULL, verbose = TRUE, control = list(),  
-    cvControl = list(V = num_v, shuffle = FALSE)) 
-
-                          Risk       Coef
-SL.glmnet_1_All    0.004658465 0.00000000
-SL.bayesglm_1_All  0.004654896 0.00000000
-SL.glmnet_All      0.004658465 0.00000000
-SL.bayesglm_All    0.004654896 0.00000000
-SL.caret.rpart_All 0.021572222 0.00559922
-SL.glm_All         0.004654905 0.17799506
-SL.nnet_All        0.004612304 0.51079604
-SL.polymars_All    0.004800986 0.30560968
-
-Call:  
-SuperLearner(Y = y_train, X = x_train, family = gaussian(), SL.library = algoritmosPredictivosUsados,  
-    method = &quot;method.NNLS&quot;, id = NULL, verbose = TRUE, control = list(),  
-    cvControl = list(V = num_v, shuffle = FALSE)) 
-
-                          Risk       Coef
-SL.glmnet_1_All    0.003402923 0.00000000
-SL.bayesglm_1_All  0.003403504 0.00000000
-SL.glmnet_All      0.003402923 0.00000000
-SL.bayesglm_All    0.003403504 0.00000000
-SL.caret.rpart_All 0.012993236 0.01919299
-SL.glm_All         0.003403515 0.13328155
-SL.nnet_All        0.003462705 0.26778420
-SL.polymars_All    0.003363003 0.57974126
-
-Call:  
-SuperLearner(Y = y_train, X = x_train, family = gaussian(), SL.library = algoritmosPredictivosUsados,  
-    method = &quot;method.NNLS&quot;, id = NULL, verbose = TRUE, control = list(),  
-    cvControl = list(V = num_v, shuffle = FALSE)) 
-
-                          Risk      Coef
-SL.glmnet_1_All    0.004756807 0.2967942
-SL.bayesglm_1_All  0.005237345 0.0000000
-SL.glmnet_All      0.004940597 0.0000000
-SL.bayesglm_All    0.005237345 0.0000000
-SL.caret.rpart_All 0.004722061 0.4745369
-SL.glm_All         0.005338379 0.0000000
-SL.nnet_All        0.020088195 0.0000000
-SL.polymars_All    0.006007078 0.2286689
-[1] &quot; ---------------Entradas (features: mantener el ORDEN)-----------&quot;
-[1] &quot;input_f_transformada_cortas:  150 x 13&quot;
-[1] &quot;input_f_transformada_medias:  263 x 14&quot;
-[1] &quot;input_f_transformada_largas:  0 x 10&quot;
-[1] &quot;Omitiendo nulos...&quot;
-[1] &quot;CORTAS-F (sin NAs): 150 x 13&quot;
-[1] &quot;MEDIAS-F (sin NAs): 263 x 14&quot;
-[1] &quot;LARGAS-F (sin NAs): 0 x 10&quot;
-[1] &quot;input_f_cortas_sinindice: 150 x 12&quot;
-       Comp.1     Comp.2      Comp.3    Comp.4      Comp.5      Comp.6
-43 0.10256234 -0.3159685 -0.54722269 0.9335756 -0.01628329 -0.23162896
-47 0.12451346 -0.4195082  0.29057083 0.9039881 -0.03600897 -0.09161251
-48 0.11638267 -0.3608673 -0.09578458 0.9090684  0.06841911  0.32555842
-51 0.06096569 -0.3008789 -0.61373731 0.9297054 -0.24596671 -0.46743882
-67 0.11919983 -0.4940241  0.67334562 0.8732760 -0.03566317 -0.09565621
-71 0.07649830 -0.3260193 -0.61560835 0.9253487 -0.11990347 -0.50433371
-         Comp.7      Comp.8     Comp.9      Comp.10     Comp.11     Comp.12
-43 -0.414856872  0.18533803 -0.2361466 -0.149214427 -0.12793820 -0.02621229
-47 -0.367642859  0.05494315  0.2387752 -0.007031706  0.04192402 -0.18986372
-48 -0.258269780  0.18857058 -0.1886866 -0.017832893 -0.03474346 -0.04691663
-51  0.057623332 -0.10378556 -0.1484471  0.199712452  0.13002972 -0.09734695
-67  0.004195255 -0.20881007  0.3788092 -0.093750672  0.19184327 -0.20842404
-71 -0.079464595 -0.05769478 -0.2605891 -0.173047442  0.17164832 -0.05155949
-[1] &quot;Prediciendo usando un modelo ya entrenado y un nuevo dataset...&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBjYXJldFxuTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBsYXR0aWNlXG4ifQ== -->
-<pre><code>Loading required package: caret
-Loading required package: lattice</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwicHJlZGljY2lvbmVzX3RfY29ydGFzOiAxNTAgeCAxXCJcblsxXSBcImlucHV0X2ZfbWVkaWFzX3NpbmluZGljZTogMjYzIHggMTNcIlxuICAgICAgICBDb21wLjEgICAgIENvbXAuMiAgICAgIENvbXAuMyAgICBDb21wLjQgICAgIENvbXAuNSAgICAgIENvbXAuNlxuMTMgLTAuMDU2ODUyNTAgLTAuMjQxMjcxMiAtMC42OTQ2MDAzOCAwLjk4MTAxOTEgLTAuMzIyMTUzMyAtMC4wMjA3NjMyOVxuMTQgLTAuMDU3NjE4MTAgLTAuMjQ3MjM5MCAtMC4yOTEzNDkwMSAwLjk5NDQ4MTggLTAuNDk0NDc5OCAgMC4yNzgzMzU1MlxuMTUgLTAuMDY3NDQ4MzkgLTAuMjc1NTQ4NiAgMC41NzU2Njg1MCAwLjk4MDQ0NzUgLTAuMzkyNDA0NiAgMC4yMzA3NjYwM1xuMTcgLTAuMDY1NDUwNTQgLTAuMjc3ODgwMyAgMC41Mjc2Mjg5OCAwLjk4NTMzMjggLTAuMzIxMzEyMyAtMC4wNDUxNTgzMFxuMTggLTAuMDU1Mjc4ODggLTAuMjQ0MTY1MiAtMC4yODQ5NDM1OSAwLjk5MDkzNTUgLTAuNDk2NjEwNCAgMC4yNzA0MDM4OFxuMzEgLTAuMjA1MTkwMzQgLTAuMzQ4NzkyMiAgMC4wNzgwOTc5OCAwLjc0NDA0NTUgIDAuMzA3OTg3OCAgMC4zODg0MDU3OFxuICAgICAgIENvbXAuNyAgICAgQ29tcC44ICAgICAgQ29tcC45ICAgIENvbXAuMTAgICAgICBDb21wLjExICAgICBDb21wLjEyXG4xMyAtMC4xOTQ5NjQxIC0wLjE4MTk2NDYgIDAuMDEwODg0MzAgLTAuMjE4ODkyOSAgMC4wODI1MzY0MDkgIDAuMjc2ODkxMDhcbjE0IC0wLjMxMzU3NDEgLTAuMTM4MDc3MiAgMC4xNzQwMzQ3NyAgMC4yNDUzODY5ICAwLjAzNjQ1MjAzMCAtMC4wMzMyNzEyN1xuMTUgLTAuMjA4NDI2NyAtMC4yNDQyOTcxIC0wLjA2NzYwMzA2IC0wLjEzOTgwNTggIDAuMDIzNDQ0NDkyICAwLjE5NjUyNDAzXG4xNyAtMC4xNjE1NzYyIC0wLjI1MjQyMzMgIDAuNDUyOTU4NzQgLTAuMjUyMTI0OCAgMC4wMDcwOTA0MTggIDAuMDQ3NjM2ODBcbjE4IC0wLjI5ODM3MTAgLTAuMTUwNzM0NSAgMC4wNjYxMzQ2OCAtMC4xMzQyNDQyIC0wLjExODk1MTgzMSAgMC4wNDk0NDA2NFxuMzEgLTAuMzU0NzgwNSAtMC40ODI2MjA1ICAwLjA0ODExMzg5IC0wLjEyMTEzOTEgIDAuMTUwNjU3MjIzICAwLjIxNjk3MjQ1XG4gICAgICAgQ29tcC4xM1xuMTMgIDAuMDU2NDkzMjBcbjE0ICAwLjEzNTQ4NjEwXG4xNSAtMC4xNDQxNDE2MFxuMTcgIDAuMTc0OTE3NTRcbjE4IC0wLjEyNjY0OTc0XG4zMSAgMC4wNzU5MjM4OFxuWzFdIFwiUHJlZGljaWVuZG8gdXNhbmRvIHVuIG1vZGVsbyB5YSBlbnRyZW5hZG8geSB1biBudWV2byBkYXRhc2V0Li4uXCJcblsxXSBcInByZWRpY2Npb25lc190X21lZGlhczogMjYzIHggMVwiXG5bMV0gXCJpbnB1dF9mX2xhcmdhc19zaW5pbmRpY2U6IDAgeCA5XCJcblsxXSBDb21wLjEgQ29tcC4yIENvbXAuMyBDb21wLjQgQ29tcC41IENvbXAuNiBDb21wLjcgQ29tcC44IENvbXAuOVxuPDAgcm93cz4gKG9yIDAtbGVuZ3RoIHJvdy5uYW1lcylcblsxXSBcIlByZWRpY2llbmRvIHVzYW5kbyB1biBtb2RlbG8geWEgZW50cmVuYWRvIHkgdW4gbnVldm8gZGF0YXNldC4uLlwiXG5bMV0gXCJwcmVkaWNjaW9uZXNfdF9sYXJnYXM6IDAgeCAxXCJcblsxXSBcIkNCSU5EOiBlbnRyYWRhIChjb24gSU5ESUNFX09SREVOKSArIHNhbGlkYS4uLlwiXG5bMV0gXCJDb2dlbW9zIHNvbG8gbGFzIGNvbHVtbmFzIHF1ZSBxdWVyZW1vcyAoaW5kaWNlIHkgdGFyZ2V0KS4uLlwiXG5bMV0gXCJKdW50YW1vcyBjb3J0YXMsIG1lZGlhcyB5IGxhcmdhcy4uLlwiXG5bMV0gXCJEaW0gZGUgcGFzYWRvX2l0OiA0MTMgeCAyXCJcblsxXSBcIkVqZW1wbG9zIGRlIHBhc2Fkb19pdDogYyg0MywgNDcsIDQ4LCA1MSwgNjcpXCIgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXG5bMl0gXCJFamVtcGxvcyBkZSBwYXNhZG9faXQ6IGMoMC4wODk5MDI5MjI4MDMwNDQ3LCAwLjEzMDkwODQzMDk2ODgwOSwgMC4xMTQ1MTg1NDk0MjYyMjYsIDAuNDQ1MDY4MjkwNjQwMTcyLCAwLjMyMzk0Mjg3MzAyMTc3MilcIlxuWzFdIFwiT3JkZW5hbW9zIHBvciBJTkRJQ0VfT1JERU4uLi5cIlxuWzFdIFwiRGltIGRlIHBhc2Fkb19pdF9vcmRlbmFkbzogNDEzIHggMlwiXG5bMV0gXCJFamVtcGxvcyBkZSBwYXNhZG9faXRfb3JkZW5hZG86IGMoMTMsIDE0LCAxNSwgMTcsIDE4KVwiICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcblsyXSBcIkVqZW1wbG9zIGRlIHBhc2Fkb19pdF9vcmRlbmFkbzogYygwLjQ0NzQ5MzE4OTYyMjQ1LCAwLjQyMDQ3MTU2NjExNDc4NywgMC4zODI4NjE1MTM0MDc3MzMsIDAuNDQ4MTczNzY0NzE4MTM4LCAwLjQ0NjA0MDA5MTIxNzQ3NSlcIlxuWzFdIFwiUmVsbGVuYW1vcyBsYXMgZmlsYXMgcXVlIGVyYW4gTkFzIChyZWxsZW5hbmRvIGVuIGxvcyBodWVjb3MgZGVsIGluZGljZSwgaGFzdGEgZWwgbnVtZXJvIGRlIGVsZW1lbnRvcyBkZSBlbnRyYWRhKS4uLlwiXG5bMV0gXCJEaW0gZGUgZGZfbnVsb3M6IDQxMyB4IDJcIlxuWzFdIFwiRWplbXBsb3MgZGUgZGZfbnVsb3M6IGMoTkEsIE5BLCBOQSwgTkEsIE5BKVwiXG5bMl0gXCJFamVtcGxvcyBkZSBkZl9udWxvczogMTo1XCIgICAgICAgICAgICAgICAgICBcblsxXSBcIkRpbWVuc2lvbmVzIGRlIGp1bnRvczogNjcyIHggM1wiXG5bMV0gXCJFamVtcGxvcyBkZSBqdW50b3M6IGMoMSwgMiwgMywgNCwgNSlcIiAgICAgXG5bMl0gXCJFamVtcGxvcyBkZSBqdW50b3M6IGMoTkEsIE5BLCBOQSwgTkEsIE5BKVwiXG5bM10gXCJFamVtcGxvcyBkZSBqdW50b3M6IGMoTkEsIE5BLCBOQSwgTkEsIE5BKVwiXG5bMV0gXCJGaWNoZXJvIGRlIHNhbGlkYS4uLlwiXG5bMV0gXCJFc2NyaWJpZW5kbyBhIGZpY2hlcm8gKHRhcmdldCBwcmVkaWNobykgY29uIDY3MiBmaWxhcy4uLlwiXG5bMV0gXCJSdXRhIHJlc3VsdGFkbzogL2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9EQVRPU19MSU1QSU8vZ2FsZ29zL0ZJTEVMT0FEX2RzX2Z1dHVyb190YXJnZXRzXzJfRE9XX0xBQi50eHRcIlxuWzFdIFwiLS0tLS0tLS0tLS0tLS0tIHByZWRlY2lyKCk6IEZJTiAtLS0tLS0tLS0tLS0tLS0tLVwiXG4+ICMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjXG4+ICMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjXG4+ICMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjXG4+IFxuPiBcbj4gXG4+IFxuPiBcbiJ9 -->
-<pre><code>[1] &quot;predicciones_t_cortas: 150 x 1&quot;
-[1] &quot;input_f_medias_sinindice: 263 x 13&quot;
-        Comp.1     Comp.2      Comp.3    Comp.4     Comp.5      Comp.6
-13 -0.05685250 -0.2412712 -0.69460038 0.9810191 -0.3221533 -0.02076329
-14 -0.05761810 -0.2472390 -0.29134901 0.9944818 -0.4944798  0.27833552
-15 -0.06744839 -0.2755486  0.57566850 0.9804475 -0.3924046  0.23076603
-17 -0.06545054 -0.2778803  0.52762898 0.9853328 -0.3213123 -0.04515830
-18 -0.05527888 -0.2441652 -0.28494359 0.9909355 -0.4966104  0.27040388
-31 -0.20519034 -0.3487922  0.07809798 0.7440455  0.3079878  0.38840578
-       Comp.7     Comp.8      Comp.9    Comp.10      Comp.11     Comp.12
-13 -0.1949641 -0.1819646  0.01088430 -0.2188929  0.082536409  0.27689108
-14 -0.3135741 -0.1380772  0.17403477  0.2453869  0.036452030 -0.03327127
-15 -0.2084267 -0.2442971 -0.06760306 -0.1398058  0.023444492  0.19652403
-17 -0.1615762 -0.2524233  0.45295874 -0.2521248  0.007090418  0.04763680
-18 -0.2983710 -0.1507345  0.06613468 -0.1342442 -0.118951831  0.04944064
-31 -0.3547805 -0.4826205  0.04811389 -0.1211391  0.150657223  0.21697245
-       Comp.13
-13  0.05649320
-14  0.13548610
-15 -0.14414160
-17  0.17491754
-18 -0.12664974
-31  0.07592388
-[1] &quot;Prediciendo usando un modelo ya entrenado y un nuevo dataset...&quot;
-[1] &quot;predicciones_t_medias: 263 x 1&quot;
-[1] &quot;input_f_largas_sinindice: 0 x 9&quot;
-[1] Comp.1 Comp.2 Comp.3 Comp.4 Comp.5 Comp.6 Comp.7 Comp.8 Comp.9
-&lt;0 rows&gt; (or 0-length row.names)
-[1] &quot;Prediciendo usando un modelo ya entrenado y un nuevo dataset...&quot;
-[1] &quot;predicciones_t_largas: 0 x 1&quot;
-[1] &quot;CBIND: entrada (con INDICE_ORDEN) + salida...&quot;
-[1] &quot;Cogemos solo las columnas que queremos (indice y target)...&quot;
-[1] &quot;Juntamos cortas, medias y largas...&quot;
-[1] &quot;Dim de pasado_it: 413 x 2&quot;
-[1] &quot;Ejemplos de pasado_it: c(43, 47, 48, 51, 67)&quot;                                                                            
-[2] &quot;Ejemplos de pasado_it: c(0.0899029228030447, 0.130908430968809, 0.114518549426226, 0.445068290640172, 0.323942873021772)&quot;
-[1] &quot;Ordenamos por INDICE_ORDEN...&quot;
-[1] &quot;Dim de pasado_it_ordenado: 413 x 2&quot;
-[1] &quot;Ejemplos de pasado_it_ordenado: c(13, 14, 15, 17, 18)&quot;                                                                          
-[2] &quot;Ejemplos de pasado_it_ordenado: c(0.44749318962245, 0.420471566114787, 0.382861513407733, 0.448173764718138, 0.446040091217475)&quot;
-[1] &quot;Rellenamos las filas que eran NAs (rellenando en los huecos del indice, hasta el numero de elementos de entrada)...&quot;
-[1] &quot;Dim de df_nulos: 413 x 2&quot;
-[1] &quot;Ejemplos de df_nulos: c(NA, NA, NA, NA, NA)&quot;
-[2] &quot;Ejemplos de df_nulos: 1:5&quot;                  
-[1] &quot;Dimensiones de juntos: 672 x 3&quot;
-[1] &quot;Ejemplos de juntos: c(1, 2, 3, 4, 5)&quot;     
-[2] &quot;Ejemplos de juntos: c(NA, NA, NA, NA, NA)&quot;
-[3] &quot;Ejemplos de juntos: c(NA, NA, NA, NA, NA)&quot;
-[1] &quot;Fichero de salida...&quot;
-[1] &quot;Escribiendo a fichero (target predicho) con 672 filas...&quot;
-[1] &quot;Ruta resultado: /home/carloslinux/Desktop/DATOS_LIMPIO/galgos/FILELOAD_ds_futuro_targets_2_DOW_LAB.txt&quot;
-[1] &quot;--------------- predecir(): FIN -----------------&quot;
-&gt; ######################################################################################################################################
-&gt; ######################################################################################################################################
-&gt; ######################################################################################################################################
-&gt; 
-&gt; 
-&gt; 
-&gt; 
-&gt; </code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiVGhlcmUgd2VyZSAzMCB3YXJuaW5ncyAodXNlIHdhcm5pbmdzKCkgdG8gc2VlIHRoZW0pXG4ifQ== -->
-<pre><code>There were 30 warnings (use warnings() to see them)</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 </div>
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiQ2FkZW5hIGNvbiBkYXRvcyBkZSBwcnVlYmFzIGVuIFIiCm91dHB1dDogaHRtbF9ub3RlYm9vawotLS0KCklOUFVUOiBkYXRhc2V0cyBwcmVwYXJhZG9zICh0YWJsYXMgTXlTUUwpLgpPVVRQVVQ6IGFuw6FsaXNpcywgZGF0YXNldHMgZWxhYm9yYWRvcyB5IG1vZGVsb3MKCkFuYWxpc2lzIGRlIGRhdGFzZXRzIGVuIHByb3llY3RvIEdBTEdPUy4KCiMjIyMgUmVkdWNjacOzbiBkZSBkaW1lbnNpb25lcwpTaSBxdWVyZW1vcyBlbnRyZW5hciB1biBtb2RlbG8gY29uIDMwIHZhcmlhYmxlcywgZGViZXLDrWFtb3MgdGVuZXIgbWlsbG9uZXMgZGUgZmlsYXMuIEluY2x1c28gYXPDrSwgbGEgY29tcGxlamlkYWQgbG8gaGFjZSBpbXBvc2libGUgeSBzZSBzb2JyZWVudHJlbmFyw61hLgpQb3IgdGFudG8sIHF1ZXJlbW9zIHJlZHVjaXIgbGFzIGRpbWVuc2lvbmVzLgoKVXNhbmRvIFBDQToKYGBge3J9Cm1vZG8gPC0gMCAjIDA9cmVkdWNjaW9uX2RpbWVuc2lvbmVzCnRhZyA8LSAiRE9XX0xBQiIKbGltaXRlU3FsIDwtICIxMDAwIgp0aXBvUmVkdWNjaW9uIDwtICJQQ0EiCnBhdGhfbW9kZWxvX3BjYV9wcmVmaWpvIDwtICIvaG9tZS9jYXJsb3NsaW51eC9EZXNrdG9wL0RBVE9TX0xJTVBJTy9nYWxnb3MvcGNhX21vZGVsb18iCnBjYV91bWJyYWxfdmFyaWFuemEgPC0gMC45NQp0c25lX251bV9mZWF0dXJlc19vdXRwdXQgPC0gMTIKCnN5c3RlbShwYXN0ZSgiUnNjcmlwdCAvaG9tZS9jYXJsb3NsaW51eC9EZXNrdG9wL1dPUktTUEFDRVMvd2tzcF9mb3Jfci9yX2dhbGdvcy9nYWxnb3NfZGltX3JlZHVjdGlvbi5SIiwgbW9kbywgdGFnLCBsaW1pdGVTcWwsIHRpcG9SZWR1Y2Npb24sIHBhdGhfbW9kZWxvX3BjYV9wcmVmaWpvLAogICAgICAgICAgICAgcGNhX3VtYnJhbF92YXJpYW56YSwgdHNuZV9udW1fZmVhdHVyZXNfb3V0cHV0LCBzZXAgPSAnICcpKQpgYGAKVXNhbmRvIHRTTkU6CmBgYHtyfQptb2RvIDwtIDAgIyAwPXJlZHVjY2lvbl9kaW1lbnNpb25lcwp0YWcgPC0gIkRPV19MQUIiCmxpbWl0ZVNxbCA8LSAiMTAwMCIKdGlwb1JlZHVjY2lvbiA8LSAiVFNORSIKcGF0aF9tb2RlbG9fcGNhX3ByZWZpam8gPC0gIi9ob21lL2Nhcmxvc2xpbnV4L0Rlc2t0b3AvREFUT1NfTElNUElPL2dhbGdvcy9wY2FfbW9kZWxvXyIKcGNhX3VtYnJhbF92YXJpYW56YSA8LSAwLjk1CnRzbmVfbnVtX2ZlYXR1cmVzX291dHB1dCA8LSAxMgoKc3lzdGVtKHBhc3RlKCJSc2NyaXB0IC9ob21lL2Nhcmxvc2xpbnV4L0Rlc2t0b3AvV09SS1NQQUNFUy93a3NwX2Zvcl9yL3JfZ2FsZ29zL2dhbGdvc19kaW1fcmVkdWN0aW9uLlIiLCBtb2RvLCB0YWcsIGxpbWl0ZVNxbCwgdGlwb1JlZHVjY2lvbixwYXRoX21vZGVsb19wY2FfcHJlZmlqbywKICAgICAgICAgICAgIHBjYV91bWJyYWxfdmFyaWFuemEsIHRzbmVfbnVtX2ZlYXR1cmVzX291dHB1dCwgIHNlcCA9ICcgJykpCmBgYAoKIyMjIyBDQURFTkEgQ09NUExFVEEgcGFyYSBFTlRSRU5BTUlFTlRPCmBgYHtyfQptb2RvIDwtIDEgIyAxPXRyYWluK3Rlc3QrdmFsaWRhdGlvbgp0YWcgPC0gIkRPV19MQUIiCmxpbWl0ZVNxbCA8LSAiMTAwMDAiCnBhdGhfbW9kZWxvX3BjYV9wcmVmaWpvIDwtICIvaG9tZS9jYXJsb3NsaW51eC9EZXNrdG9wL0RBVE9TX0xJTVBJTy9nYWxnb3MvcGNhX21vZGVsb18iCnBjYV91bWJyYWxfdmFyaWFuemEgPC0gMC45NQp0c25lX251bV9mZWF0dXJlc19vdXRwdXQgPC0gMTIKCnN5c3RlbShwYXN0ZSgiUnNjcmlwdCAvaG9tZS9jYXJsb3NsaW51eC9EZXNrdG9wL1dPUktTUEFDRVMvd2tzcF9mb3Jfci9yX2dhbGdvcy9nYWxnb3NfMDQwX3R0dl9wb3JfdGFnX3Bhc2Fkby5SIiwgbW9kbywgdGFnLCBsaW1pdGVTcWwsIHRpcG9SZWR1Y2Npb24scGF0aF9tb2RlbG9fcGNhX3ByZWZpam8sCiAgICAgICAgICAgICBwY2FfdW1icmFsX3ZhcmlhbnphLCB0c25lX251bV9mZWF0dXJlc19vdXRwdXQsIHNlcCA9ICcgJykpCmBgYAoKIyMgQU5BTElTSVMgUFJFTElNSU5BUiBERSBEQVRPUyBjb24gbG9zIHF1ZSBoZW1vcyBlbnRyZW5hZG8KYGBge3J9CiNoZWFkKHBhc2Fkb19mdCkKI2JveHBsb3QocGFzYWRvX2Z0LCBjZXguYXhpcyA9IDAuNSkgCmBgYApWZW1vcyBxdWUgaGF5IHZhcmlhYmxlcyBjb24gb3V0bGllcnMgeSBvdHJhcyBsZXB0b2PDunJ0aWNhcyAoYXByZXRhZGFzIGVuIHRvcm5vIGEgbGEgbWVkaWEpLgpgYGB7cn0KI3N1bW1hcnkocGFzYWRvX2Z0KQojbGFwcGx5KHBhc2Fkb19mdCwgc3VtbWFyeSkKYGBgCgoKIyMjIyBDQURFTkEgQ09NUExFVEEgcGFyYSBFTlRSRU5BTUlFTlRPIGNvbiBkYXRhc2V0IFBBU0FETyBUVFYKYGBge3J9Cm1vZG8gPC0gMiAjIDI9dHJhaW4rdGVzdAp0YWcgPC0gIkRPV19MQUIiCmxpbWl0ZVNxbCA8LSAiMTAwMDAiCnBhdGhfbW9kZWxvX3BjYV9wcmVmaWpvIDwtICIvaG9tZS9jYXJsb3NsaW51eC9EZXNrdG9wL0RBVE9TX0xJTVBJTy9nYWxnb3MvcGNhX21vZGVsb18iCnBjYV91bWJyYWxfdmFyaWFuemEgPC0gMC45NQp0c25lX251bV9mZWF0dXJlc19vdXRwdXQgPC0gMTIKCnN5c3RlbShwYXN0ZSgiUnNjcmlwdCAvaG9tZS9jYXJsb3NsaW51eC9EZXNrdG9wL1dPUktTUEFDRVMvd2tzcF9mb3Jfci9yX2dhbGdvcy9nYWxnb3NfMDQ1X3R0dl9wYXNhZG8uUiIsIG1vZG8sIHRhZywgbGltaXRlU3FsLCB0aXBvUmVkdWNjaW9uLHBhdGhfbW9kZWxvX3BjYV9wcmVmaWpvLAogICAgICAgICAgICAgcGNhX3VtYnJhbF92YXJpYW56YSwgdHNuZV9udW1fZmVhdHVyZXNfb3V0cHV0LCBzZXAgPSAnICcpKQpgYGAKCgojIyMjIENBREVOQSBDT01QTEVUQSBwYXJhIFBSRURJQ1RPUiBkZWwgRlVUVVJPCmBgYHtyfQptb2RvIDwtIDMgIyAzPXByZWRpY2Npb25fZnV0dXJvCnRhZyA8LSAiRE9XX0xBQiIKbGltaXRlU3FsIDwtICIxMDAwIgpwYXRoX21vZGVsb19wY2FfcHJlZmlqbyA8LSAiL2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9EQVRPU19MSU1QSU8vZ2FsZ29zL3BjYV9tb2RlbG9fIgpwY2FfdW1icmFsX3ZhcmlhbnphIDwtIDAuOTUKdHNuZV9udW1fZmVhdHVyZXNfb3V0cHV0IDwtIDEyCgpzeXN0ZW0ocGFzdGUoIlJzY3JpcHQgL2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9XT1JLU1BBQ0VTL3drc3BfZm9yX3Ivcl9nYWxnb3MvZ2FsZ29zXzA1MF9wcmVkaWN0b3JfZnV0dXJvLlIiLCBtb2RvLCB0YWcsIGxpbWl0ZVNxbCwgdGlwb1JlZHVjY2lvbixwYXRoX21vZGVsb19wY2FfcHJlZmlqbywKICAgICAgICAgICAgIHBjYV91bWJyYWxfdmFyaWFuemEsIHRzbmVfbnVtX2ZlYXR1cmVzX291dHB1dCwgc2VwID0gJyAnKSkKYGBgCgoKCgoKCg==</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiQ2FkZW5hIGNvbiBkYXRvcyBkZSBwcnVlYmFzIGVuIFIiCm91dHB1dDogaHRtbF9ub3RlYm9vawotLS0KCklOUFVUOiBkYXRhc2V0cyBwcmVwYXJhZG9zICh0YWJsYXMgTXlTUUwpLgpPVVRQVVQ6IGFuw6FsaXNpcywgZGF0YXNldHMgZWxhYm9yYWRvcyB5IG1vZGVsb3MKCkFuYWxpc2lzIGRlIGRhdGFzZXRzIGVuIHByb3llY3RvIEdBTEdPUy4KCiMjIyMgUmVkdWNjacOzbiBkZSBkaW1lbnNpb25lcwpTaSBxdWVyZW1vcyBlbnRyZW5hciB1biBtb2RlbG8gY29uIDMwIHZhcmlhYmxlcywgZGViZXLDrWFtb3MgdGVuZXIgbWlsbG9uZXMgZGUgZmlsYXMuIEluY2x1c28gYXPDrSwgbGEgY29tcGxlamlkYWQgbG8gaGFjZSBpbXBvc2libGUgeSBzZSBzb2JyZWVudHJlbmFyw61hLgpQb3IgdGFudG8sIHF1ZXJlbW9zIHJlZHVjaXIgbGFzIGRpbWVuc2lvbmVzLgoKVXNhbmRvIFBDQToKYGBge3J9Cm1vZG8gPC0gMCAjIDA9cmVkdWNjaW9uX2RpbWVuc2lvbmVzCnRhZyA8LSAiRE9XX00iCmxpbWl0ZVNxbCA8LSAiMTAwMCIKdGlwb1JlZHVjY2lvbiA8LSAiUENBIgpwYXRoX21vZGVsb19wY2FfcHJlZmlqbyA8LSAiL2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9EQVRPU19MSU1QSU8vZ2FsZ29zL3BjYV9tb2RlbG9fIgpwY2FfdW1icmFsX3ZhcmlhbnphIDwtIDAuOTAKdHNuZV9udW1fZmVhdHVyZXNfb3V0cHV0IDwtIDEyCgojRWplY3VjaW9uIGRlIENPRElHTyBSIG1lZGlhbnRlIGxsYW1hZGEgYWwgc2lzdGVtYSAoUEVORElFTlRFIG5vIGVzIG11eSBib25pdG8sIHBlcm8gbWUgdmFsZSBkZSBtb21lbnRvKQpzeXN0ZW0ocGFzdGUoIlJzY3JpcHQgL2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9XT1JLU1BBQ0VTL3drc3BfZm9yX3Ivcl9nYWxnb3MvZ2FsZ29zX2RpbV9yZWR1Y3Rpb24uUiIsIG1vZG8sIHRhZywgbGltaXRlU3FsLCB0aXBvUmVkdWNjaW9uLCBwYXRoX21vZGVsb19wY2FfcHJlZmlqbywKICAgICAgICAgICAgIHBjYV91bWJyYWxfdmFyaWFuemEsIHRzbmVfbnVtX2ZlYXR1cmVzX291dHB1dCwgc2VwID0gJyAnKSkKYGBgClVzYW5kbyB0U05FOgpgYGB7cn0KbW9kbyA8LSAwICMgMD1yZWR1Y2Npb25fZGltZW5zaW9uZXMKdGFnIDwtICJET1dfTSIKbGltaXRlU3FsIDwtICIxMDAwIgp0aXBvUmVkdWNjaW9uIDwtICJUU05FIgpwYXRoX21vZGVsb19wY2FfcHJlZmlqbyA8LSAiL2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9EQVRPU19MSU1QSU8vZ2FsZ29zL3BjYV9tb2RlbG9fIgpwY2FfdW1icmFsX3ZhcmlhbnphIDwtIDAuOTUKdHNuZV9udW1fZmVhdHVyZXNfb3V0cHV0IDwtIDEyCgpzeXN0ZW0ocGFzdGUoIlJzY3JpcHQgL2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9XT1JLU1BBQ0VTL3drc3BfZm9yX3Ivcl9nYWxnb3MvZ2FsZ29zX2RpbV9yZWR1Y3Rpb24uUiIsIG1vZG8sIHRhZywgbGltaXRlU3FsLCB0aXBvUmVkdWNjaW9uLHBhdGhfbW9kZWxvX3BjYV9wcmVmaWpvLAogICAgICAgICAgICAgcGNhX3VtYnJhbF92YXJpYW56YSwgdHNuZV9udW1fZmVhdHVyZXNfb3V0cHV0LCAgc2VwID0gJyAnKSkKYGBgCgojIyMjIENBREVOQSBDT01QTEVUQSBwYXJhIEVOVFJFTkFNSUVOVE8KYGBge3J9Cm1vZG8gPC0gMSAjIDE9dHJhaW4rdGVzdCt2YWxpZGF0aW9uCnRhZyA8LSAiRE9XX00iCmxpbWl0ZVNxbCA8LSAiMTAwMDAiCnRpcG9SZWR1Y2Npb24gPC0gIlBDQSIKcGF0aF9tb2RlbG9fcGNhX3ByZWZpam8gPC0gIi9ob21lL2Nhcmxvc2xpbnV4L0Rlc2t0b3AvREFUT1NfTElNUElPL2dhbGdvcy9wY2FfbW9kZWxvXyIKcGNhX3VtYnJhbF92YXJpYW56YSA8LSAwLjg1CnRzbmVfbnVtX2ZlYXR1cmVzX291dHB1dCA8LSAxMgoKc3lzdGVtKHBhc3RlKCJSc2NyaXB0IC9ob21lL2Nhcmxvc2xpbnV4L0Rlc2t0b3AvV09SS1NQQUNFUy93a3NwX2Zvcl9yL3JfZ2FsZ29zL2dhbGdvc18wNDBfdHR2X3Bvcl90YWdfcGFzYWRvLlIiLCBtb2RvLCB0YWcsIGxpbWl0ZVNxbCwgdGlwb1JlZHVjY2lvbixwYXRoX21vZGVsb19wY2FfcHJlZmlqbywKICAgICAgICAgICAgIHBjYV91bWJyYWxfdmFyaWFuemEsIHRzbmVfbnVtX2ZlYXR1cmVzX291dHB1dCwgc2VwID0gJyAnKSkKCmBgYAoKIyMgQU5BTElTSVMgUFJFTElNSU5BUiBERSBEQVRPUyBjb24gbG9zIHF1ZSBoZW1vcyBlbnRyZW5hZG8KYGBge3J9CiNoZWFkKHBhc2Fkb19mdCkKI2JveHBsb3QocGFzYWRvX2Z0LCBjZXguYXhpcyA9IDAuNSkgCmBgYApWZW1vcyBxdWUgaGF5IHZhcmlhYmxlcyBjb24gb3V0bGllcnMgeSBvdHJhcyBsZXB0b2PDunJ0aWNhcyAoYXByZXRhZGFzIGVuIHRvcm5vIGEgbGEgbWVkaWEpLgpgYGB7cn0KI3N1bW1hcnkocGFzYWRvX2Z0KQojbGFwcGx5KHBhc2Fkb19mdCwgc3VtbWFyeSkKYGBgCgoKIyMjIyBDQURFTkEgQ09NUExFVEEgcGFyYSBFTlRSRU5BTUlFTlRPIGNvbiBkYXRhc2V0IFBBU0FETyBUVFYKYGBge3J9Cm1vZG8gPC0gMiAjIDI9dHJhaW4rdGVzdAp0YWcgPC0gIkRPV19NIgpsaW1pdGVTcWwgPC0gIjEwMDAwIgpwYXRoX21vZGVsb19wY2FfcHJlZmlqbyA8LSAiL2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9EQVRPU19MSU1QSU8vZ2FsZ29zL3BjYV9tb2RlbG9fIgpwY2FfdW1icmFsX3ZhcmlhbnphIDwtIDAuOTUKdHNuZV9udW1fZmVhdHVyZXNfb3V0cHV0IDwtIDEyCgpzeXN0ZW0ocGFzdGUoIlJzY3JpcHQgL2hvbWUvY2FybG9zbGludXgvRGVza3RvcC9XT1JLU1BBQ0VTL3drc3BfZm9yX3Ivcl9nYWxnb3MvZ2FsZ29zXzA0NV90dHZfcGFzYWRvLlIiLCBtb2RvLCB0YWcsIGxpbWl0ZVNxbCwgdGlwb1JlZHVjY2lvbixwYXRoX21vZGVsb19wY2FfcHJlZmlqbywKICAgICAgICAgICAgIHBjYV91bWJyYWxfdmFyaWFuemEsIHRzbmVfbnVtX2ZlYXR1cmVzX291dHB1dCwgc2VwID0gJyAnKSkKYGBgCgoKIyMjIyBDQURFTkEgQ09NUExFVEEgcGFyYSBQUkVESUNUT1IgZGVsIEZVVFVSTwpgYGB7cn0KbW9kbyA8LSAzICMgMz1wcmVkaWNjaW9uX2Z1dHVybwp0YWcgPC0gIkRPV19NIgpsaW1pdGVTcWwgPC0gIjEwMDAiCnBhdGhfbW9kZWxvX3BjYV9wcmVmaWpvIDwtICIvaG9tZS9jYXJsb3NsaW51eC9EZXNrdG9wL0RBVE9TX0xJTVBJTy9nYWxnb3MvcGNhX21vZGVsb18iCnBjYV91bWJyYWxfdmFyaWFuemEgPC0gMC45NQp0c25lX251bV9mZWF0dXJlc19vdXRwdXQgPC0gMTIKCnN5c3RlbShwYXN0ZSgiUnNjcmlwdCAvaG9tZS9jYXJsb3NsaW51eC9EZXNrdG9wL1dPUktTUEFDRVMvd2tzcF9mb3Jfci9yX2dhbGdvcy9nYWxnb3NfMDUwX3ByZWRpY3Rvcl9mdXR1cm8uUiIsIG1vZG8sIHRhZywgbGltaXRlU3FsLCB0aXBvUmVkdWNjaW9uLHBhdGhfbW9kZWxvX3BjYV9wcmVmaWpvLAogICAgICAgICAgICAgcGNhX3VtYnJhbF92YXJpYW56YSwgdHNuZV9udW1fZmVhdHVyZXNfb3V0cHV0LCBzZXAgPSAnICcpKQpgYGAKCgoKCgoK</div>
 
 
 

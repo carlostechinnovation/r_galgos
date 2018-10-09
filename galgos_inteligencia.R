@@ -1,5 +1,9 @@
 # Script para TRAIN+TEST persistiendo en fichero el mejor modelo entrenado
 
+# --------- VARIABLES GLOBALES -----------------------------------------
+R_OUT <- "#R_OUT#--"
+PORCENTAJE_TEST <- 0.20 #Divide el dataset de entrenamiento de PASADO en TRAIN+TEST para entrenar el modelo
+
 # --------- FUNCIONES -----------------------------------------
 
 #' Configuraciones generales
@@ -28,6 +32,7 @@ establecerConfigGeneral <- function(){
   library(polspline)
   
   options(java.parameters = '-Xmx5g') #Memoria 5GB
+  
 }
 
 
@@ -260,9 +265,13 @@ cargarModelosPCADesdeFicheros <- function(tag){
 #' @examples
 cargarModelosPredictivosDesdeFicheros <- function(tag) {
   print("Cargando modelos PREDICTIVOS ENTRENADOS (desde fichero)...")
-  modelo_predictivo_cortas <- readRDS(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_cortas_', tag, sep = '')); print(modelo_predictivo_cortas)
-  modelo_predictivo_medias <- readRDS(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_medias_', tag, sep = '')); print(modelo_predictivo_medias)
-  modelo_predictivo_largas <- readRDS(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_largas_', tag, sep = '')); print(modelo_predictivo_largas)
+  modelo_predictivo_cortas <- readRDS(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_cortas_', tag, sep = ''))
+  modelo_predictivo_medias <- readRDS(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_medias_', tag, sep = ''))
+  modelo_predictivo_largas <- readRDS(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_largas_', tag, sep = ''))
+  
+  print(modelo_predictivo_cortas)
+  print(modelo_predictivo_medias)
+  print(modelo_predictivo_largas)
   
   return(list(modelo_predictivo_cortas, modelo_predictivo_medias, modelo_predictivo_largas))
 }
@@ -281,8 +290,8 @@ aplicarUmbralVarianza <- function(pca_modelo_sdev, umbral_varianza) {
   # VARIANZA ACUMULADA: aplico el umbral para coger sólo las variables PCx mas importantes
   var_acum <- cumsum(pca_modelo_sdev^2 / sum(pca_modelo_sdev^2))
   indice_umbral <- min( which(var_acum >= umbral_varianza) )
-  print(paste("Umbral deseado de varianza acumulada:", umbral_varianza))
-  print(paste("Por tanto, necesitamos coger", indice_umbral, "variables transformadas PCx..."))
+  #print(paste("Umbral deseado de varianza acumulada:", umbral_varianza))
+  #print(paste("Por tanto, necesitamos coger", indice_umbral, "variables transformadas PCx..."))
   
   return(indice_umbral)
 }
@@ -510,7 +519,7 @@ resumen_pesos <- function(modelo_cv) {
 
 #' SELECCION DEL MODELO USANDO SUPERLEARNER
 #'
-#' @param matrizentrada 
+#' @param matrizentrada
 #' @param distancia_str 
 #' @param ejecutarMulticore True/False. Indica si se quiere ejecutar la parte multicore (para elegir el algoritmo, rendimiento)
 #'
@@ -522,11 +531,10 @@ analisis_modelos_superlearner <- function(matrizentrada, distancia_str, ejecutar
   
   print(paste("****************** analisis_modelos_superlearner ==>", distancia_str, "******************"))
   
-  
   #Crear datasets features+target para train y test
   index     <- 1:nrow(matrizentrada)
-  tercio <- trunc(0.30 * length(index)) #70%-TRAIN, 30%-Test
-  testindex <- sample(index, tercio, replace = FALSE, prob = NULL)
+  num_filas_test <- trunc(PORCENTAJE_TEST * length(index)) #(100-X)%-TRAIN, X%-Test
+  testindex <- sample(index, num_filas_test, replace = FALSE, prob = NULL)
   testset   <- na.omit(matrizentrada[testindex,])
   trainset  <- na.omit(matrizentrada[-testindex,])
   
@@ -536,13 +544,20 @@ analisis_modelos_superlearner <- function(matrizentrada, distancia_str, ejecutar
   x_test <- subset(testset, select = -indice_target)
   y_test <- testset$TARGET
   
-  print( paste( "matrizentrada=",nrow(matrizentrada), "x", ncol(matrizentrada) ) )
-  print( paste( "testset=",nrow(testset), "x", ncol(testset) ) )
-  print( paste( "trainset=",nrow(trainset), "x", ncol(trainset) ) )
-  print( paste( "x_train=",nrow(x_train), "x", ncol(x_train) ) )
-  print( paste( "y_train=",length(y_train) ) )
-  print( paste( "x_test=",nrow(x_test), "x", ncol(x_test) ) )
-  print( paste( "y_test=",length(y_test) ) )
+  print( paste( "matrizentrada=", nrow(matrizentrada), "x", ncol(matrizentrada) ) )
+  print( paste( "ejecutarMulticore=", ejecutarMulticore ) )
+  print( paste( "testset=", nrow(testset), "x", ncol(testset) ) )
+  print( paste( "trainset=", nrow(trainset), "x", ncol(trainset) ) )
+  print( paste( "x_train=", nrow(x_train), "x", ncol(x_train) ) )
+  print( paste( "y_train=", length(y_train) ) ) #Es un vector, no una matriz
+  print( paste( "x_test=", nrow(x_test), "x", ncol(x_test) ) )
+  print( paste( "y_test=", length(y_test) ) ) #Es un vector, no una matriz
+  
+  print(paste(R_OUT,"MODELOS_PRED [distancia_str|ejecutarMulticore|x_train|x_test] =",
+              distancia_str,'|', ejecutarMulticore,'|',
+              nrow(x_train), "x", ncol(x_train),"|",
+              nrow(x_test), "x", ncol(x_test),"|",
+              sep = ''))
   
   #MODELOS DISPONIBLES en libreria SuperLearner:
   #listWrappers(what = "both")
@@ -555,17 +570,17 @@ analisis_modelos_superlearner <- function(matrizentrada, distancia_str, ejecutar
   glmnet_bis <- create.Learner("SL.glmnet",
                                params = list(nfolds = nfolds_num),
                                # tune = list(alpha = alpha_seq),
-                               detailed_names = T, verbose = TRUE)
+                               detailed_names = T, verbose = FALSE)
   glmnet_bis
-  print(glmnet_bis$grid)
+  #print(glmnet_bis$grid)
   
   alpha_seq <- seq(from = 0, to = 1, by = 0.2) #0=ridge regression and 1=lasso
   nfolds_num <- 3
   bayesglm_bis <- create.Learner("SL.bayesglm",
                                params = list(nfolds = nfolds_num),
-                               detailed_names = T, verbose = TRUE)
+                               detailed_names = T, verbose = FALSE)
   bayesglm_bis
-  print(bayesglm_bis$grid)
+  #print(bayesglm_bis$grid)
    
   # mtry_seq <- floor( ncol(30) / c(2,3,4) ) #MTRY: how many features are randomly chosen within each decision tree node
   # ntree_seq <- seq(from = 100, to = 1000, by = 300)
@@ -581,7 +596,7 @@ analisis_modelos_superlearner <- function(matrizentrada, distancia_str, ejecutar
     bayesglm_bis$names,
     "SL.glmnet","SL.bayesglm", "SL.caret.rpart", "SL.glm", "SL.nnet", "SL.polymars"
     )
-  # print(algoritmosPredictivosUsados)
+  print( t(algoritmosPredictivosUsados) )
   
   
   internal_v <- 2 #inner cross-validation process (replicated across all folds)  
@@ -594,15 +609,13 @@ analisis_modelos_superlearner <- function(matrizentrada, distancia_str, ejecutar
   
   
   print('-------- UNICORE (con cross validation) ----------')
-  modelo_unicore <- SuperLearner(Y = y_train, X = x_train,
+  modelo_unicore <- SuperLearner::SuperLearner(Y = y_train, X = x_train,
                                  family = gaussian(), # describe the error distribution
                                  SL.library = algoritmosPredictivosUsados, method = "method.NNLS",
-                                 id = NULL, verbose = TRUE,
+                                 id = NULL, verbose = FALSE,
                                  control = list(), cvControl = list(V = num_v, shuffle = FALSE))
-  
   modelo_unicore
   summary(modelo_unicore)
-  
   
   if (ejecutarMulticore) {
     
@@ -674,6 +687,14 @@ calcularModelosPredictivosParaDistanciasYGuardarlos <- function(lista, tag){
   pasado_ft_cortas <- lista[[1]]
   pasado_ft_medias <- lista[[2]]
   pasado_ft_largas <- lista[[3]]
+  
+  print(paste(R_OUT,"MODELOS_PRED INPUT [tag|PORCENTAJE_TEST|pasado_ft_cortas|pasado_ft_medias|pasado_ft_largas] =",
+              tag,'|',
+              PORCENTAJE_TEST,'|',
+              nrow(pasado_ft_cortas), "x", ncol(pasado_ft_cortas),'|',
+              nrow(pasado_ft_medias), "x", ncol(pasado_ft_medias),'|',
+              nrow(pasado_ft_largas), "x", ncol(pasado_ft_largas),
+              sep = ''))
   
   if (nrow(pasado_ft_cortas) > 0) {
     print( paste( "pasado_ft_cortas=", nrow(pasado_ft_cortas), "x", ncol(pasado_ft_cortas) ) ); 
@@ -747,7 +768,7 @@ predecir <- function(tag, input_f_transformadas, lista_modelos_predictivos, outp
   modelo_medias <- lista_modelos_predictivos[[2]]
   modelo_largas <- lista_modelos_predictivos[[3]]
   
-  # Las entradas estan divididas en en 3 subsets segun DISTANCIA. Predecimos cada una por separado con su modelo adecuado.
+  # Las entradas estan divididas en 3 subsets segun DISTANCIA. Predecimos cada una por separado con su modelo adecuado.
   # Luego juntamos resultados en un solo dataset de salida, pero manteniendo el ORDEN!!!!!!!!!
   
   
@@ -784,9 +805,20 @@ predecir <- function(tag, input_f_transformadas, lista_modelos_predictivos, outp
   indice_de_indiceorden_m <- which( colnames(input_f_medias) == "INDICE_ORDEN" )
   indice_de_indiceorden_l <- which( colnames(input_f_largas) == "INDICE_ORDEN" )
   
-  #Prediccion CORTAS (sin la columna indice_orden)
   input_f_cortas_sinindice <- as.data.frame( subset(input_f_cortas, select = -indice_de_indiceorden_c ) );
   print(paste("input_f_cortas_sinindice:", nrow(input_f_cortas_sinindice), "x", ncol(input_f_cortas_sinindice))); print(head(input_f_cortas_sinindice))
+  input_f_medias_sinindice <- as.data.frame( subset(input_f_medias, select = -indice_de_indiceorden_m ) );
+  print(paste("input_f_medias_sinindice:", nrow(input_f_medias_sinindice), "x", ncol(input_f_medias_sinindice))); print(head(input_f_medias_sinindice))
+  input_f_largas_sinindice <- as.data.frame( subset(input_f_largas, select = -indice_de_indiceorden_l ) );
+  print(paste("input_f_largas_sinindice:", nrow(input_f_largas_sinindice), "x", ncol(input_f_largas_sinindice))); print(head(input_f_largas_sinindice))
+  
+  print(paste(R_OUT, tipo, " Input-Features [cortas|medias|largas] = ",
+              nrow(input_f_cortas_sinindice), "x", ncol(input_f_cortas_sinindice), "|",
+              nrow(input_f_medias_sinindice), "x", ncol(input_f_medias_sinindice), "|",
+              nrow(input_f_largas_sinindice), "x", ncol(input_f_largas_sinindice), 
+              sep = ''))
+  
+  #Prediccion CORTAS (sin la columna indice_orden)
   print("Prediciendo usando un modelo ya entrenado y un nuevo dataset...")
   predicciones_t_model_cortas <- predict.SuperLearner(object = modelo_cortas, newdata = input_f_cortas_sinindice, onlySL = TRUE) #No usa los que tienen peso =0
   predicciones_t_cortas <- predicciones_t_model_cortas$pred #Prediccion
@@ -795,8 +827,6 @@ predecir <- function(tag, input_f_transformadas, lista_modelos_predictivos, outp
 
   
   #Prediccion MEDIAS (sin la columna indice_orden)
-  input_f_medias_sinindice <- as.data.frame( subset(input_f_medias, select = -indice_de_indiceorden_m ) );
-  print(paste("input_f_medias_sinindice:", nrow(input_f_medias_sinindice), "x", ncol(input_f_medias_sinindice))); print(head(input_f_medias_sinindice))
   print("Prediciendo usando un modelo ya entrenado y un nuevo dataset...")
   predicciones_t_model_medias <- predict.SuperLearner(object = modelo_medias, newdata = input_f_medias_sinindice, onlySL = TRUE) #No usa los que tienen peso =0
   predicciones_t_medias <- predicciones_t_model_medias$pred #Prediccion
@@ -805,8 +835,6 @@ predecir <- function(tag, input_f_transformadas, lista_modelos_predictivos, outp
   
   
   #Prediccion LARGAS (sin la columna indice_orden)
-  input_f_largas_sinindice <- as.data.frame( subset(input_f_largas, select = -indice_de_indiceorden_l ) );
-  print(paste("input_f_largas_sinindice:", nrow(input_f_largas_sinindice), "x", ncol(input_f_largas_sinindice))); print(head(input_f_largas_sinindice))
   print("Prediciendo usando un modelo ya entrenado y un nuevo dataset...")
   predicciones_t_model_largas <- predict.SuperLearner(object = modelo_largas, newdata = input_f_largas_sinindice, onlySL = TRUE) #No usa los que tienen peso =0
   predicciones_t_largas <- predicciones_t_model_largas$pred #Prediccion
@@ -945,7 +973,7 @@ ejecutarReduccionDimensiones <- function(tabla_train_f, tabla_test_f, tag, limit
     print("Modelo PCA para CORTAS es incorrecto, porque su SCORES es NULL. Revisarlo!")
   } else {
     indice_umbral_cortas <- aplicarUmbralVarianza(modelo_pca_cortas$sdev, pca_umbral_varianza)
-    print('CORTAS: separar TARGET, reducir las FEATURES y pegar el TARGET otra vez...')
+    #print('CORTAS: separar TARGET, reducir las FEATURES y pegar el TARGET otra vez...')
     pasado_ft_temp <- lista_ft_cortasmediaslargas[[1]]
     indice_t_temp <- which( colnames(pasado_ft_temp) == "TARGET" )
     pasado_f_temp <- subset(pasado_ft_temp, select = -indice_t_temp); #print("CORTAS (antes de PCA):"); print(head(pasado_f_temp, n=5L))
@@ -960,7 +988,7 @@ ejecutarReduccionDimensiones <- function(tabla_train_f, tabla_test_f, tag, limit
     print("Modelo PCA para MEDIAS es incorrecto, porque su SCORES es NULL. Revisarlo!")
   } else {
     indice_umbral_medias <- aplicarUmbralVarianza(modelo_pca_medias$sdev, pca_umbral_varianza)
-    print('MEDIAS: separar TARGET, reducir las FEATURES y pegar el TARGET otra vez...')
+    #print('MEDIAS: separar TARGET, reducir las FEATURES y pegar el TARGET otra vez...')
     pasado_ft_temp <- lista_ft_cortasmediaslargas[[2]]
     indice_t_temp <- which( colnames(pasado_ft_temp) == "TARGET" )
     pasado_f_temp <- subset(pasado_ft_temp, select = -indice_t_temp); #print("MEDIAS (antes de PCA):"); print(head(pasado_f_temp, n=5L))
@@ -975,7 +1003,7 @@ ejecutarReduccionDimensiones <- function(tabla_train_f, tabla_test_f, tag, limit
     print("Modelo PCA para LARGAS es incorrecto, porque su SCORES es NULL. Revisarlo!")
   } else {
     indice_umbral_largas <- aplicarUmbralVarianza(modelo_pca_largas$sdev, pca_umbral_varianza)
-    print('LARGAS: separar TARGET, reducir las FEATURES y pegar el TARGET otra vez...')
+    #print('LARGAS: separar TARGET, reducir las FEATURES y pegar el TARGET otra vez...')
     pasado_ft_temp <- lista_ft_cortasmediaslargas[[3]]
     indice_t_temp <- which( colnames(pasado_ft_temp) == "TARGET" )
     pasado_f_temp <- subset(pasado_ft_temp, select = -indice_t_temp); #print("MEDIAS (antes de PCA):"); print(head(pasado_f_temp, n=5L))
@@ -1033,9 +1061,9 @@ aplicarReductores <- function(input_f, lista_modelos_pca, tipo, umbral_varianza)
   medias_f_sinindice <- subset(input_f_medias, select = -indice_de_indiceorden_medias)
   largas_f_sinindice <- subset(input_f_largas, select = -indice_de_indiceorden_largas)
   
-  input_f_transformada_cortas <- predict(modelo_pca_cortas, cortas_f_sinindice )
-  input_f_transformada_medias <- predict(modelo_pca_medias, medias_f_sinindice )
-  input_f_transformada_largas <- predict(modelo_pca_largas, largas_f_sinindice )
+  input_f_transformada_cortas <- predict(modelo_pca_cortas, cortas_f_sinindice ) #Reduciendo
+  input_f_transformada_medias <- predict(modelo_pca_medias, medias_f_sinindice ) #Reduciendo
+  input_f_transformada_largas <- predict(modelo_pca_largas, largas_f_sinindice ) #Reduciendo
   
   #Coger solo las features que mas impacto tengan en la varianza
   indice_umbral_cortas <- aplicarUmbralVarianza(modelo_pca_cortas$sdev, umbral_varianza)
@@ -1074,7 +1102,12 @@ aplicarReductores <- function(input_f, lista_modelos_pca, tipo, umbral_varianza)
 #' @examples
 ejecutarCadenaEntrenamientoValidation <- function(tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output){
   
-  print('--------------- ejecutarCadenaEntrenamientoValidation ------------')
+  print(paste(R_OUT, '--------------- ejecutarCadenaEntrenamientoValidation: INICIO ------------', sep=''))
+  print( paste(R_OUT, 
+               'PARAM [modo|tag|limiteSql|tipoReduccion|pca_umbral_varianza|tsne_num_features_output] = ', 
+               modo,'|',tag,'|',limiteSql,'|',tipoReduccion,'|',pca_umbral_varianza,'|',tsne_num_features_output, 
+               sep = '') )
+  
   print( paste( 'tag=', tag, sep = '' ) )
   print( paste( 'limiteSql=', tag, sep = '' ) )
   print( paste( 'tipoReduccion=', tipoReduccion, sep = '' ) )
@@ -1108,23 +1141,20 @@ ejecutarCadenaEntrenamientoValidation <- function(tag, limiteSql, tipoReduccion,
     # Modelos predictivos (sobre los datos transformados) y los guarda en ficheros
     calcularModelosPredictivosParaDistanciasYGuardarlos(lista_ft_transformadas, tag)
     
+    print('----- VALIDATION (pasado-features): Aplicando reduccion PCA y modelos predictivos para adivinar el target ---')
     
-    print('----- VALIDATION: Aplicando reduccion PCA y modelos predictivos para adivinar el target ---')
-    
-    
-    print('Aplicando PCA sobre Validation-F...')
+    print('Aplicando PCA sobre Validation (pasado-features)...')
     validation_f_transformadas <- aplicarReductores(pasado_validation_f, lista_modelos_pca, "validation", pca_umbral_varianza) #Con INDICE_ORDEN
-    print('Predeciendo el target sobre el validation, usando modelos predictivos...')
-    predecir(tag, validation_f_transformadas, cargarModelosPredictivosDesdeFicheros(tag), "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pasado_validation_targets_predichos_", "VALIDATION")
-    
-    
+    print('Predeciendo el target sobre el validation (pasado-features), usando modelos predictivos...')
+    lista_modelos_predictivos <- cargarModelosPredictivosDesdeFicheros(tag)
+    predecir(tag, validation_f_transformadas, lista_modelos_predictivos, "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pasado_validation_targets_predichos_", "VALIDATION")
     
   } else {
     print("ERROR Algun dataset no ha sido bien transformado")
   }
   
   
-  print('--------------- ejecutarCadenaEntrenamientoValidation: FIN ------------')
+  print(paste(R_OUT, '--------------- ejecutarCadenaEntrenamientoValidation: FIN ------------', sep=''))
 }
 
 
@@ -1138,7 +1168,12 @@ ejecutarCadenaEntrenamientoValidation <- function(tag, limiteSql, tipoReduccion,
 #' @examples
 ejecutarCadenaEntrenamientoTTV <- function(tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output){
   
-  print('--------------- ejecutarCadenaEntrenamientoTTV: INICIO ------------')
+  print(paste(R_OUT, '--------------- ejecutarCadenaEntrenamientoTTV: INICIO ------------', sep=''))
+  print( paste(R_OUT, 
+               'PARAM [modo|tag|limiteSql|tipoReduccion|pca_umbral_varianza|tsne_num_features_output] = ', 
+               modo,'|',tag,'|',limiteSql,'|',tipoReduccion,'|',pca_umbral_varianza,'|',tsne_num_features_output, 
+               sep = '') )
+  
   print( paste( 'tag=', tag, sep = '' ) )
   print( paste( 'limiteSql=', tag, sep = '' ) )
   print( paste( 'tipoReduccion=', tipoReduccion, sep = '' ) )
@@ -1159,7 +1194,7 @@ ejecutarCadenaEntrenamientoTTV <- function(tag, limiteSql, tipoReduccion, path_m
   calcularModelosPredictivosParaDistanciasYGuardarlos(lista_ft_transformadas, tag)
   
   
-  print('--------------- ejecutarCadenaEntrenamientoTTV: FIN ------------')
+  print(paste(R_OUT, '--------------- ejecutarCadenaEntrenamientoTTV: FIN ------------', sep=''))
 }
 
 
@@ -1173,7 +1208,12 @@ ejecutarCadenaEntrenamientoTTV <- function(tag, limiteSql, tipoReduccion, path_m
 #' @examples
 ejecutarCadenaPredecirFuturo <- function(tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output){
   
-  print('--------------- ejecutarCadenaPredecirFuturo ------------')
+  print(paste(R_OUT, '--------------- ejecutarCadenaPredecirFuturo: INICIO ------------', sep=''))
+  print( paste(R_OUT, 
+               'PARAM [modo|tag|limiteSql|tipoReduccion|pca_umbral_varianza|tsne_num_features_output] = ', 
+               modo,'|',tag,'|',limiteSql,'|',tipoReduccion,'|',pca_umbral_varianza,'|',tsne_num_features_output, 
+               sep = '') )
+  
   print( paste( 'tag=', tag, sep = '' ) )
   print( paste( 'limiteSql=', limiteSql, sep = '' ) )
   print( paste( 'tipoReduccion=', tipoReduccion, sep = '' ) )
@@ -1274,6 +1314,7 @@ ejecutarCadenaPredecirFuturo <- function(tag, limiteSql, tipoReduccion, path_mod
     predecir(tag, lista_f_cortasmediaslargas, cargarModelosPredictivosDesdeFicheros(tag), "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/FILELOAD_ds_futuro_targets_2_", "FUTURO")
   }
   
+  print(paste(R_OUT, '--------------- ejecutarCadenaPredecirFuturo: FIN ------------', sep=''))
 }
 
 
