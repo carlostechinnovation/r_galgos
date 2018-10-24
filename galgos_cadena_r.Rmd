@@ -15,8 +15,8 @@ Por tanto, queremos reducir las dimensiones.
 Usando PCA:
 ```{r}
 modo <- 0 # 0=reduccion_dimensiones
-tag <- "DOW_M"
-limiteSql <- "1000"
+tag <- "DOW_L"
+limiteSql <- "10000"
 tipoReduccion <- "PCA"
 path_modelo_pca_prefijo <- "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_"
 pca_umbral_varianza <- 0.90
@@ -29,8 +29,8 @@ system(paste("Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/g
 Usando tSNE:
 ```{r}
 modo <- 0 # 0=reduccion_dimensiones
-tag <- "DOW_M"
-limiteSql <- "1000"
+tag <- "DOW_L"
+limiteSql <- "10000"
 tipoReduccion <- "TSNE"
 path_modelo_pca_prefijo <- "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_"
 pca_umbral_varianza <- 0.95

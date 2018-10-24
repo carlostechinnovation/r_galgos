@@ -244,9 +244,9 @@ crearFeaturesyTargetDelPasadoParaDistancias <- function(pasado_ft, col_cortas,co
 #' @examples
 cargarModelosPCADesdeFicheros <- function(tag){
   print("Cargando reductores PCA (desde ficheros)...")
-  path_pca_cortas <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_cortas_', tag, sep=''); print(path_pca_cortas)
-  path_pca_medias <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_medias_', tag, sep=''); print(path_pca_medias)
-  path_pca_largas <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_largas_', tag, sep=''); print(path_pca_largas)
+  path_pca_cortas <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_cortas_', tag, sep = ''); print(path_pca_cortas)
+  path_pca_medias <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_medias_', tag, sep = ''); print(path_pca_medias)
+  path_pca_largas <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_largas_', tag, sep = ''); print(path_pca_largas)
   
   modelo_pca_cortas <- readRDS(file = path_pca_cortas)
   modelo_pca_medias <- readRDS(file = path_pca_medias)
@@ -265,18 +265,27 @@ cargarModelosPCADesdeFicheros <- function(tag){
 #' @examples
 cargarModelosPredictivosDesdeFicheros <- function(tag) {
   print("Cargando modelos PREDICTIVOS ENTRENADOS (desde fichero)...")
-  modelo_predictivo_cortas <- readRDS(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_cortas_', tag, sep = ''))
-  modelo_predictivo_medias <- readRDS(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_medias_', tag, sep = ''))
-  modelo_predictivo_largas <- readRDS(file = paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_largas_', tag, sep = ''))
   
+  uri_cortas <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_cortas_', tag, sep = '')
+  print( paste("URI modelo entrenado para CORTAS: ", uri_cortas))
+  modelo_predictivo_cortas <- readRDS(file = uri_cortas)
   print(modelo_predictivo_cortas)
+  
+  uri_medias <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_medias_', tag, sep = '')
+  print( paste("URI modelo entrenado para MEDIAS: ", uri_medias))
+  modelo_predictivo_medias <- readRDS(file = uri_medias)
   print(modelo_predictivo_medias)
+  
+  uri_largas <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_largas_', tag, sep = '')
+  print( paste("URI modelo entrenado para LARGAS: ", uri_largas))
+  modelo_predictivo_largas <- readRDS(file = uri_largas)
   print(modelo_predictivo_largas)
   
+  print("Ya hemos cargado los PREDICTIVOS ENTRENADOS.")
   return(list(modelo_predictivo_cortas, modelo_predictivo_medias, modelo_predictivo_largas))
 }
 
-#' Title
+#' Calcula el indice maximo de la variable que está mas cerca del umbral de varianza acumulada deseada.
 #'
 #' @param pca_modelo_sdev 
 #' @param umbral_varianza 
@@ -285,13 +294,13 @@ cargarModelosPredictivosDesdeFicheros <- function(tag) {
 #' @export
 #'
 #' @examples
-aplicarUmbralVarianza <- function(pca_modelo_sdev, umbral_varianza) {
+aplicarUmbralVarianza <- function(distancia_str, pca_modelo_sdev, umbral_varianza) {
   
   # VARIANZA ACUMULADA: aplico el umbral para coger sólo las variables PCx mas importantes
   var_acum <- cumsum(pca_modelo_sdev^2 / sum(pca_modelo_sdev^2))
   indice_umbral <- min( which(var_acum >= umbral_varianza) )
-  #print(paste("Umbral deseado de varianza acumulada:", umbral_varianza))
-  #print(paste("Por tanto, necesitamos coger", indice_umbral, "variables transformadas PCx..."))
+  print(paste(distancia_str, " - Umbral varianza acumulada = ", umbral_varianza))
+  print(paste(distancia_str, " - Cogemos ", indice_umbral, "variables transformadas PCx..."))
   
   return(indice_umbral)
 }
@@ -390,6 +399,8 @@ reducirConPCA <- function(input_ft, path_modelo_pca, umbral_varianza, tipoPCA){
   
   print(paste("Guardando modelo PCA fichero:", path_modelo_pca))
   saveRDS(pca_modelo, file = path_modelo_pca)
+  print("Descripcion del modelo PCA:")
+  print(pca_modelo)
   
   #Borrar variable
   rm(pca_modelo)
@@ -599,9 +610,9 @@ analisis_modelos_superlearner <- function(matrizentrada, distancia_str, ejecutar
   print( t(algoritmosPredictivosUsados) )
   
   
-  internal_v <- 2 #inner cross-validation process (replicated across all folds)  
+  internal_v <- 3 #inner cross-validation process (replicated across all folds)  
   print( paste('Cross-validation (INTERNA, dentro de cada algoritmo):', toString(internal_v) ) )
-  num_v <- 2
+  num_v <- 3
   print( paste('Cross-validation (EXTERNA):', toString(num_v) ) )
   
   #PENDIENTE: https://cran.r-project.org/web/packages/SuperLearner/vignettes/Guide-to-SuperLearner.html#test-algorithm-with-multiple-hyperparameter-settings
@@ -699,6 +710,7 @@ calcularModelosPredictivosParaDistanciasYGuardarlos <- function(lista, tag){
   if (nrow(pasado_ft_cortas) > 0) {
     print( paste( "pasado_ft_cortas=", nrow(pasado_ft_cortas), "x", ncol(pasado_ft_cortas) ) ); 
     # print(head(pasado_ft_cortas))
+    boxplot(pasado_ft_cortas, cex.axis=0.5) 
     out_cortas <- analisis_modelos_superlearner(pasado_ft_cortas, "CORTAS", FALSE)
     modelo_cortas <- out_cortas[[1]]
     path_modelo_cortas <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_cortas_', tag, sep = '');
@@ -714,6 +726,8 @@ calcularModelosPredictivosParaDistanciasYGuardarlos <- function(lista, tag){
   if (nrow(pasado_ft_medias) > 0) {
     print( paste( "pasado_ft_medias=", nrow(pasado_ft_medias), "x", ncol(pasado_ft_medias) ) ); 
     # print(head(pasado_ft_medias))
+    boxplot(pasado_ft_medias, cex.axis=0.5) 
+    
     out_medias <- analisis_modelos_superlearner(pasado_ft_medias, "MEDIAS", FALSE)
     modelo_medias <- out_medias[[1]]
     path_modelo_medias <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_medias_', tag, sep = '');
@@ -728,6 +742,7 @@ calcularModelosPredictivosParaDistanciasYGuardarlos <- function(lista, tag){
   if (nrow(pasado_ft_largas) > 0) {
     print( paste( "pasado_ft_largas=", nrow(pasado_ft_largas), "x", ncol(pasado_ft_largas) ) ); 
     # print(head(pasado_ft_largas))
+    boxplot(pasado_ft_largas, cex.axis=0.5) 
     out_largas <- analisis_modelos_superlearner(pasado_ft_largas, "LARGAS", FALSE)
     modelo_largas <- out_largas[[1]]
     path_modelo_largas <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_largas_', tag, sep = ''); 
@@ -972,7 +987,7 @@ ejecutarReduccionDimensiones <- function(tabla_train_f, tabla_test_f, tag, limit
   if (is.null(modelo_pca_cortas$scores) && is.null(modelo_pca_cortas$rotation)) {
     print("Modelo PCA para CORTAS es incorrecto, porque su SCORES es NULL. Revisarlo!")
   } else {
-    indice_umbral_cortas <- aplicarUmbralVarianza(modelo_pca_cortas$sdev, pca_umbral_varianza)
+    indice_umbral_cortas <- aplicarUmbralVarianza("CORTAS", modelo_pca_cortas$sdev, pca_umbral_varianza)
     #print('CORTAS: separar TARGET, reducir las FEATURES y pegar el TARGET otra vez...')
     pasado_ft_temp <- lista_ft_cortasmediaslargas[[1]]
     indice_t_temp <- which( colnames(pasado_ft_temp) == "TARGET" )
@@ -987,7 +1002,7 @@ ejecutarReduccionDimensiones <- function(tabla_train_f, tabla_test_f, tag, limit
   if (is.null(modelo_pca_medias$scores) && is.null(modelo_pca_medias$rotation)) {
     print("Modelo PCA para MEDIAS es incorrecto, porque su SCORES es NULL. Revisarlo!")
   } else {
-    indice_umbral_medias <- aplicarUmbralVarianza(modelo_pca_medias$sdev, pca_umbral_varianza)
+    indice_umbral_medias <- aplicarUmbralVarianza("MEDIAS", modelo_pca_medias$sdev, pca_umbral_varianza)
     #print('MEDIAS: separar TARGET, reducir las FEATURES y pegar el TARGET otra vez...')
     pasado_ft_temp <- lista_ft_cortasmediaslargas[[2]]
     indice_t_temp <- which( colnames(pasado_ft_temp) == "TARGET" )
@@ -1002,7 +1017,7 @@ ejecutarReduccionDimensiones <- function(tabla_train_f, tabla_test_f, tag, limit
   if (is.null(modelo_pca_largas$scores) && is.null(modelo_pca_largas$rotation)) {
     print("Modelo PCA para LARGAS es incorrecto, porque su SCORES es NULL. Revisarlo!")
   } else {
-    indice_umbral_largas <- aplicarUmbralVarianza(modelo_pca_largas$sdev, pca_umbral_varianza)
+    indice_umbral_largas <- aplicarUmbralVarianza("LARGAS", modelo_pca_largas$sdev, pca_umbral_varianza)
     #print('LARGAS: separar TARGET, reducir las FEATURES y pegar el TARGET otra vez...')
     pasado_ft_temp <- lista_ft_cortasmediaslargas[[3]]
     indice_t_temp <- which( colnames(pasado_ft_temp) == "TARGET" )
@@ -1066,9 +1081,9 @@ aplicarReductores <- function(input_f, lista_modelos_pca, tipo, umbral_varianza)
   input_f_transformada_largas <- predict(modelo_pca_largas, largas_f_sinindice ) #Reduciendo
   
   #Coger solo las features que mas impacto tengan en la varianza
-  indice_umbral_cortas <- aplicarUmbralVarianza(modelo_pca_cortas$sdev, umbral_varianza)
-  indice_umbral_medias <- aplicarUmbralVarianza(modelo_pca_medias$sdev, umbral_varianza)
-  indice_umbral_largas <- aplicarUmbralVarianza(modelo_pca_largas$sdev, umbral_varianza)
+  indice_umbral_cortas <- aplicarUmbralVarianza("CORTAS", modelo_pca_cortas$sdev, umbral_varianza)
+  indice_umbral_medias <- aplicarUmbralVarianza("MEDIAS", modelo_pca_medias$sdev, umbral_varianza)
+  indice_umbral_largas <- aplicarUmbralVarianza("LARGAS", modelo_pca_largas$sdev, umbral_varianza)
   
   #TABLON ANALITICO TRANSFORMADO con los pesos de las componentes (PCx) para cada individuo (fila), solo con las variables que mas peso tienen:
   input_f_transformada_cortas_conumbral <- input_f_transformada_cortas[, 1:indice_umbral_cortas]
@@ -1104,8 +1119,8 @@ ejecutarCadenaEntrenamientoValidation <- function(tag, limiteSql, tipoReduccion,
   
   print(paste(R_OUT, '--------------- ejecutarCadenaEntrenamientoValidation: INICIO ------------', sep=''))
   print( paste(R_OUT, 
-               'PARAM [modo|tag|limiteSql|tipoReduccion|pca_umbral_varianza|tsne_num_features_output] = ', 
-               modo,'|',tag,'|',limiteSql,'|',tipoReduccion,'|',pca_umbral_varianza,'|',tsne_num_features_output, 
+               'PARAM [tag|limiteSql|tipoReduccion|pca_umbral_varianza|tsne_num_features_output] = ', 
+               tag,'|',limiteSql,'|',tipoReduccion,'|',pca_umbral_varianza,'|',tsne_num_features_output, 
                sep = '') )
   
   print( paste( 'tag=', tag, sep = '' ) )
@@ -1170,8 +1185,8 @@ ejecutarCadenaEntrenamientoTTV <- function(tag, limiteSql, tipoReduccion, path_m
   
   print(paste(R_OUT, '--------------- ejecutarCadenaEntrenamientoTTV: INICIO ------------', sep=''))
   print( paste(R_OUT, 
-               'PARAM [modo|tag|limiteSql|tipoReduccion|pca_umbral_varianza|tsne_num_features_output] = ', 
-               modo,'|',tag,'|',limiteSql,'|',tipoReduccion,'|',pca_umbral_varianza,'|',tsne_num_features_output, 
+               'PARAM [tag|limiteSql|tipoReduccion|pca_umbral_varianza|tsne_num_features_output] = ', 
+               ,tag,'|',limiteSql,'|',tipoReduccion,'|',pca_umbral_varianza,'|',tsne_num_features_output, 
                sep = '') )
   
   print( paste( 'tag=', tag, sep = '' ) )
@@ -1278,9 +1293,9 @@ ejecutarCadenaPredecirFuturo <- function(tag, limiteSql, tipoReduccion, path_mod
     modelo_pca_largas <- lista_modelos_pca[[3]]
     
     #Coger solo las features que mas impacto tengan en la varianza
-    indice_umbral_cortas <- aplicarUmbralVarianza(modelo_pca_cortas$sdev, pca_umbral_varianza)
-    indice_umbral_medias <- aplicarUmbralVarianza(modelo_pca_medias$sdev, pca_umbral_varianza)
-    indice_umbral_largas <- aplicarUmbralVarianza(modelo_pca_largas$sdev, pca_umbral_varianza)
+    indice_umbral_cortas <- aplicarUmbralVarianza("CORTAS", modelo_pca_cortas$sdev, pca_umbral_varianza)
+    indice_umbral_medias <- aplicarUmbralVarianza("MEDIAS", modelo_pca_medias$sdev, pca_umbral_varianza)
+    indice_umbral_largas <- aplicarUmbralVarianza("LARGAS", modelo_pca_largas$sdev, pca_umbral_varianza)
     
     print('Reduciendo dimensiones....')
     indice_de_indiceorden_cortas <- which( colnames(lista_f_cortasmediaslargas[[1]]) == "INDICE_ORDEN" )
