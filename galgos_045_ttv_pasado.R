@@ -1,4 +1,5 @@
 # Script para TRAIN+TEST sobre PASADO-TTV persistiendo en fichero el mejor modelo entrenado
+rm(list=ls())
 
 source("/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_inteligencia.R") # para reciclar funciones
 

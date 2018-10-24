@@ -27,4 +27,8 @@
 # install.packages("RhpcBLASctl")
 
 # install.packages("igraph")
+# install.packages("standardize")
+# install.packages("plyr")
+# install.packages("pracma")
+# install.packages("BBmisc")
 

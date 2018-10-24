@@ -1,4 +1,5 @@
 # Script para predecir el FUTURO usando el MODELO (YA ENTRENADO sobre datos del pasado-ttv)
+rm(list=ls())
 
 source("/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_inteligencia.R") # para reciclar funciones
 

@@ -15,7 +15,7 @@ Por tanto, queremos reducir las dimensiones.
 Usando PCA:
 ```{r}
 modo <- 0 # 0=reduccion_dimensiones
-tag <- "DOW_M"
+tag <- "DOW_L"
 limiteSql <- "1000"
 tipoReduccion <- "PCA"
 path_modelo_pca_prefijo <- "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_"
@@ -29,7 +29,7 @@ system(paste("Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/g
 Usando tSNE:
 ```{r}
 modo <- 0 # 0=reduccion_dimensiones
-tag <- "DOW_M"
+tag <- "DOW_L"
 limiteSql <- "1000"
 tipoReduccion <- "TSNE"
 path_modelo_pca_prefijo <- "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_"
@@ -44,7 +44,7 @@ system(paste("Rscript /home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/g
 ```{r}
 modo <- 1 # 1=train+test+validation
 tag <- "DOW_M"
-limiteSql <- "10000"
+limiteSql <- "1000"
 tipoReduccion <- "PCA"
 path_modelo_pca_prefijo <- "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_"
 pca_umbral_varianza <- 0.85
@@ -71,7 +71,7 @@ Vemos que hay variables con outliers y otras leptocúrticas (apretadas en torno 
 ```{r}
 modo <- 2 # 2=train+test
 tag <- "DOW_M"
-limiteSql <- "10000"
+limiteSql <- "1000"
 path_modelo_pca_prefijo <- "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_"
 pca_umbral_varianza <- 0.95
 tsne_num_features_output <- 12

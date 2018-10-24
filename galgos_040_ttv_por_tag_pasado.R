@@ -1,18 +1,19 @@
 # Script para TRAIN+TEST sobre PASADO-TTV persistiendo en fichero el mejor modelo entrenado
+rm(list=ls())
 
 source("/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/galgos_inteligencia.R") # para reciclar funciones
 
 entradas <- commandArgs(trailingOnly = TRUE)
 
 ##### Solo para debug
-# modo <- 1 # 1=train+test+validation
-# tag <- "TOTAL"
-# limiteSql <- "30000"
-# tipoReduccion <- "PCA"
-# path_modelo_pca_prefijo <- "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_"
-# pca_umbral_varianza <- 0.75
-# tsne_num_features_output <- 12
-# entradas <- c(modo, tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output)
+ modo <- 1 # 1=train+test+validation
+ tag <- "TOTAL"
+ limiteSql <- "3000"
+ tipoReduccion <- "PCA"
+ path_modelo_pca_prefijo <- "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_"
+ pca_umbral_varianza <- 0.95
+ tsne_num_features_output <- 12
+ entradas <- c(modo, tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output)
 #######
 
 
