@@ -67,7 +67,7 @@ leerDesdeBaseDatosYEscribirCSV <- function(nombre_tabla_f, nombre_tabla_t, nombr
   
   #print('---------------Conexion a BBDD ------------')
   #Conexiones ya abiertas
-  conexiones_abiertas <- dbListConnections(MySQL())
+  #conexiones_abiertas <- dbListConnections(MySQL())
   
   #print('Conectando...')
   mydb = dbConnect(MySQL(), user = 'root', password = 'datos1986', dbname = 'datos_desa', host = 'localhost')
@@ -161,8 +161,8 @@ leerDesdeBaseDatosYEscribirCSV <- function(nombre_tabla_f, nombre_tabla_t, nombr
   print('--------------- leerDesdeBaseDatosYEscribirCSV: FIN ------------')
   
   #Todo numericos, en vez de strings
-  salida_1_num <- mapply(salida_1, FUN=as.numeric)
-  salida_2_num <- mapply(salida_2, FUN=as.numeric)
+  salida_1_num <- mapply(salida_1, FUN = as.numeric)
+  salida_2_num <- mapply(salida_2, FUN = as.numeric)
   
   #Formato dataframe
   salida_1_df <- as_data_frame(salida_1_num)
@@ -196,7 +196,7 @@ crearFeaturesyTargetDelPasadoParaDistancias <- function(pasado_ft, col_cortas, c
   print("NAMES:")
   print(names(pasado_ft))
   print("HEAD pasado_ft:")
-  print(head(pasado_ft, n=5L))
+  print(head(pasado_ft, n = 5L))
   
   
   pasado_ft_cortas_conNAs <- subset(pasado_ft, distancia <= 0.33)
@@ -235,13 +235,13 @@ crearFeaturesyTargetDelPasadoParaDistancias <- function(pasado_ft, col_cortas, c
     pasado_ft_largas <- na.omit(pasado_ft_largas_coldis)
   
     print('Comprobacion de NAs...')
-    indices_sin_na_cortas <- as.numeric( na.action(pasado_ft_cortas) ) #Indices en los que habia NAs
+    # indices_sin_na_cortas <- as.numeric( na.action(pasado_ft_cortas) ) #Indices en los que habia NAs
     if (sum( colSums(is.na(pasado_ft_cortas)) ) != 0) { print('ERROR: Hay columnas con missing data!') } #comprobamos que no hay missing data
     
-    indices_sin_na_medias <- as.numeric( na.action(pasado_ft_medias) ) #Indices en los que habia NAs
+    # indices_sin_na_medias <- as.numeric( na.action(pasado_ft_medias) ) #Indices en los que habia NAs
     if (sum( colSums(is.na(pasado_ft_medias)) ) != 0) { print('ERROR: Hay columnas con missing data!') } #comprobamos que no hay missing data
     
-    indices_sin_na_largas <- as.numeric( na.action(pasado_ft_largas) ) #Indices en los que habia NAs
+    # indices_sin_na_largas <- as.numeric( na.action(pasado_ft_largas) ) #Indices en los que habia NAs
     if (sum( colSums(is.na(pasado_ft_largas)) ) != 0) { print('ERROR: Hay columnas con missing data!') } #comprobamos que no hay missing data
   } 
   
@@ -329,7 +329,6 @@ aplicarUmbralVarianza <- function(distancia_str, pca_modelo_sdev, umbral_varianz
   print("pca_modelo_sdev:"); print(pca_modelo_sdev)
   print(paste("umbral_varianza:", umbral_varianza))
   
-  
   # VARIANZA ACUMULADA: aplico el umbral para coger sólo las variables PCx mas importantes
   var_acum <- cumsum(pca_modelo_sdev^2 / sum(pca_modelo_sdev^2))
   print("var_acum:"); print(var_acum)
@@ -401,7 +400,6 @@ reducirConPCA <- function(input_ft, path_modelo_pca, umbral_varianza, tipoPCA){
         if (sum( colSums(is.na(input_f_full)) ) != 0) { print('ERROR: Hay columnas con missing data en input_f_full!') } #comprobamos que no hay missing data
         
         print('reducirConPCA() --> ALGORITMO...')
-        
         
         if (tipoPCA == 'princomp') {
           
@@ -970,7 +968,7 @@ predecir <- function(tag, input_f_transformadas, lista_modelos_predictivos, outp
   out_target_predicho = data.frame(out_target_predicho)
   
   #Borramos fichero preexistente
-  if(file.exists(path_output_file)){
+  if (file.exists(path_output_file)) {
     file.remove(path_output_file)
   }
   
@@ -1032,7 +1030,7 @@ ejecutarReduccionDimensiones <- function(tabla_train_f, tabla_test_f, tag, limit
   print("CLASS de A:")
   print(class(A))
   print("HEAD de A:")
-  print(head(A, n=5L))
+  print(head(A, n = 5L))
   
   #B=Subset de todas las columnas excepto "las de distancia": 1000x29
   columnas_distancia <- as.vector( c(col_cortas, col_medias, col_largas) )
@@ -1074,11 +1072,11 @@ ejecutarReduccionDimensiones <- function(tabla_train_f, tabla_test_f, tag, limit
   print(paste("MEDIAS -> lista_ft_cortasmediaslargas[[2]] = ", nrow(lista_ft_cortasmediaslargas[[2]]), "x", ncol(lista_ft_cortasmediaslargas[[2]])  ))
   print(paste("LARGAS -> lista_ft_cortasmediaslargas[[3]] = ", nrow(lista_ft_cortasmediaslargas[[3]]), "x", ncol(lista_ft_cortasmediaslargas[[3]])  ))
   print("***************************************************************************************")
-  print(head(lista_ft_cortasmediaslargas[[1]], n=3L))
+  print(head(lista_ft_cortasmediaslargas[[1]], n = 3L))
   print("***************************************************************************************")
-  print(head(lista_ft_cortasmediaslargas[[2]], n=3L))
+  print(head(lista_ft_cortasmediaslargas[[2]], n = 3L))
   print("***************************************************************************************")
-  print(head(lista_ft_cortasmediaslargas[[3]], n=3L))
+  print(head(lista_ft_cortasmediaslargas[[3]], n = 3L))
   print("***************************************************************************************")
   
   if (is.null(modelo_pca_cortas$scores) && is.null(modelo_pca_cortas$rotation)) {
@@ -1187,7 +1185,7 @@ aplicarReductores <- function(input_f, lista_modelos_pca, tipo, umbral_varianza)
     indice_de_indiceorden_cortas <- which( colnames(input_f_cortas) == "INDICE_ORDEN" )
     cortas_f_sinindice <- subset(input_f_cortas, select = -indice_de_indiceorden_cortas)
     print( paste("Reduciendo dimensiones sobre este DF: ", nrow(cortas_f_sinindice), "x", ncol(cortas_f_sinindice)) )
-    print(head(cortas_f_sinindice, n=3L))
+    print(head(cortas_f_sinindice, n = 3L))
     input_f_transformada_cortas <- predict(modelo_pca_cortas, cortas_f_sinindice ) #Reduciendo
     indice_umbral_cortas <- aplicarUmbralVarianza("CORTAS", modelo_pca_cortas$sdev, umbral_varianza)
     input_f_transformada_cortas_conumbral <- input_f_transformada_cortas[, 1:indice_umbral_cortas] #TABLON ANALITICO TRANSFORMADO con los pesos de las componentes (PCx) para cada individuo (fila), solo con las variables que mas peso tienen
@@ -1234,8 +1232,6 @@ aplicarReductores <- function(input_f, lista_modelos_pca, tipo, umbral_varianza)
 }
 
 
-
-
 #' CADENA de ENTRENAMIENTO (train+test) y VALIDATION (rentabilidad externa).
 #'
 #' @param tag 
@@ -1250,7 +1246,7 @@ aplicarReductores <- function(input_f, lista_modelos_pca, tipo, umbral_varianza)
 #' @examples
 ejecutarCadenaEntrenamientoValidation <- function(tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output){
   
-  print(paste(R_OUT, '--------------- ejecutarCadenaEntrenamientoValidation: INICIO ------------', sep=''))
+  print(paste(R_OUT, '--------------- ejecutarCadenaEntrenamientoValidation: INICIO ------------', sep = ''))
   print( paste(R_OUT, 
                'PARAM [tag|limiteSql|tipoReduccion|pca_umbral_varianza|tsne_num_features_output] = ', 
                tag,'|',limiteSql,'|',tipoReduccion,'|',pca_umbral_varianza,'|',tsne_num_features_output, 
@@ -1279,7 +1275,7 @@ ejecutarCadenaEntrenamientoValidation <- function(tag, limiteSql, tipoReduccion,
                                                 'datos_desa.tb_ds_pasado_train_targets_',
                                                 tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output)
   
-  datasetsBienTransformados <- ( sum(is.na(reduccion_out[[1]])) + sum(is.na(reduccion_out[[2]])) + sum(is.na(reduccion_out[[3]])) == 0)
+  datasetsBienTransformados <- (sum(is.na(reduccion_out[[1]])) + sum(is.na(reduccion_out[[2]])) + sum(is.na(reduccion_out[[3]])) == 0)
   
   if (datasetsBienTransformados == TRUE) {
     
@@ -1302,7 +1298,7 @@ ejecutarCadenaEntrenamientoValidation <- function(tag, limiteSql, tipoReduccion,
   }
   
   
-  print(paste(R_OUT, '--------------- ejecutarCadenaEntrenamientoValidation: FIN ------------', sep=''))
+  print(paste(R_OUT, '--------------- ejecutarCadenaEntrenamientoValidation: FIN ------------', sep = ''))
 }
 
 
@@ -1316,10 +1312,10 @@ ejecutarCadenaEntrenamientoValidation <- function(tag, limiteSql, tipoReduccion,
 #' @examples
 ejecutarCadenaEntrenamientoTTV <- function(tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output){
   
-  print(paste(R_OUT, '--------------- ejecutarCadenaEntrenamientoTTV: INICIO ------------', sep=''))
+  print(paste(R_OUT, '--------------- ejecutarCadenaEntrenamientoTTV: INICIO ------------', sep = ''))
   print( paste(R_OUT, 
                'PARAM [tag|limiteSql|tipoReduccion|pca_umbral_varianza|tsne_num_features_output] = ', 
-               ,tag,'|',limiteSql,'|',tipoReduccion,'|',pca_umbral_varianza,'|',tsne_num_features_output, 
+               tag,'|',limiteSql,'|',tipoReduccion,'|',pca_umbral_varianza,'|',tsne_num_features_output, 
                sep = '') )
   
   print( paste( 'tag=', tag, sep = '' ) )
@@ -1342,7 +1338,7 @@ ejecutarCadenaEntrenamientoTTV <- function(tag, limiteSql, tipoReduccion, path_m
   calcularModelosPredictivosParaDistanciasYGuardarlos(lista_ft_transformadas, tag)
   
   
-  print(paste(R_OUT, '--------------- ejecutarCadenaEntrenamientoTTV: FIN ------------', sep=''))
+  print(paste(R_OUT, '--------------- ejecutarCadenaEntrenamientoTTV: FIN ------------', sep = ''))
 }
 
 
@@ -1356,7 +1352,7 @@ ejecutarCadenaEntrenamientoTTV <- function(tag, limiteSql, tipoReduccion, path_m
 #' @examples
 ejecutarCadenaPredecirFuturo <- function(tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output){
   
-  print(paste(R_OUT, '--------------- ejecutarCadenaPredecirFuturo: INICIO ------------', sep=''))
+  print(paste(R_OUT, '--------------- ejecutarCadenaPredecirFuturo: INICIO ------------', sep = ''))
   print( paste(R_OUT, 
                'PARAM [modo|tag|limiteSql|tipoReduccion|pca_umbral_varianza|tsne_num_features_output] = ', 
                modo,'|',tag,'|',limiteSql,'|',tipoReduccion,'|',pca_umbral_varianza,'|',tsne_num_features_output, 
@@ -1383,7 +1379,7 @@ ejecutarCadenaPredecirFuturo <- function(tag, limiteSql, tipoReduccion, path_mod
                                                format(limiteSql, scientific = FALSE),
                                                FALSE, FALSE)
   
-  if (listaDatos[[3]] == FALSE){
+  if (listaDatos[[3]] == FALSE) {
     print('ERROR El metodo leerDesdeBaseDatosYEscribirCSV() ha devuelto 0 filas. Revisara mano. Puede que tenga sentido.')
     
   } else {
@@ -1426,7 +1422,6 @@ ejecutarCadenaPredecirFuturo <- function(tag, limiteSql, tipoReduccion, path_mod
     # 2º Coger solo las features que mas impacto tengan en la varianza
     # 3º Reducir dimensiones
     # 4º Meter columna INDICE_ORDEN
-    
     
     modelo_pca_cortas <- lista_modelos_pca[[1]]
     if (is.null(modelo_pca_cortas)) {
