@@ -30,12 +30,15 @@ establecerConfigGeneral <- function(){
   library(MASS)
   library(lme4)
   library(polspline)
+  library(plyr)
   library(dplyr)
   library(stats)
-  library(plyr)
+  library(mice)
   
   options(java.parameters = '-Xmx5g') #Memoria 5GB
   
+  UMBRAL_DISTANCIA_NORM_1 <<- 0.85  # variable global en R
+  UMBRAL_DISTANCIA_NORM_2 <<- 1.15  # variable global en R
 }
 
 
@@ -168,6 +171,21 @@ leerDesdeBaseDatosYEscribirCSV <- function(nombre_tabla_f, nombre_tabla_t, nombr
   salida_1_df <- as_data_frame(salida_1_num)
   salida_2_df <- as_data_frame(salida_2_num)
   
+  
+  # print("Analizando e IMPUTANDO (PENDIENTE: es muy arriesgado) los missing values (NA) en las tablas recien leidas de BBDD y que devolvemos como data.frame...")
+  # if (!is.na(salida_1_df)) {
+    # file_prueba <- "/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/temp_salida_1_df"
+    # saveRDS(object = salida_1_df, file = file_prueba)
+    # print("Missing values de salida_1_df:")
+    # print(t(md.pattern(salida_1_df)))
+    
+  # }
+  # if (!is.na(salida_2_df)) {
+    # print("Missing values de salida_2_df:")
+    # print(t(md.pattern(salida_2_df)))
+  # }
+  
+  
   return(list(salida_1_df, salida_2_df, salida_3))
 }
 
@@ -185,23 +203,23 @@ leerDesdeBaseDatosYEscribirCSV <- function(nombre_tabla_f, nombre_tabla_t, nombr
 #' @export
 #'
 #' @examples
-crearFeaturesyTargetDelPasadoParaDistancias <- function(pasado_ft, col_cortas, col_medias, col_largas, quitarColumnasDeOtrasDistancias, quitarNas) {
+crearFeaturesyTargetDelPasadoParaDistancias <- function(descripcion, pasado_ft, col_cortas, col_medias, col_largas, quitarColumnasDeOtrasDistancias, quitarNas) {
   
   print('--------------- crearFeaturesyTargetDelPasadoParaDistancias ------------')
   print(paste("pasado_ft:", nrow(pasado_ft), "x", ncol(pasado_ft)))
   print(paste("quitarColumnasDeOtrasDistancias:", quitarColumnasDeOtrasDistancias))
   print(paste("quitarNas:", quitarNas))
   
+  # print("NAMES:")
+  # print(names(pasado_ft))
+  # print("HEAD pasado_ft:")
+  # print(head(pasado_ft, n = 5L))
   
-  print("NAMES:")
-  print(names(pasado_ft))
-  print("HEAD pasado_ft:")
-  print(head(pasado_ft, n = 5L))
   
-  
-  pasado_ft_cortas_conNAs <- subset(pasado_ft, distancia <= 0.33)
-  pasado_ft_medias_conNAs <- subset(pasado_ft, distancia > 0.33 & distancia <= 0.66)
-  pasado_ft_largas_conNAs <- subset(pasado_ft, distancia > 0.66)
+  # PENDIENTE Umbrales establecidos manualmente viendo hist(pasado_ft$distancia). Debe cuadrar con los umbrales puestos en Java (Constantes)
+  pasado_ft_cortas_conNAs <- subset(pasado_ft, distancia <= UMBRAL_DISTANCIA_NORM_1)
+  pasado_ft_medias_conNAs <- subset(pasado_ft, distancia > UMBRAL_DISTANCIA_NORM_1 & distancia <= UMBRAL_DISTANCIA_NORM_2)
+  pasado_ft_largas_conNAs <- subset(pasado_ft, distancia > UMBRAL_DISTANCIA_NORM_2)
   
   print(paste("pasado_ft_cortas_conNAs:", nrow(pasado_ft_cortas_conNAs), "x", ncol(pasado_ft_cortas_conNAs)))
   print(paste("pasado_ft_medias_conNAs:", nrow(pasado_ft_medias_conNAs), "x", ncol(pasado_ft_medias_conNAs)))
@@ -229,10 +247,22 @@ crearFeaturesyTargetDelPasadoParaDistancias <- function(pasado_ft, col_cortas, c
   pasado_ft_largas <- pasado_ft_largas_coldis
   
   if (quitarNas == TRUE) {
+    
     print('-- Quitando NAs (aunque mantengo columna INDICE_ORDEN)...')
     pasado_ft_cortas <- na.omit(pasado_ft_cortas_coldis)
     pasado_ft_medias <- na.omit(pasado_ft_medias_coldis)
     pasado_ft_largas <- na.omit(pasado_ft_largas_coldis)
+    
+    
+    file_cortas_con_nas <- paste("/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/", descripcion, "_file_cortas_con_nas.csv", sep='')
+    print(paste('Guardando ejemplos de filas con NA de pasado_ft_cortas_coldis:', file_cortas_con_nas))
+    indices_cortas_con_na <- as.numeric( na.action(pasado_ft_cortas) ) #Filas de B con NAs
+    print(paste("La tabla ha bajado de ",nrow(pasado_ft_cortas_coldis), "filas a ", nrow(pasado_ft_cortas), " filas!!!"))
+    muestra <- pasado_ft_cortas_coldis[indices_cortas_con_na,]
+    write.csv(muestra, file=file_cortas_con_nas)
+    file_prueba <- "/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/temp_muestra"
+    saveRDS(object = muestra, file = file_prueba)
+    
   
     print('Comprobacion de NAs...')
     # indices_sin_na_cortas <- as.numeric( na.action(pasado_ft_cortas) ) #Indices en los que habia NAs
@@ -294,22 +324,40 @@ cargarModelosPCADesdeFicheros <- function(tag){
 cargarModelosPredictivosDesdeFicheros <- function(tag) {
   print("Cargando modelos PREDICTIVOS ENTRENADOS (desde fichero)...")
   
+  modelo_predictivo_cortas <- NULL #DEFAULT
+  modelo_predictivo_medias <- NULL #DEFAULT
+  modelo_predictivo_largas <- NULL #DEFAULT
+  
+  
   uri_cortas <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_cortas_', tag, sep = '')
-  print( paste("URI modelo entrenado para CORTAS: ", uri_cortas))
-  modelo_predictivo_cortas <- readRDS(file = uri_cortas)
-  print(modelo_predictivo_cortas)
+  if (file.exists(uri_cortas)) {
+    print( paste("URI modelo entrenado para CORTAS: ", uri_cortas))
+    modelo_predictivo_cortas <- readRDS(file = uri_cortas)
+    print(modelo_predictivo_cortas)
+  } else {
+    print(paste("Fichero no existe, así que cargo NULL: ", uri_cortas))
+  }
+  
   
   uri_medias <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_medias_', tag, sep = '')
+  if (file.exists(uri_medias)) {
   print( paste("URI modelo entrenado para MEDIAS: ", uri_medias))
   modelo_predictivo_medias <- readRDS(file = uri_medias)
   print(modelo_predictivo_medias)
+  } else {
+    print(paste("Fichero no existe, así que cargo NULL: ", uri_medias))
+  }
   
   uri_largas <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_largas_', tag, sep = '')
+  if (file.exists(uri_largas)) {
   print( paste("URI modelo entrenado para LARGAS: ", uri_largas))
   modelo_predictivo_largas <- readRDS(file = uri_largas)
   print(modelo_predictivo_largas)
+  } else {
+    print(paste("Fichero no existe, así que cargo NULL: ", uri_largas))
+  }
   
-  print("Ya hemos cargado los PREDICTIVOS ENTRENADOS.")
+  print("Ya hemos cargado los PREDICTIVOS ENTRENADOS (o NULL si no existen)")
   return(list(modelo_predictivo_cortas, modelo_predictivo_medias, modelo_predictivo_largas))
 }
 
@@ -326,8 +374,8 @@ aplicarUmbralVarianza <- function(distancia_str, pca_modelo_sdev, umbral_varianz
   
   print(paste("////////////////// aplicarUmbralVarianza.INICIO: ///////////////////////"))
   print(paste("distancia_str:", distancia_str))
-  print("pca_modelo_sdev:"); print(pca_modelo_sdev)
-  print(paste("umbral_varianza:", umbral_varianza))
+  # print("pca_modelo_sdev:"); print(pca_modelo_sdev)
+  # print(paste("umbral_varianza:", umbral_varianza))
   
   # VARIANZA ACUMULADA: aplico el umbral para coger sólo las variables PCx mas importantes
   var_acum <- cumsum(pca_modelo_sdev^2 / sum(pca_modelo_sdev^2))
@@ -394,8 +442,8 @@ reducirConPCA <- function(input_ft, path_modelo_pca, umbral_varianza, tipoPCA){
   
         indice_target <- which( colnames(input_ft) == "TARGET" ) #Columna TARGET
         input_f_full <- subset(input_ft, select = -indice_target)
-        print(paste("input_f_full (sin TARGET):", nrow(input_f_full), "x", ncol(input_f_full)))
-        print(head(input_f_full, n = 5L))
+        # print(paste("input_f_full (sin TARGET):", nrow(input_f_full), "x", ncol(input_f_full)))
+        # print(head(input_f_full, n = 5L))
         
         if (sum( colSums(is.na(input_f_full)) ) != 0) { print('ERROR: Hay columnas con missing data en input_f_full!') } #comprobamos que no hay missing data
         
@@ -763,12 +811,19 @@ calcularModelosPredictivosParaDistanciasYGuardarlos <- function(lista, tag){
               nrow(pasado_ft_largas), "x", ncol(pasado_ft_largas),
               sep = ''))
   
-  par(mfrow = c(3,1)) #Para pintar los boxplots (DEBUG)
+  
+  #IMAGEN PNG
+  nombre_fichero <- paste('ML_',tag,'.png', sep = '')
+  pathFichero <- paste('/home/carloslinux/Desktop/LOGS/', nombre_fichero, sep = '')
+  print(pathFichero)
+  png(filename = pathFichero, width = 500, height = 1000, units = "px")
+  graphics::par(mfrow = c(3,1))  # GRID para pintar plots
+  
   
   if (nrow(pasado_ft_cortas) > 0) {
     print( paste( "pasado_ft_cortas=", nrow(pasado_ft_cortas), "x", ncol(pasado_ft_cortas) ) ); 
     # print(head(pasado_ft_cortas))
-    boxplot(pasado_ft_cortas, cex.axis=0.5) 
+    boxplot(pasado_ft_cortas, cex.axis=0.5); algun_plot=T
     out_cortas <- analisis_modelos_superlearner(pasado_ft_cortas, "CORTAS", FALSE)
     modelo_cortas <- out_cortas[[1]]
     path_modelo_cortas <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_cortas_', tag, sep = '');
@@ -784,7 +839,7 @@ calcularModelosPredictivosParaDistanciasYGuardarlos <- function(lista, tag){
   if (nrow(pasado_ft_medias) > 0) {
     print( paste( "pasado_ft_medias=", nrow(pasado_ft_medias), "x", ncol(pasado_ft_medias) ) ); 
     # print(head(pasado_ft_medias))
-    boxplot(pasado_ft_medias, cex.axis=0.5) 
+    boxplot(pasado_ft_medias, cex.axis=0.5); algun_plot=T
     
     out_medias <- analisis_modelos_superlearner(pasado_ft_medias, "MEDIAS", FALSE)
     modelo_medias <- out_medias[[1]]
@@ -800,7 +855,7 @@ calcularModelosPredictivosParaDistanciasYGuardarlos <- function(lista, tag){
   if (nrow(pasado_ft_largas) > 0) {
     print( paste( "pasado_ft_largas=", nrow(pasado_ft_largas), "x", ncol(pasado_ft_largas) ) ); 
     # print(head(pasado_ft_largas))
-    boxplot(pasado_ft_largas, cex.axis=0.5) 
+    boxplot(pasado_ft_largas, cex.axis=0.5); algun_plot=T
     out_largas <- analisis_modelos_superlearner(pasado_ft_largas, "LARGAS", FALSE)
     modelo_largas <- out_largas[[1]]
     path_modelo_largas <- paste('/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/modelo_largas_', tag, sep = ''); 
@@ -810,6 +865,12 @@ calcularModelosPredictivosParaDistanciasYGuardarlos <- function(lista, tag){
   } else {
     print("WARNING El dataset FT de LARGAS NO tiene suficientes filas para poder crear un MODELO PREDICTIVO")
   }
+  
+  #Cerrar grafico
+  if (algun_plot == T) {
+    title(paste("mi grafico"), outer = T)
+  }
+  dev.off()
   
   print('----------------------------------------- calcularModelosPredictivosParaDistanciasYGuardarlos: FIN ----------------------------')
 }
@@ -828,7 +889,7 @@ calcularModelosPredictivosParaDistanciasYGuardarlos <- function(lista, tag){
 #' @examples
 predecir <- function(tag, input_f_transformadas, lista_modelos_predictivos, output_file_prefijo, tipo) {
   
-  print(paste('--------------- predecir(): INICIO -----------------'))
+  print(paste('--------------- predecir: INICIO -----------------'))
   print(paste('tag=',tag))
   print(paste("input_f_transformadas: ", length(input_f_transformadas)))
   print(paste('output_file_prefijo=',output_file_prefijo))
@@ -879,11 +940,11 @@ predecir <- function(tag, input_f_transformadas, lista_modelos_predictivos, outp
   indice_de_indiceorden_l <- which( colnames(input_f_largas) == "INDICE_ORDEN" )
   
   input_f_cortas_sinindice <- as.data.frame( subset(input_f_cortas, select = -indice_de_indiceorden_c ) );
-  print(paste("input_f_cortas_sinindice:", nrow(input_f_cortas_sinindice), "x", ncol(input_f_cortas_sinindice))); print(head(input_f_cortas_sinindice))
+  print(paste("input_f_cortas_sinindice:", nrow(input_f_cortas_sinindice), "x", ncol(input_f_cortas_sinindice))); #print(head(input_f_cortas_sinindice))
   input_f_medias_sinindice <- as.data.frame( subset(input_f_medias, select = -indice_de_indiceorden_m ) );
-  print(paste("input_f_medias_sinindice:", nrow(input_f_medias_sinindice), "x", ncol(input_f_medias_sinindice))); print(head(input_f_medias_sinindice))
+  print(paste("input_f_medias_sinindice:", nrow(input_f_medias_sinindice), "x", ncol(input_f_medias_sinindice))); #print(head(input_f_medias_sinindice))
   input_f_largas_sinindice <- as.data.frame( subset(input_f_largas, select = -indice_de_indiceorden_l ) );
-  print(paste("input_f_largas_sinindice:", nrow(input_f_largas_sinindice), "x", ncol(input_f_largas_sinindice))); print(head(input_f_largas_sinindice))
+  print(paste("input_f_largas_sinindice:", nrow(input_f_largas_sinindice), "x", ncol(input_f_largas_sinindice))); #print(head(input_f_largas_sinindice))
   
   print(paste(R_OUT, tipo, " Input-Features [cortas|medias|largas] = ",
               nrow(input_f_cortas_sinindice), "x", ncol(input_f_cortas_sinindice), "|",
@@ -891,21 +952,40 @@ predecir <- function(tag, input_f_transformadas, lista_modelos_predictivos, outp
               nrow(input_f_largas_sinindice), "x", ncol(input_f_largas_sinindice), 
               sep = ''))
   
-  #Prediccion CORTAS (sin la columna indice_orden)
+  
+  print('[predecir] Prediccion CORTAS (sin la columna indice_orden)')
   if ( nrow(input_f_cortas_sinindice) == 0 ) {
     output_it_cortas <- NULL
   } else {
     print("Prediciendo usando un modelo ya entrenado y un nuevo dataset...")
     predicciones_t_model_cortas <- predict.SuperLearner(object = modelo_cortas, newdata = input_f_cortas_sinindice, onlySL = TRUE) #No usa los que tienen peso =0
     predicciones_t_cortas <- predicciones_t_model_cortas$pred #Prediccion
+    
+    print(paste("input_f_cortas:", nrow(input_f_cortas), "x", ncol(input_f_cortas)))
+    print(head(input_f_cortas, n = 3L))
     print(paste("predicciones_t_cortas:", nrow(predicciones_t_cortas), "x", ncol(predicciones_t_cortas)))
-    print(head(predicciones_t_cortas, n = 5L))
-    output_ft_cortas <- rename( cbind(input_f_cortas, predicciones_t_cortas) , c("predicciones_t_cortas" = "TARGET_predicho")) # Entrada (con INDICE_ORDEN) + salida
+    print(head(predicciones_t_cortas, n = 3L))
+    
+    cortas_f_y_t <- cbind(input_f_cortas, predicciones_t_cortas)
+    print(paste("cortas_f_y_t:", nrow(cortas_f_y_t), "x", ncol(cortas_f_y_t)))
+    print(head(cortas_f_y_t, n = 3L))
+    
+    nombrado_target <- c("predicciones_t_cortas" = "TARGET_predicho")
+    print(nombrado_target)
+    
+    print("Renombrando columna target....")
+    output_ft_cortas <- plyr::rename( cortas_f_y_t , nombrado_target) # Entrada (con INDICE_ORDEN) + salida
+    print(paste("output_ft_cortas:", nrow(output_ft_cortas), "x", ncol(output_ft_cortas)))
+    print(head(output_ft_cortas, n = 3L))
+    
+    print("Seleccionando columnas deseadas....")
     output_it_cortas <- subset(output_ft_cortas, select = c(INDICE_ORDEN, TARGET_predicho)) # Cogemos solo las columnas que queremos (indice y target)
+    print(paste("output_it_cortas:", nrow(output_it_cortas), "x", ncol(output_it_cortas)))
+    print(head(output_it_cortas, n = 3L))
   }
   
   
-  #Prediccion MEDIAS (sin la columna indice_orden)
+  print('[predecir] Prediccion MEDIAS (sin la columna indice_orden)')
   if ( nrow(input_f_medias_sinindice) == 0 ) {
     output_it_medias <- NULL
   } else {
@@ -913,13 +993,17 @@ predecir <- function(tag, input_f_transformadas, lista_modelos_predictivos, outp
     predicciones_t_model_medias <- predict.SuperLearner(object = modelo_medias, newdata = input_f_medias_sinindice, onlySL = TRUE) #No usa los que tienen peso =0
     predicciones_t_medias <- predicciones_t_model_medias$pred #Prediccion
     print(paste("predicciones_t_medias:", nrow(predicciones_t_medias), "x", ncol(predicciones_t_medias)))
-    print(head(predicciones_t_medias, n = 5L))
-    output_ft_medias <- rename( cbind(input_f_medias, predicciones_t_medias) , c("predicciones_t_medias" = "TARGET_predicho"))
+    # print(head(predicciones_t_medias, n = 5L))
+    medias_f_y_t <- cbind(input_f_medias, predicciones_t_medias)
+    nombrado_target <- c("predicciones_t_medias" = "TARGET_predicho")
+    output_ft_medias <- plyr::rename( medias_f_y_t , nombrado_target)
     output_it_medias <- subset(output_ft_medias, select = c(INDICE_ORDEN, TARGET_predicho))
+    print(paste("output_it_medias:", nrow(output_it_medias), "x", ncol(output_it_medias)))
+    print(head(output_it_medias, n = 3L))
   }
   
   
-  #Prediccion LARGAS (sin la columna indice_orden)
+  print('[predecir] Prediccion LARGAS (sin la columna indice_orden)')
   if ( nrow(input_f_largas_sinindice) == 0 ) {
     output_it_largas <- NULL
   } else {
@@ -927,9 +1011,13 @@ predecir <- function(tag, input_f_transformadas, lista_modelos_predictivos, outp
     predicciones_t_model_largas <- predict.SuperLearner(object = modelo_largas, newdata = input_f_largas_sinindice, onlySL = TRUE) #No usa los que tienen peso =0
     predicciones_t_largas <- predicciones_t_model_largas$pred #Prediccion
     print(paste("predicciones_t_largas:", nrow(predicciones_t_largas), "x", ncol(predicciones_t_largas)))
-    print(head(predicciones_t_largas, n = 5L))
-    output_ft_largas <- rename( cbind(input_f_largas, predicciones_t_largas) , c("predicciones_t_largas" = "TARGET_predicho"))
+    # print(head(predicciones_t_largas, n = 5L))
+    largas_f_y_t <- cbind(input_f_largas, predicciones_t_largas)
+    nombrado_target <- c("predicciones_t_largas" = "TARGET_predicho")
+    output_ft_largas <- plyr::rename( largas_f_y_t , nombrado_target)
     output_it_largas <- subset(output_ft_largas, select = c(INDICE_ORDEN, TARGET_predicho))
+    print(paste("output_it_largas:", nrow(output_it_largas), "x", ncol(output_it_largas)))
+    print(head(output_it_largas, n = 3L))
   }
   
 
@@ -977,7 +1065,7 @@ predecir <- function(tag, input_f_transformadas, lista_modelos_predictivos, outp
               eol = "\n", na = "\\N", dec = ".", row.names = FALSE, col.names = FALSE)
   
   
-  print(paste('--------------- predecir(): FIN -----------------'))
+  print(paste('--------------- predecir: FIN -----------------'))
   
 }
 
@@ -1025,32 +1113,37 @@ ejecutarReduccionDimensiones <- function(tabla_train_f, tabla_test_f, tag, limit
   #A=contiene una matriz de 1000x41 (F+T)
   A <- listaDatos[[1]]
   print(paste(class(A), "A:", nrow(A), "x", ncol(A)))
-  print("NAMES de A:")
-  print(names(A))
-  print("CLASS de A:")
-  print(class(A))
-  print("HEAD de A:")
-  print(head(A, n = 5L))
+  # print("NAMES de A:")
+  # print(names(A))
+  # print("CLASS de A:")
+  # print(class(A))
+  # print("HEAD de A:")
+  # print(head(A, n = 5L))
   
   #B=Subset de todas las columnas excepto "las de distancia": 1000x29
   columnas_distancia <- as.vector( c(col_cortas, col_medias, col_largas) )
   B <- A[, !(names(A) %in% columnas_distancia)]
   print(paste(class(B), "B:", nrow(B), "x", ncol(B)))
   
-  #C=Quitar los valores NA, apuntando qué indices tenían NAs (D). Ej: 800x29, con indices NA borrados
+  print("C=Quitar los valores NA de B. Ej: 800x29, con indices NA borrados")
   C <- na.omit(B)
   indices_con_na <- as.numeric( na.action(C) ) #Filas de B con NAs
   if (sum( colSums(is.na(C)) ) != 0) { print('ERROR: Hay columnas con missing data en C!') } #comprobamos que no hay missing data
   print(paste(class(C), "C:", nrow(C), "x", ncol(C)))
-  print('Numero de filas de C que tenian algun NA:')
+  print('Numero de filas de B que tenian algun NA:')
   print(length(indices_con_na))
+  
+  file_b_con_nas <- "/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/temp_B_con_NAs.csv"
+  print(paste('Guardando ejemplos de filas de B con columnas NA:', file_b_con_nas))
+  write.csv(B[indices_con_na,], file=file_b_con_nas)
+  
   
   #E = sobre A, quitar las filas de los índices D.
   E <- A[-indices_con_na, ]
   print(paste(class(E), "E:", nrow(E), "x", ncol(E)))
   
-  # Aplicar crearFeaturesyTargetDelPasadoParaDistancias sobre E: divide en 3 tablas (por distancias), quitando NAs en esas 3 tablas por separado (por si hubiera valores NA dentro de las columnas de esa distancia)
-  lista_ft_cortasmediaslargas <- crearFeaturesyTargetDelPasadoParaDistancias(E, col_cortas, col_medias, col_largas, TRUE, TRUE)
+  print("ejecutarReduccionDimensiones() ===> Aplicar crearFeaturesyTargetDelPasadoParaDistancias sobre E: divide en 3 tablas (por distancias), quitando NAs en esas 3 tablas por separado (por si hubiera valores NA dentro de las columnas de esa distancia)")
+  lista_ft_cortasmediaslargas <- crearFeaturesyTargetDelPasadoParaDistancias("PASADO", E, col_cortas, col_medias, col_largas, TRUE, TRUE)
   #-----------------
   
   
@@ -1071,18 +1164,14 @@ ejecutarReduccionDimensiones <- function(tabla_train_f, tabla_test_f, tag, limit
   print(paste("CORTAS -> lista_ft_cortasmediaslargas[[1]] = ", nrow(lista_ft_cortasmediaslargas[[1]]), "x", ncol(lista_ft_cortasmediaslargas[[1]])  ))
   print(paste("MEDIAS -> lista_ft_cortasmediaslargas[[2]] = ", nrow(lista_ft_cortasmediaslargas[[2]]), "x", ncol(lista_ft_cortasmediaslargas[[2]])  ))
   print(paste("LARGAS -> lista_ft_cortasmediaslargas[[3]] = ", nrow(lista_ft_cortasmediaslargas[[3]]), "x", ncol(lista_ft_cortasmediaslargas[[3]])  ))
-  print("***************************************************************************************")
-  print(head(lista_ft_cortasmediaslargas[[1]], n = 3L))
-  print("***************************************************************************************")
-  print(head(lista_ft_cortasmediaslargas[[2]], n = 3L))
-  print("***************************************************************************************")
-  print(head(lista_ft_cortasmediaslargas[[3]], n = 3L))
-  print("***************************************************************************************")
   
   if (is.null(modelo_pca_cortas$scores) && is.null(modelo_pca_cortas$rotation)) {
     print("Modelo PCA para CORTAS es NULL. Se supone que no se pudo generar porque teniamos 0 filas para ese tag.")
     pasado_ft_cortas_transformada <- na.omit(lista_ft_cortasmediaslargas[[1]])
     
+  } else if( nrow(lista_ft_cortasmediaslargas[[1]]) == 0) {
+    print("CORTAS tiene 0 filas. No hago reduccion de dimensiones.")
+    pasado_ft_cortas_transformada <- na.omit(lista_ft_cortasmediaslargas[[1]])
   } else {
     indice_umbral_cortas <- aplicarUmbralVarianza("CORTAS", modelo_pca_cortas$sdev, pca_umbral_varianza)
     print(paste("CORTAS --> indice_umbral_cortas:", indice_umbral_cortas ))
@@ -1107,14 +1196,16 @@ ejecutarReduccionDimensiones <- function(tabla_train_f, tabla_test_f, tag, limit
     print(paste(class(pasado_ft_cortas_transformada), "pasado_ft_cortas_transformada:", nrow(pasado_ft_cortas_transformada), "x", ncol(pasado_ft_cortas_transformada)))
     rm(pasado_ft_temp); rm(indice_t_temp); rm(pasado_f_temp); rm(pasado_f_temp_transformada)
   }
-  print("CORTAS Tras aplicar PCA:")
-  print(head(pasado_ft_cortas_transformada))
-  
   
   
   if (is.null(modelo_pca_medias$scores) && is.null(modelo_pca_medias$rotation)) {
     print("Modelo PCA para MEDIAS es NULL. Se supone que no se pudo generar porque teniamos 0 filas para ese tag.")
     pasado_ft_medias_transformada <- na.omit(lista_ft_cortasmediaslargas[[2]])
+    
+  } else if( nrow(lista_ft_cortasmediaslargas[[2]]) == 0) {
+    print("MEDIAS tiene 0 filas. No hago reduccion de dimensiones.")
+    pasado_ft_cortas_transformada <- na.omit(lista_ft_cortasmediaslargas[[2]])
+    
   } else {
     indice_umbral_medias <- aplicarUmbralVarianza("MEDIAS", modelo_pca_medias$sdev, pca_umbral_varianza)
     print('MEDIAS: separar TARGET, reducir las FEATURES y pegar el TARGET otra vez...')
@@ -1126,12 +1217,16 @@ ejecutarReduccionDimensiones <- function(tabla_train_f, tabla_test_f, tag, limit
     print(paste(class(pasado_ft_medias_transformada), "pasado_ft_medias_transformada:", nrow(pasado_ft_medias_transformada), "x", ncol(pasado_ft_medias_transformada)))
     rm(pasado_ft_temp); rm(indice_t_temp); rm(pasado_f_temp); rm(pasado_f_temp_transformada)
   }
-  print(head(pasado_ft_medias_transformada))
   
   
   if (is.null(modelo_pca_largas$scores) && is.null(modelo_pca_largas$rotation)) {
     print("Modelo PCA para LARGAS es NULL. Se supone que no se pudo generar porque teniamos 0 filas para ese tag.")
     pasado_ft_largas_transformada <- na.omit(lista_ft_cortasmediaslargas[[3]])
+    
+  } else if( nrow(lista_ft_cortasmediaslargas[[3]]) == 0) {
+    print("LARGAS tiene 0 filas. No hago reduccion de dimensiones.")
+    pasado_ft_cortas_transformada <- na.omit(lista_ft_cortasmediaslargas[[3]])
+    
   } else {
     indice_umbral_largas <- aplicarUmbralVarianza("LARGAS", modelo_pca_largas$sdev, pca_umbral_varianza)
     #print('LARGAS: separar TARGET, reducir las FEATURES y pegar el TARGET otra vez...')
@@ -1143,7 +1238,6 @@ ejecutarReduccionDimensiones <- function(tabla_train_f, tabla_test_f, tag, limit
     print(paste(class(pasado_ft_largas_transformada), "pasado_ft_largas_transformada:", nrow(pasado_ft_largas_transformada), "x", ncol(pasado_ft_largas_transformada)))
     rm(pasado_ft_temp); rm(indice_t_temp); rm(pasado_f_temp); rm(pasado_f_temp_transformada)
   }
-  print(head(pasado_ft_largas_transformada))
   
   
   print('--------------- ejecutarReduccionDimensiones: FIN ------------')
@@ -1176,7 +1270,7 @@ aplicarReductores <- function(input_f, lista_modelos_pca, tipo, umbral_varianza)
   
   
   modelo_pca_cortas <- lista_modelos_pca[[1]]
-  input_f_cortas <- subset(input_f[, !(names(input_f) %in% col_medias | names(input_f) %in% col_largas)], distancia <= 0.33) 
+  input_f_cortas <- subset(input_f[, !(names(input_f) %in% col_medias | names(input_f) %in% col_largas)], distancia <= UMBRAL_DISTANCIA_NORM_1) 
   if (is.null(modelo_pca_cortas)) {
     # No puedo aplicar PCA; pero por lo menos quito los valores NA
     cortas_f_transf_conindice <- na.omit(input_f_cortas)
@@ -1194,7 +1288,7 @@ aplicarReductores <- function(input_f, lista_modelos_pca, tipo, umbral_varianza)
   
   
   modelo_pca_medias <- lista_modelos_pca[[2]]
-  input_f_medias <- subset(input_f[, !(names(input_f) %in% col_cortas | names(input_f) %in% col_largas)], distancia > 0.33 & distancia <= 0.66)
+  input_f_medias <- subset(input_f[, !(names(input_f) %in% col_cortas | names(input_f) %in% col_largas)], distancia > UMBRAL_DISTANCIA_NORM_1 & distancia <= UMBRAL_DISTANCIA_NORM_2)
   if (is.null(modelo_pca_medias)) {
     # No puedo aplicar PCA; pero por lo menos quito los valores NA
     medias_f_transf_conindice <- na.omit(input_f_medias)
@@ -1210,7 +1304,7 @@ aplicarReductores <- function(input_f, lista_modelos_pca, tipo, umbral_varianza)
   
   
   modelo_pca_largas <- lista_modelos_pca[[3]]
-  input_f_largas <- subset(input_f[, !(names(input_f) %in% col_cortas | names(input_f) %in% col_medias)], distancia > 0.66)
+  input_f_largas <- subset(input_f[, !(names(input_f) %in% col_cortas | names(input_f) %in% col_medias)], distancia > UMBRAL_DISTANCIA_NORM_2)
   if (is.null(modelo_pca_largas)) {
     # No puedo aplicar PCA; pero por lo menos quito los valores NA
     largas_f_transf_conindice <- na.omit(input_f_largas)
@@ -1291,7 +1385,8 @@ ejecutarCadenaEntrenamientoValidation <- function(tag, limiteSql, tipoReduccion,
     validation_f_transformadas <- aplicarReductores(pasado_validation_f, lista_modelos_pca, "validation", pca_umbral_varianza) #Con INDICE_ORDEN
     print('Predeciendo el target sobre el validation (pasado-features), usando modelos predictivos...')
     lista_modelos_predictivos <- cargarModelosPredictivosDesdeFicheros(tag)
-    predecir(tag, validation_f_transformadas, lista_modelos_predictivos, "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pasado_validation_targets_predichos_", "VALIDATION")
+    uri_validation_t_file_prefijo <- "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pasado_validation_targets_predichos_"
+    predecir(tag, validation_f_transformadas, lista_modelos_predictivos, uri_validation_t_file_prefijo, "VALIDATION")
     
   } else {
     print("ERROR Algun dataset no ha sido bien transformado")
@@ -1398,7 +1493,7 @@ ejecutarCadenaPredecirFuturo <- function(tag, limiteSql, tipoReduccion, path_mod
     B <- A[, !(names(A) %in% columnas_distancia)]
     print(paste(class(B), "B:", nrow(B), "x", ncol(B)))
     
-    #C=Quitar los valores NA, apuntando qué indices tenían NAs (D). Ej: 800x29, con indices NA borrados
+    print("C=Quitar los valores NA de B. Ej: 800x29, con indices NA borrados")
     C <- na.omit(B)
     indices_con_na <- as.numeric( na.action(C) ) #Filas de B con NAs
     if (sum( colSums(is.na(C)) ) != 0) { print('ERROR: Hay columnas con missing data en C!') } #comprobamos que no hay missing data
@@ -1410,8 +1505,8 @@ ejecutarCadenaPredecirFuturo <- function(tag, limiteSql, tipoReduccion, path_mod
     E <- A[-indices_con_na, ]
     print(paste(class(E), "E:", nrow(E), "x", ncol(E)))
     
-    # Aplicar crearFeaturesyTargetDelPasadoParaDistancias sobre E: divide en 3 tablas (por distancias), quitando NAs en esas 3 tablas por separado (por si hubiera valores NA dentro de las columnas de esa distancia)
-    lista_f_cortasmediaslargas <- crearFeaturesyTargetDelPasadoParaDistancias(E, col_cortas,col_medias,col_largas, TRUE, TRUE)
+    print("ejecutarCadenaPredecirFuturo() ===> Aplicar crearFeaturesyTargetDelPasadoParaDistancias sobre E: divide en 3 tablas (por distancias), quitando NAs en esas 3 tablas por separado (por si hubiera valores NA dentro de las columnas de esa distancia)")
+    lista_f_cortasmediaslargas <- crearFeaturesyTargetDelPasadoParaDistancias("FUTURO", E, col_cortas,col_medias,col_largas, TRUE, TRUE)
     #-----------------
     
     
@@ -1467,7 +1562,9 @@ ejecutarCadenaPredecirFuturo <- function(tag, limiteSql, tipoReduccion, path_mod
     lista_f_cortasmediaslargas <- list(cortas_f_transf_conindice, medias_f_transf_conindice, largas_f_transf_conindice) #Lista de features, agrupadas por DISTANCIA, y con columna INDICE_ORDEN
     
     print('######## PREDICCION DEL FUTURO ##########')
-    predecir(tag, lista_f_cortasmediaslargas, cargarModelosPredictivosDesdeFicheros(tag), "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/FILELOAD_ds_futuro_targets_2_", "FUTURO")
+    lista_modelos_predictivos <- cargarModelosPredictivosDesdeFicheros(tag)
+    uri_futuro_t_prefijo <- "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/FILELOAD_ds_futuro_targets_2_"
+    predecir(tag, lista_f_cortasmediaslargas, lista_modelos_predictivos, uri_futuro_t_prefijo, "FUTURO")
   }
   
   print(paste(R_OUT, '--------------- ejecutarCadenaPredecirFuturo: FIN ------------', sep=''))
