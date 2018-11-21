@@ -17,8 +17,8 @@ mydb = dbConnect(MySQL(), user = 'root', password = 'datos1986', dbname = 'datos
 on.exit(dbDisconnect(mydb))
 
 leido_1 <- "" #Default
-columna_nombre <- 'eed'
-schema_tabla <- 'datos_desa.tb_elaborada_carrerasgalgos'
+columna_nombre <- 'distancia'
+schema_tabla <- 'datos_desa.tb_elaborada_carreras'
 consulta <- paste('SELECT * FROM ', schema_tabla, ' LIMIT ', limiteSql, ';', sep = '')
 leido_1_rs <- dbSendQuery(mydb,  consulta)
 leido_1 <- dbFetch(leido_1_rs, n = -1)

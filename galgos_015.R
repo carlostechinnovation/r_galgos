@@ -94,9 +94,9 @@ transformaryGuardar <- function(input_1, input_2, input_3, output_1_nombre, outp
   print('Transformamos explícitamente CADA columna, aplicando una fórmula adecuada a los histogramas q hemos visto en KNIME (o en R usando hist(my_df$col) ) para obtener una forma de GAUSSIANA.')
   print('Despues evaluaremos cómo se ajusta a la gaussiana ideal aplicando TESTS DE NORMALIDAD.')
   print('Tambien hacemos normalizacion z-score (gaussiana mu=0, std=1) de la gaussiana parcial intermedia.')
-  input_1 <- analizarColumnasTransformarYCbind(input_1)
-  input_2 <- analizarColumnasTransformarYCbind(input_2)
-  input_3 <- analizarColumnasTransformarYCbind(input_3)
+  input_1 <- analizarColumnasTransformarYCbind(input_1, output_1_nombre)
+  input_2 <- analizarColumnasTransformarYCbind(input_2, output_2_nombre)
+  input_3 <- analizarColumnasTransformarYCbind(input_3, output_3_nombre)
   
   #View(input_1)
   #View(input_2)
@@ -127,7 +127,15 @@ transformaryGuardar <- function(input_1, input_2, input_3, output_1_nombre, outp
 #' @export
 #'
 #' @examples
-analizarColumnasTransformarYCbind <- function(a){
+analizarColumnasTransformarYCbind <- function(a, prefijo){
+  
+  ##############################################################
+  dir.create(file.path("/home/carloslinux/Desktop/LOGS/", "015_antes"), showWarnings = FALSE)
+  file_antes_feature <- paste("/home/carloslinux/Desktop/LOGS/015_antes/", prefijo, ".csv", sep='')
+  print(paste('Guardando CSV de tabla antes:', file_antes_feature))
+  write.csv(a, file = file_antes_feature)
+  ##############################################################
+  
   
   for (n in names(a)) {
     
@@ -138,6 +146,14 @@ analizarColumnasTransformarYCbind <- function(a){
     #Solo transformamos las numericas, y que no sean IDENTIFICADORAS
     if (num_elementos_distintos >= 2 && !col_identificadora && !is.na(n) && (class(a[[n]]) == "numeric" || class(a[[n]]) == "integer" )) {
       print(paste('Bucle transformando columna:', n, 'que es de tipo:', class(a[[n]])))
+      
+      ##############################################################
+      #IMAGEN PNG
+      nombre_fichero <- paste(prefijo,'_',n,'.png', sep = '')
+      pathFichero <- paste('/home/carloslinux/Desktop/LOGS/015_antes/', nombre_fichero, sep = '')
+      print(paste("Pintando hist en PNG: ", pathFichero))
+      png(filename = pathFichero, width = 500, height = 1500, units = "px")
+      ##############################################################
       
       #Aplicar formula para conseguir una gaussiana (aprox) intermedia y evaluar su NORMALIDAD (test Shapiro-Wilk: si p-value > 0.05, la variable es casi una gaussiana, que es lo que queremos)
       col_transformada <- transformarColumnaYEvaluarNormalidad(a[[n]], 'TABLA', n)

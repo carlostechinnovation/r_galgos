@@ -37,8 +37,8 @@ establecerConfigGeneral <- function(){
   
   options(java.parameters = '-Xmx5g') #Memoria 5GB
   
-  UMBRAL_DISTANCIA_NORM_1 <<- 0.85  # variable global en R
-  UMBRAL_DISTANCIA_NORM_2 <<- 1.15  # variable global en R
+  UMBRAL_DISTANCIA_NORM_1 <<- 0.20  # variable global en R
+  UMBRAL_DISTANCIA_NORM_2 <<- 0.65  # variable global en R
 }
 
 
@@ -203,20 +203,27 @@ leerDesdeBaseDatosYEscribirCSV <- function(nombre_tabla_f, nombre_tabla_t, nombr
 #' @export
 #'
 #' @examples
-crearFeaturesyTargetDelPasadoParaDistancias <- function(descripcion, pasado_ft, col_cortas, col_medias, col_largas, quitarColumnasDeOtrasDistancias, quitarNas) {
+crearFeaturesyTargetDelPasadoParaDistancias <- function(descripcion, tag, pasado_ft, col_cortas, col_medias, col_largas, quitarColumnasDeOtrasDistancias, quitarNas) {
   
   print('--------------- crearFeaturesyTargetDelPasadoParaDistancias ------------')
   print(paste("pasado_ft:", nrow(pasado_ft), "x", ncol(pasado_ft)))
   print(paste("quitarColumnasDeOtrasDistancias:", quitarColumnasDeOtrasDistancias))
   print(paste("quitarNas:", quitarNas))
   
+  dir.create(file.path("/home/carloslinux/Desktop/LOGS/", "ML_csv"), showWarnings = FALSE)
+  
   # print("NAMES:")
   # print(names(pasado_ft))
   # print("HEAD pasado_ft:")
   # print(head(pasado_ft, n = 5L))
   
+  file_completo <- paste("/home/carloslinux/Desktop/LOGS/ML_csv/",tag,"_", descripcion, "_file_ft.csv", sep='')
+  print(paste('Guardando ejemplos de filas pasado_ft:', file_completo))
+  write.csv(pasado_ft, file=file_completo)
+  
   
   # PENDIENTE Umbrales establecidos manualmente viendo hist(pasado_ft$distancia). Debe cuadrar con los umbrales puestos en Java (Constantes)
+  print(paste("Umbrales para separar en CORTAS/MEDIAS/LARGAS: ", UMBRAL_DISTANCIA_NORM_1, "y", UMBRAL_DISTANCIA_NORM_2))
   pasado_ft_cortas_conNAs <- subset(pasado_ft, distancia <= UMBRAL_DISTANCIA_NORM_1)
   pasado_ft_medias_conNAs <- subset(pasado_ft, distancia > UMBRAL_DISTANCIA_NORM_1 & distancia <= UMBRAL_DISTANCIA_NORM_2)
   pasado_ft_largas_conNAs <- subset(pasado_ft, distancia > UMBRAL_DISTANCIA_NORM_2)
@@ -253,16 +260,20 @@ crearFeaturesyTargetDelPasadoParaDistancias <- function(descripcion, pasado_ft, 
     pasado_ft_medias <- na.omit(pasado_ft_medias_coldis)
     pasado_ft_largas <- na.omit(pasado_ft_largas_coldis)
     
-    
-    file_cortas_con_nas <- paste("/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/", descripcion, "_file_cortas_con_nas.csv", sep='')
-    print(paste('Guardando ejemplos de filas con NA de pasado_ft_cortas_coldis:', file_cortas_con_nas))
-    indices_cortas_con_na <- as.numeric( na.action(pasado_ft_cortas) ) #Filas de B con NAs
-    print(paste("La tabla ha bajado de ",nrow(pasado_ft_cortas_coldis), "filas a ", nrow(pasado_ft_cortas), " filas!!!"))
-    muestra <- pasado_ft_cortas_coldis[indices_cortas_con_na,]
-    write.csv(muestra, file=file_cortas_con_nas)
-    file_prueba <- "/home/carloslinux/Desktop/WORKSPACES/wksp_for_r/r_galgos/temp_muestra"
-    saveRDS(object = muestra, file = file_prueba)
-    
+    ##################################################################################
+    file_cortas_con_nas <- paste("/home/carloslinux/Desktop/LOGS/ML_csv/",tag,"_", descripcion, "_CORTAS_con_nas.csv", sep='')
+    file_medias_con_nas <- paste("/home/carloslinux/Desktop/LOGS/ML_csv/",tag,"_", descripcion, "_MEDIAS_con_nas.csv", sep='')
+    file_largas_con_nas <- paste("/home/carloslinux/Desktop/LOGS/ML_csv/",tag,"_", descripcion, "_LARGAS_con_nas.csv", sep='')
+    print(paste('Guardando solo las filas con NA:', file_cortas_con_nas, 
+                "La tabla CORTAS ha bajado de ",nrow(pasado_ft_cortas_coldis), "filas a ", nrow(pasado_ft_cortas), " filas!!!"))
+    print(paste('Guardando solo las filas con NA:', file_medias_con_nas, 
+                "La tabla MEDIAS ha bajado de ",nrow(pasado_ft_medias_coldis), "filas a ", nrow(pasado_ft_medias), " filas!!!"))
+    print(paste('Guardando solo las filas con NA:', file_largas_con_nas, 
+                "La tabla LARGAS ha bajado de ",nrow(pasado_ft_largas_coldis), "filas a ", nrow(pasado_ft_largas), " filas!!!"))
+    write.csv(pasado_ft_cortas_coldis[ as.numeric( na.action(pasado_ft_cortas) )  ,], file = file_cortas_con_nas)
+    write.csv(pasado_ft_medias_coldis[ as.numeric( na.action(pasado_ft_medias) )  ,], file = file_medias_con_nas)
+    write.csv(pasado_ft_largas_coldis[ as.numeric( na.action(pasado_ft_largas) )  ,], file = file_largas_con_nas)
+    ##################################################################################
   
     print('Comprobacion de NAs...')
     # indices_sin_na_cortas <- as.numeric( na.action(pasado_ft_cortas) ) #Indices en los que habia NAs
@@ -481,7 +492,7 @@ reducirConPCA <- function(input_ft, path_modelo_pca, umbral_varianza, tipoPCA){
           
           
         } else if (tipoPCA == 'prcomp') {
-          pca_modelo <- prcomp(x = input_f_full, retx = TRUE, center = F, scale. = F) #Usa SVD, no eigenvalores sobre la matriz de covarianza
+          pca_modelo <- prcomp(x = input_f_full, retx = TRUE, center = TRUE, scale = TRUE) #Usa SVD, no eigenvalores sobre la matriz de covarianza
         }
         
         
@@ -813,12 +824,14 @@ calcularModelosPredictivosParaDistanciasYGuardarlos <- function(lista, tag){
   
   
   #IMAGEN PNG
+  dir.create(file.path("/home/carloslinux/Desktop/LOGS/", "ML_png"), showWarnings = FALSE)
   nombre_fichero <- paste('ML_',tag,'.png', sep = '')
-  pathFichero <- paste('/home/carloslinux/Desktop/LOGS/', nombre_fichero, sep = '')
+  pathFichero <- paste('/home/carloslinux/Desktop/LOGS/ML_png/', nombre_fichero, sep = '')
   print(pathFichero)
   png(filename = pathFichero, width = 500, height = 1000, units = "px")
   graphics::par(mfrow = c(3,1))  # GRID para pintar plots
   
+  algun_plot <- F
   
   if (nrow(pasado_ft_cortas) > 0) {
     print( paste( "pasado_ft_cortas=", nrow(pasado_ft_cortas), "x", ncol(pasado_ft_cortas) ) ); 
@@ -1026,7 +1039,7 @@ predecir <- function(tag, input_f_transformadas, lista_modelos_predictivos, outp
   cortasymedias <- as.data.frame( rbind(output_it_cortas, output_it_medias) ) #CORTAS+MEDIAS
   pasado_it <- as.data.frame( rbind( cortasymedias, output_it_largas) )  #CORTAS+MEDIAS+LARGAS
   print(paste("Dim de pasado_it:", nrow(pasado_it), "x", ncol(pasado_it)));
-  # print( head(pasado_it, n = 5L))
+  print( head(pasado_it, n = 5L))
   
   print('Ordenamos por INDICE_ORDEN...')
   pasado_it_ordenado <- pasado_it[order(pasado_it$INDICE_ORDEN),] 
@@ -1040,7 +1053,7 @@ predecir <- function(tag, input_f_transformadas, lista_modelos_predictivos, outp
   print(paste("Dim de df_nulos:", nrow(df_nulos), "x", ncol(df_nulos)))
   # print(head(df_nulos, n = 5L))
   
-  # rellenos (con huecos) LEFT OUTER JOIN df_nullos
+  # rellenos (con huecos) LEFT OUTER JOIN df_nulos
   juntos <- merge(x = df_nulos, y = pasado_it_ordenado, by = "INDICE_ORDEN", all = TRUE) 
   print(paste("Dimensiones de juntos:", nrow(juntos), "x", ncol(juntos)))
   # print(head(juntos, n = 5L))
@@ -1095,11 +1108,11 @@ ejecutarReduccionDimensiones <- function(tabla_train_f, tabla_test_f, tag, limit
   
   #Para quitar las COLUMNAS que no son UTILES para esa DISTANCIA
   col_cortas <- c("vel_real_cortas_mediana", "vel_real_cortas_max", "vel_going_cortas_mediana", "vel_going_cortas_max",
-                  "vgcortas_med_min", "vgcortas_med_max")
+                  "vgcortas_med_min", "vgcortas_med_max", "distancia_solo_cortas")
   col_medias <- c("vel_real_longmedias_mediana", "vel_real_longmedias_max", "vel_going_longmedias_mediana", "vel_going_longmedias_max",
-                  "vgmedias_med_min", "vgmedias_med_max")
+                  "vgmedias_med_min", "vgmedias_med_max", "distancia_solo_medias")
   col_largas <- c("vel_real_largas_mediana", "vel_real_largas_max", "vel_going_largas_mediana", "vel_going_largas_max",
-                  "vglargas_med_min", "vglargas_med_max")
+                  "vglargas_med_min", "vglargas_med_max", "distancia_solo_largas")
   
   establecerConfigGeneral()
   
@@ -1143,7 +1156,7 @@ ejecutarReduccionDimensiones <- function(tabla_train_f, tabla_test_f, tag, limit
   print(paste(class(E), "E:", nrow(E), "x", ncol(E)))
   
   print("ejecutarReduccionDimensiones() ===> Aplicar crearFeaturesyTargetDelPasadoParaDistancias sobre E: divide en 3 tablas (por distancias), quitando NAs en esas 3 tablas por separado (por si hubiera valores NA dentro de las columnas de esa distancia)")
-  lista_ft_cortasmediaslargas <- crearFeaturesyTargetDelPasadoParaDistancias("PASADO", E, col_cortas, col_medias, col_largas, TRUE, TRUE)
+  lista_ft_cortasmediaslargas <- crearFeaturesyTargetDelPasadoParaDistancias("PASADO", tag, E, col_cortas, col_medias, col_largas, TRUE, TRUE)
   #-----------------
   
   
@@ -1187,11 +1200,12 @@ ejecutarReduccionDimensiones <- function(tabla_train_f, tabla_test_f, tag, limit
     pasado_f_temp <- subset(pasado_ft_temp, select = -indice_t_temp); #print("CORTAS (antes de PCA):"); print(head(pasado_f_temp, n=5L))
     print(paste("CORTAS -> pasado_f_temp = ", nrow(pasado_f_temp), "x", ncol(pasado_f_temp)  ))
     
+    print("Aplicando REDUCCION de dimensiones con un modelo reductor ya entrenado...")
     pasado_f_temp_transformada <- predict(modelo_pca_cortas, pasado_f_temp)  #Reduccion (solo sobre F)
-    print(paste("CORTAS -> pasado_f_temp_transformada = ", nrow(pasado_f_temp_transformada), "x", ncol(pasado_f_temp_transformada)  ))
+    print(paste("CORTAS (con reduccion a variables PCx) -> pasado_f_temp_transformada = ", nrow(pasado_f_temp_transformada), "x", ncol(pasado_f_temp_transformada)  ))
     
     pasado_ft_cortas_transformada <- cbind(pasado_f_temp_transformada[, 1:indice_umbral_cortas], subset(pasado_ft_temp, select = indice_t_temp)) # F (reducidas) + t
-    print(paste("CORTAS -> pasado_ft_cortas_transformada = ", nrow(pasado_ft_cortas_transformada), "x", ncol(pasado_ft_cortas_transformada)  ))
+    print(paste("CORTAS (con umbral varianza) -> pasado_ft_cortas_transformada = ", nrow(pasado_ft_cortas_transformada), "x", ncol(pasado_ft_cortas_transformada)  ))
     
     print(paste(class(pasado_ft_cortas_transformada), "pasado_ft_cortas_transformada:", nrow(pasado_ft_cortas_transformada), "x", ncol(pasado_ft_cortas_transformada)))
     rm(pasado_ft_temp); rm(indice_t_temp); rm(pasado_f_temp); rm(pasado_f_temp_transformada)
@@ -1262,11 +1276,11 @@ aplicarReductores <- function(input_f, lista_modelos_pca, tipo, umbral_varianza)
   
   #Para quitar las COLUMNAS que no son UTILES para esa DISTANCIA
   col_cortas <- c("vel_real_cortas_mediana", "vel_real_cortas_max", "vel_going_cortas_mediana", "vel_going_cortas_max",
-                  "vgcortas_med_min", "vgcortas_med_max")
-  col_medias <- c("vel_real_longmedias_mediana_", "vel_real_longmedias_max", "vel_going_longmedias_mediana_norm", "vel_going_longmedias_max",
-                  "vgmedias_med_min", "vgmedias_med_max")
+                  "vgcortas_med_min", "vgcortas_med_max", "distancia_solo_cortas")
+  col_medias <- c("vel_real_longmedias_mediana", "vel_real_longmedias_max", "vel_going_longmedias_mediana", "vel_going_longmedias_max",
+                  "vgmedias_med_min", "vgmedias_med_max", "distancia_solo_medias")
   col_largas <- c("vel_real_largas_mediana", "vel_real_largas_max", "vel_going_largas_mediana", "vel_going_largas_max",
-                  "vglargas_med_min", "vglargas_med_max")
+                  "vglargas_med_min", "vglargas_med_max", "distancia_solo_largas")
   
   
   modelo_pca_cortas <- lista_modelos_pca[[1]]
@@ -1460,9 +1474,12 @@ ejecutarCadenaPredecirFuturo <- function(tag, limiteSql, tipoReduccion, path_mod
   print( paste( 'tsne_num_features_output=', tsne_num_features_output, sep = '' ) )
   
   #Para quitar las COLUMNAS que no son UTILES para esa DISTANCIA
-  col_cortas <- c("vel_real_cortas_mediana_norm", "vel_real_cortas_max_norm", "vel_going_cortas_mediana_norm", "vel_going_cortas_max_norm")
-  col_medias <- c("vel_real_longmedias_mediana_norm", "vel_real_longmedias_max_norm", "vel_going_longmedias_mediana_norm", "vel_going_longmedias_max_norm")
-  col_largas <- c("vel_real_largas_mediana_norm", "vel_real_largas_max_norm", "vel_going_largas_mediana_norm", "vel_going_largas_max_norm")
+  col_cortas <- c("vel_real_cortas_mediana", "vel_real_cortas_max", "vel_going_cortas_mediana", "vel_going_cortas_max",
+                  "vgcortas_med_min", "vgcortas_med_max", "distancia_solo_cortas")
+  col_medias <- c("vel_real_longmedias_mediana", "vel_real_longmedias_max", "vel_going_longmedias_mediana", "vel_going_longmedias_max",
+                  "vgmedias_med_min", "vgmedias_med_max", "distancia_solo_medias")
+  col_largas <- c("vel_real_largas_mediana", "vel_real_largas_max", "vel_going_largas_mediana", "vel_going_largas_max",
+                  "vglargas_med_min", "vglargas_med_max", "distancia_solo_largas")
   
   establecerConfigGeneral()
   
@@ -1506,7 +1523,7 @@ ejecutarCadenaPredecirFuturo <- function(tag, limiteSql, tipoReduccion, path_mod
     print(paste(class(E), "E:", nrow(E), "x", ncol(E)))
     
     print("ejecutarCadenaPredecirFuturo() ===> Aplicar crearFeaturesyTargetDelPasadoParaDistancias sobre E: divide en 3 tablas (por distancias), quitando NAs en esas 3 tablas por separado (por si hubiera valores NA dentro de las columnas de esa distancia)")
-    lista_f_cortasmediaslargas <- crearFeaturesyTargetDelPasadoParaDistancias("FUTURO", E, col_cortas,col_medias,col_largas, TRUE, TRUE)
+    lista_f_cortasmediaslargas <- crearFeaturesyTargetDelPasadoParaDistancias("FUTURO", tag, E, col_cortas,col_medias,col_largas, TRUE, TRUE)
     #-----------------
     
     
