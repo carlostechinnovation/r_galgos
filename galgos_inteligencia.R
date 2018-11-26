@@ -492,7 +492,7 @@ reducirConPCA <- function(input_ft, path_modelo_pca, umbral_varianza, tipoPCA){
           
           
         } else if (tipoPCA == 'prcomp') {
-          pca_modelo <- prcomp(x = input_f_full, retx = TRUE, center = TRUE, scale = TRUE) #Usa SVD, no eigenvalores sobre la matriz de covarianza
+          pca_modelo <- prcomp(x = input_f_full, retx = TRUE, center = TRUE, scale = F) #Usa SVD, no eigenvalores sobre la matriz de covarianza
         }
         
         
