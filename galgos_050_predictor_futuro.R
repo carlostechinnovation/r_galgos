@@ -7,11 +7,11 @@ entradas <- commandArgs(trailingOnly = TRUE)
 
 ##### Solo para debug
 # modo <- 3
-# tag <- "DOW_LAB"
+# tag <- "TOTAL"
 # limiteSql <- "1000"
 # tipoReduccion <- "PCA"
 # path_modelo_pca_prefijo <- "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_"
-# pca_umbral_varianza <- 0.95
+# pca_umbral_varianza <- 0.82
 # tsne_num_features_output <- 12
 # entradas <- c(modo, tag, limiteSql, tipoReduccion, path_modelo_pca_prefijo, pca_umbral_varianza, tsne_num_features_output)
 #######

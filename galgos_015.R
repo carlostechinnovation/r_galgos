@@ -266,7 +266,7 @@ transformarColumnaYEvaluarNormalidad <- function(col_in, nombre_tabla, nombre_co
       p3 <- shapiro_out$p.value
     }
     
-    #print('Transformacion 4: LOG_e(1+x)')
+    #print('Transformacion 4: LOG_e(A+x)')
     SUMANDO_LOG <- 0.1
     trans4 <- log(SUMANDO_LOG + col_in_shifted_normalizada)
     recortada <- na.omit( head(trans4, MAX_ELEMENTOS_SHAPIRO_WILK) ) #quito todos los valores NA, que no aportan nada estadistico. Pero solo aqui, para mantenerlos en el dataframe de salida
@@ -286,28 +286,64 @@ transformarColumnaYEvaluarNormalidad <- function(col_in, nombre_tabla, nombre_co
       p5 <- shapiro_out$p.value
     }
     
+    #print('Transformacion 6: x*log(1+x)')
+    trans6 <- col_in_shifted_normalizada * log(1+col_in_shifted_normalizada)
+    recortada <- na.omit( head(trans6, MAX_ELEMENTOS_SHAPIRO_WILK) ) #quito todos los valores NA, que no aportan nada estadistico. Pero solo aqui, para mantenerlos en el dataframe de salida
+    p6 <- NA #default
+    if (length(recortada) >= 3) {
+      shapiro_out <- shapiro.test(recortada)
+      p6 <- shapiro_out$p.value
+    }
+    
+    #print('Transformacion 7: LOG_e(1+x)')
+    SUMANDO_LOG <- 1
+    trans7 <- log(SUMANDO_LOG + col_in_shifted_normalizada)
+    recortada <- na.omit( head(trans7, MAX_ELEMENTOS_SHAPIRO_WILK) ) #quito todos los valores NA, que no aportan nada estadistico. Pero solo aqui, para mantenerlos en el dataframe de salida
+    p7 <- NA #default
+    if (length(recortada) >= 3) {
+      shapiro_out <- shapiro.test(recortada)
+      p7 <- shapiro_out$p.value
+    }
+    
+    #print('Transformacion 1: CUBO')
+    trans8 <- col_in_shifted_normalizada ^ 3
+    recortada <- na.omit( head(trans8, MAX_ELEMENTOS_SHAPIRO_WILK) ) #quito todos los valores NA, que no aportan nada estadistico. Pero solo aqui, para mantenerlos en el dataframe de salida
+    p8 <- NA #default
+    if (length(recortada) >= 3) {
+      shapiro_out <- shapiro.test(recortada)
+      p8 <- shapiro_out$p.value
+    }
+    
+    #print('Transformacion 1: POT_CUATRO')
+    trans9 <- col_in_shifted_normalizada ^ 4
+    recortada <- na.omit( head(trans9, MAX_ELEMENTOS_SHAPIRO_WILK) ) #quito todos los valores NA, que no aportan nada estadistico. Pero solo aqui, para mantenerlos en el dataframe de salida
+    p9 <- NA #default
+    if (length(recortada) >= 3) {
+      shapiro_out <- shapiro.test(recortada)
+      p9 <- shapiro_out$p.value
+    }
     # SHAPIRO-WILK (test de normalidad):
     # - Si p-value es mayor que alpha (0.05) entonces no se puede rechazar la hipotesis nula ("la muestra viene de una distribucion NORMAL")
     # - Si p-value es menor que alpha (0.05) entonces rechazamos la hipotesis nula: SEGURO que la muestra NO viene de una distribucion NORMAL.
-    print(paste('p0=',p0,'p1=',p1,'p2=',p2,'p3=',p3,'p4=',p4,'p5=',p5))
+    print(paste('p0=',p0,'p1=',p1,'p2=',p2,'p3=',p3,'p4=',p4,'p5=',p5,'p6=',p6,'p7=',p7,'p8=',p8,'p9=',p9))
     
     
     ##### GUARDAR transformaciones en PNG
     nombre_fichero <- paste('TRANS_',nombre_tabla,'_',nombre_columna,'.png', sep = '')
     pathFichero <- paste('/home/carloslinux/Desktop/LOGS/015_graficos/', nombre_fichero, sep = '')
     print(pathFichero)
-    png(filename = pathFichero, width = 500, height = 1000, units = "px")
-    graphics::par(mfrow = c(6, 2))  # GRID para pintar plots
+    png(filename = pathFichero, width = 800, height = 2800, units = "px")
+    graphics::par(mfrow = c(11,2))  # GRID para pintar plots
     algun_plot = F
     
     #SELECCION DE tranformacion ganadora: la de mayor p-value.
-    if (!is.na(p1) && !is.na(p2) && !is.na(p3) && !is.na(p4) && !is.na(p5)) {
+    if (!is.na(p1) && !is.na(p2) && !is.na(p3) && !is.na(p4) && !is.na(p5) && !is.na(p6) && !is.na(p7) && !is.na(p8) && !is.na(p9)) {
       
-      p_mayor = max(p0, p1,p2,p3,p4,p5, na.rm = T)
+      p_mayor = max(p0, p1,p2,p3,p4,p5,p6,p7,p8,p9, na.rm = T)
       
       if (!is.nan(p0)) {
         algun_plot=T
-        hist(na.omit(trans0), main = paste('HIST-trans1 p=',p0));  qqnorm(na.omit(trans0)); qqline(na.omit(trans0))
+        hist(na.omit(trans0), main = paste('HIST-trans0 p=',p0));  qqnorm(na.omit(trans0)); qqline(na.omit(trans0))
         if (p0 == p_mayor) {
           col_transformada <- trans0; print(paste("Tranformo columna", nombre_columna, 'con', 'T0'))
         }
@@ -339,7 +375,7 @@ transformarColumnaYEvaluarNormalidad <- function(col_in, nombre_tabla, nombre_co
       
       if (!is.nan(p4)) {
         algun_plot=T
-        hist(na.omit(trans4), main = paste('HIST-trans4 p=',p4));  qqline(y=na.omit(trans4));  qqline(na.omit(trans4))
+        hist(na.omit(trans4), main = paste('HIST-trans4 p=',p4));  qqnorm(y=na.omit(trans4));  qqline(na.omit(trans4))
         if (p4 == p_mayor) {
           col_transformada <- trans4; print(paste("Tranformo columna", nombre_columna, 'con', 'T4'))
         }
@@ -347,9 +383,41 @@ transformarColumnaYEvaluarNormalidad <- function(col_in, nombre_tabla, nombre_co
       
       if (!is.nan(p5)) {
         algun_plot=T
-        hist(na.omit(trans5), main = paste('HIST-trans5 p=',p5));  qqline(y=na.omit(trans5));  qqline(na.omit(trans5))
+        hist(na.omit(trans5), main = paste('HIST-trans5 p=',p5));  qqnorm(y=na.omit(trans5));  qqline(na.omit(trans5))
         if (p5 == p_mayor) {
           col_transformada <- trans5; print(paste("Tranformo columna", nombre_columna, 'con', 'T5'))
+        }
+      }
+      
+      if (!is.nan(p6)) {
+        algun_plot=T
+        hist(na.omit(trans6), main = paste('HIST-trans6 p=',p6));  qqnorm(y=na.omit(trans6));  qqline(na.omit(trans6))
+        if (p6 == p_mayor) {
+          col_transformada <- trans6; print(paste("Tranformo columna", nombre_columna, 'con', 'T6'))
+        }
+      }
+      
+      if (!is.nan(p7)) {
+        algun_plot=T
+        hist(na.omit(trans7), main = paste('HIST-trans7 p=',p7));  qqnorm(y=na.omit(trans7));  qqline(na.omit(trans7))
+        if (p7 == p_mayor) {
+          col_transformada <- trans7; print(paste("Tranformo columna", nombre_columna, 'con', 'T7'))
+        }
+      }
+      
+      if (!is.nan(p8)) {
+        algun_plot=T
+        hist(na.omit(trans8), main = paste('HIST-trans8 p=',p8));  qqnorm(y=na.omit(trans8));  qqline(na.omit(trans8))
+        if (p8 == p_mayor) {
+          col_transformada <- trans8; print(paste("Tranformo columna", nombre_columna, 'con', 'T8'))
+        }
+      }
+      
+      if (!is.nan(p9)) {
+        algun_plot=T
+        hist(na.omit(trans9), main = paste('HIST-trans9 p=',p9));  qqnorm(y=na.omit(trans9));  qqline(na.omit(trans9))
+        if (p9 == p_mayor) {
+          col_transformada <- trans8; print(paste("Tranformo columna", nombre_columna, 'con', 'T9'))
         }
       }
       
@@ -362,10 +430,8 @@ transformarColumnaYEvaluarNormalidad <- function(col_in, nombre_tabla, nombre_co
     dev.off()
     
   } else {
-    print(paste('Hay menos de 3 elementos numericos distintos. No puedo usar Shapiro-Wilk para comprobar test de normalidadde las transformadas, asi que ni la transformo:', nombre_columna))
+    print(paste('Hay menos de 3 elementos numericos distintos. No puedo usar Shapiro-Wilk para comprobar test de normalidad de las transformadas, asi que ni la transformo:', nombre_columna))
   }
-  
-  
   
   
   return(col_transformada)
@@ -374,7 +440,7 @@ transformarColumnaYEvaluarNormalidad <- function(col_in, nombre_tabla, nombre_co
 
 print('-------------------------------- 015:INICIO ---------------------')
 entradas <- commandArgs(trailingOnly = TRUE)
-#limiteSql <- "1000" #Para debug solo
+#limiteSql <- "5000" #Para debug solo
 if (length(entradas) == 0) {
   print("MAL No tiene parametros de entrada")
 } else if (length(entradas) >= 1) {

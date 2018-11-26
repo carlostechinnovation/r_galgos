@@ -13,32 +13,43 @@ PORCENTAJE_TEST <- 0.20 #Divide el dataset de entrenamiento de PASADO en TRAIN+T
 #'
 #' @examples
 establecerConfigGeneral <- function(){
-  print('--------------- establecerConfigGeneral ------------')
+  print('--------------- establecerConfigGeneral: INICIO ------------')
   
+  print("Orden de liberias: la ultima cargada tendra mas prioridad")
   options(echo = TRUE) # En la salida, queremos ver los comandos ejecutados
   
-  library(SuperLearner)
-  library(nnls)
-  library(nnet)
-  library(randomForest)
-  library(glmnet)
-  library(ggplot2)
-  library(parallel)
-  library(Matrix)
-  library(foreach)
-  library(arm)
-  library(MASS)
-  library(lme4)
-  library(polspline)
-  library(plyr)
-  library(dplyr)
-  library(stats)
-  library(mice)
+  a=1
+  library(conflicted, pos=(a+1)) # Ante conflictos de dos funciones con el mismo nombre en varias librerias, informa de que librerias estan afectadas
+  library(Matrix, pos=(a+1))
+  library(foreach, pos=(a+1))
+  library(MASS, pos=(a+1))
+  library(lme4, pos=(a+1))
+  library(methods, pos=(a+1))
+  library(SuperLearner, pos=(a+1))
+  library(nnls, pos=(a+1))
+  library(nnet, pos=(a+1))
+  library(ggplot2, pos=(a+1))
+  library(randomForest, pos=(a+1))
+  library(glmnet, pos=(a+1))
+  
+  library(parallel, pos=(a+1))
+  library(arm, pos=(a+1))
+  library(polspline, pos=(a+1))
+  library(plyr, pos=(a+1))
+  library(dplyr, pos=(a+1))
+  library(stats, pos=(a+1))
+  library(mice, pos=(a+1))
+  library(caret, pos=(a+1))
   
   options(java.parameters = '-Xmx5g') #Memoria 5GB
   
   UMBRAL_DISTANCIA_NORM_1 <<- 0.20  # variable global en R
   UMBRAL_DISTANCIA_NORM_2 <<- 0.65  # variable global en R
+  
+  print("Orden de librerias cargadas")
+  print(search())
+  
+  print('--------------- establecerConfigGeneral: FIN ------------')
 }
 
 
@@ -492,7 +503,7 @@ reducirConPCA <- function(input_ft, path_modelo_pca, umbral_varianza, tipoPCA){
           
           
         } else if (tipoPCA == 'prcomp') {
-          pca_modelo <- prcomp(x = input_f_full, retx = TRUE, center = TRUE, scale = F) #Usa SVD, no eigenvalores sobre la matriz de covarianza
+          pca_modelo <- prcomp(x = input_f_full, retx = TRUE, center = TRUE, scale = FALSE) #Usa SVD, no eigenvalores sobre la matriz de covarianza
         }
         
         
@@ -716,11 +727,13 @@ analisis_modelos_superlearner <- function(matrizentrada, distancia_str, ejecutar
   # -------------------------------------------------------------
   
   print('------- Algoritmos usados -------')
-  algoritmosPredictivosUsados <- list( 
+  algoritmosPredictivosUsados <- list(
     # rf_bis$names,
     glmnet_bis$names,
     bayesglm_bis$names,
-    "SL.glmnet","SL.bayesglm", "SL.caret.rpart", "SL.glm", "SL.nnet", "SL.polymars"
+    "SL.glmnet","SL.bayesglm", 
+    #"SL.caret.rpart", 
+    "SL.glm", "SL.nnet", "SL.polymars"
     )
   print( t(algoritmosPredictivosUsados) )
   
@@ -970,8 +983,11 @@ predecir <- function(tag, input_f_transformadas, lista_modelos_predictivos, outp
   if ( nrow(input_f_cortas_sinindice) == 0 ) {
     output_it_cortas <- NULL
   } else {
+    print("input_f_cortas_sinindice contiene:")
+    print(head(input_f_cortas_sinindice, n=5L))
+    
     print("Prediciendo usando un modelo ya entrenado y un nuevo dataset...")
-    predicciones_t_model_cortas <- predict.SuperLearner(object = modelo_cortas, newdata = input_f_cortas_sinindice, onlySL = TRUE) #No usa los que tienen peso =0
+    predicciones_t_model_cortas <- predict.SuperLearner(object = modelo_cortas, newdata = input_f_cortas_sinindice, onlySL = TRUE) #No usa los algoritmos que tuvieron peso=0 en el entrenamiento
     predicciones_t_cortas <- predicciones_t_model_cortas$pred #Prediccion
     
     print(paste("input_f_cortas:", nrow(input_f_cortas), "x", ncol(input_f_cortas)))
@@ -1003,7 +1019,7 @@ predecir <- function(tag, input_f_transformadas, lista_modelos_predictivos, outp
     output_it_medias <- NULL
   } else {
     print("Prediciendo usando un modelo ya entrenado y un nuevo dataset...")
-    predicciones_t_model_medias <- predict.SuperLearner(object = modelo_medias, newdata = input_f_medias_sinindice, onlySL = TRUE) #No usa los que tienen peso =0
+    predicciones_t_model_medias <- predict.SuperLearner(object = modelo_medias, newdata = input_f_medias_sinindice, onlySL = TRUE) #No usa los algoritmos que tuvieron peso=0 en el entrenamiento
     predicciones_t_medias <- predicciones_t_model_medias$pred #Prediccion
     print(paste("predicciones_t_medias:", nrow(predicciones_t_medias), "x", ncol(predicciones_t_medias)))
     # print(head(predicciones_t_medias, n = 5L))
@@ -1021,7 +1037,7 @@ predecir <- function(tag, input_f_transformadas, lista_modelos_predictivos, outp
     output_it_largas <- NULL
   } else {
     print("Prediciendo usando un modelo ya entrenado y un nuevo dataset...")
-    predicciones_t_model_largas <- predict.SuperLearner(object = modelo_largas, newdata = input_f_largas_sinindice, onlySL = TRUE) #No usa los que tienen peso =0
+    predicciones_t_model_largas <- predict.SuperLearner(object = modelo_largas, newdata = input_f_largas_sinindice, onlySL = TRUE) #No usa los algoritmos que tuvieron peso=0 en el entrenamiento
     predicciones_t_largas <- predicciones_t_model_largas$pred #Prediccion
     print(paste("predicciones_t_largas:", nrow(predicciones_t_largas), "x", ncol(predicciones_t_largas)))
     # print(head(predicciones_t_largas, n = 5L))
@@ -1152,7 +1168,12 @@ ejecutarReduccionDimensiones <- function(tabla_train_f, tabla_test_f, tag, limit
   
   
   #E = sobre A, quitar las filas de los índices D.
-  E <- A[-indices_con_na, ]
+  if(length(indices_con_na) == 0 ){
+    E <- A
+    print("El array indices_con_na contienen 0 filas.")
+  } else {
+    E <- A[-indices_con_na, ]
+  }
   print(paste(class(E), "E:", nrow(E), "x", ncol(E)))
   
   print("ejecutarReduccionDimensiones() ===> Aplicar crearFeaturesyTargetDelPasadoParaDistancias sobre E: divide en 3 tablas (por distancias), quitando NAs en esas 3 tablas por separado (por si hubiera valores NA dentro de las columnas de esa distancia)")
@@ -1492,7 +1513,7 @@ ejecutarCadenaPredecirFuturo <- function(tag, limiteSql, tipoReduccion, path_mod
                                                FALSE, FALSE)
   
   if (listaDatos[[3]] == FALSE) {
-    print('ERROR El metodo leerDesdeBaseDatosYEscribirCSV() ha devuelto 0 filas. Revisara mano. Puede que tenga sentido.')
+    print('ERROR El metodo leerDesdeBaseDatosYEscribirCSV() ha devuelto 0 filas. Revisar a mano. Puede que tenga sentido.')
     
   } else {
     
@@ -1519,7 +1540,12 @@ ejecutarCadenaPredecirFuturo <- function(tag, limiteSql, tipoReduccion, path_mod
     print(indices_con_na)
     
     #E = sobre A, quitar las filas de los índices D.
-    E <- A[-indices_con_na, ]
+    if(length(indices_con_na) == 0 ){
+      E <- A
+      print("El array indices_con_na contienen 0 filas.")
+    } else {
+      E <- A[-indices_con_na, ]
+    }
     print(paste(class(E), "E:", nrow(E), "x", ncol(E)))
     
     print("ejecutarCadenaPredecirFuturo() ===> Aplicar crearFeaturesyTargetDelPasadoParaDistancias sobre E: divide en 3 tablas (por distancias), quitando NAs en esas 3 tablas por separado (por si hubiera valores NA dentro de las columnas de esa distancia)")
