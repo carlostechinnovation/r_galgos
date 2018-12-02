@@ -147,14 +147,6 @@ analizarColumnasTransformarYCbind <- function(a, prefijo){
     if (num_elementos_distintos >= 2 && !col_identificadora && !is.na(n) && (class(a[[n]]) == "numeric" || class(a[[n]]) == "integer" )) {
       print(paste('Bucle transformando columna:', n, 'que es de tipo:', class(a[[n]])))
       
-      ##############################################################
-      #IMAGEN PNG
-      nombre_fichero <- paste(prefijo,'_',n,'.png', sep = '')
-      pathFichero <- paste('/home/carloslinux/Desktop/LOGS/015_antes/', nombre_fichero, sep = '')
-      print(paste("Pintando hist en PNG: ", pathFichero))
-      png(filename = pathFichero, width = 500, height = 1500, units = "px")
-      ##############################################################
-      
       #Aplicar formula para conseguir una gaussiana (aprox) intermedia y evaluar su NORMALIDAD (test Shapiro-Wilk: si p-value > 0.05, la variable es casi una gaussiana, que es lo que queremos)
       col_transformada <- transformarColumnaYEvaluarNormalidad(a[[n]], 'TABLA', n)
       
@@ -211,7 +203,7 @@ transformarColumnaYEvaluarNormalidad <- function(col_in, nombre_tabla, nombre_co
   
   col_transformada <- col_in; #DEFAULT
   
-  print(paste('Transformando columna:', nombre_columna))
+  #print(paste('Transformando columna:', nombre_columna))
   
   #Debe ser una columna numerica
   col_in_num <- col_in
@@ -289,7 +281,7 @@ transformarColumnaYEvaluarNormalidad <- function(col_in, nombre_tabla, nombre_co
     # SHAPIRO-WILK (test de normalidad):
     # - Si p-value es mayor que alpha (0.05) entonces no se puede rechazar la hipotesis nula ("la muestra viene de una distribucion NORMAL")
     # - Si p-value es menor que alpha (0.05) entonces rechazamos la hipotesis nula: SEGURO que la muestra NO viene de una distribucion NORMAL.
-    print(paste('p0=',p0,'p1=',p1,'p2=',p2,'p3=',p3,'p4=',p4,'p5=',p5))
+    #print(paste('p0=',p0,'p1=',p1,'p2=',p2,'p3=',p3,'p4=',p4,'p5=',p5))
     
     
     ##### GUARDAR transformaciones en PNG
@@ -362,7 +354,7 @@ transformarColumnaYEvaluarNormalidad <- function(col_in, nombre_tabla, nombre_co
     dev.off()
     
   } else {
-    print(paste('Hay menos de 3 elementos numericos distintos. No puedo usar Shapiro-Wilk para comprobar test de normalidadde las transformadas, asi que ni la transformo:', nombre_columna))
+    print(paste('Hay menos de 3 elementos numericos distintos. No puedo usar Shapiro-Wilk para comprobar test de normalidad de las transformadas, asi que ni la transformo:', nombre_columna))
   }
   
   
