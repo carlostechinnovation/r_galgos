@@ -147,14 +147,6 @@ analizarColumnasTransformarYCbind <- function(a, prefijo){
     if (num_elementos_distintos >= 2 && !col_identificadora && !is.na(n) && (class(a[[n]]) == "numeric" || class(a[[n]]) == "integer" )) {
       print(paste('Bucle transformando columna:', n, 'que es de tipo:', class(a[[n]])))
       
-      ##############################################################
-      #IMAGEN PNG
-      nombre_fichero <- paste(prefijo,'_',n,'.png', sep = '')
-      pathFichero <- paste('/home/carloslinux/Desktop/LOGS/015_antes/', nombre_fichero, sep = '')
-      print(paste("Pintando hist en PNG: ", pathFichero))
-      png(filename = pathFichero, width = 500, height = 1500, units = "px")
-      ##############################################################
-      
       #Aplicar formula para conseguir una gaussiana (aprox) intermedia y evaluar su NORMALIDAD (test Shapiro-Wilk: si p-value > 0.05, la variable es casi una gaussiana, que es lo que queremos)
       col_transformada <- transformarColumnaYEvaluarNormalidad(a[[n]], 'TABLA', n)
       
@@ -211,7 +203,7 @@ transformarColumnaYEvaluarNormalidad <- function(col_in, nombre_tabla, nombre_co
   
   col_transformada <- col_in; #DEFAULT
   
-  print(paste('Transformando columna:', nombre_columna))
+  #print(paste('Transformando columna:', nombre_columna))
   
   #Debe ser una columna numerica
   col_in_num <- col_in
