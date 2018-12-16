@@ -1554,6 +1554,7 @@ ejecutarCadenaPredecirFuturo <- function(tag, limiteSql, tipoReduccion, path_mod
     
     
     print('######## REDUCIR DIMENSIONES ##########')
+    print(paste(R_OUT, 'Reduciendo dimensiones...', sep = ''))
     lista_modelos_pca <- cargarModelosPCADesdeFicheros(tag)
     
     # 1º Cargar modelo (si es NULL, no reduzco dimensiones)
@@ -1605,12 +1606,13 @@ ejecutarCadenaPredecirFuturo <- function(tag, limiteSql, tipoReduccion, path_mod
     lista_f_cortasmediaslargas <- list(cortas_f_transf_conindice, medias_f_transf_conindice, largas_f_transf_conindice) #Lista de features, agrupadas por DISTANCIA, y con columna INDICE_ORDEN
     
     print('######## PREDICCION DEL FUTURO ##########')
+    print(paste(R_OUT, 'Prediciendo el futuro...', sep = ''))
     lista_modelos_predictivos <- cargarModelosPredictivosDesdeFicheros(tag)
     uri_futuro_t_prefijo <- "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/FILELOAD_ds_futuro_targets_2_"
     predecir(tag, lista_f_cortasmediaslargas, lista_modelos_predictivos, uri_futuro_t_prefijo, "FUTURO")
   }
   
-  print(paste(R_OUT, '--------------- ejecutarCadenaPredecirFuturo: FIN ------------', sep=''))
+  print(paste(R_OUT, '--------------- ejecutarCadenaPredecirFuturo: FIN ------------', sep = ''))
 }
 
 

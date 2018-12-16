@@ -7,7 +7,7 @@ entradas <- commandArgs(trailingOnly = TRUE)
 
 ##### Solo para debug
  # modo <- 1 # 1=train+test+validation
- # tag <- "HORA_PRONTO"
+ # tag <- "LARGA_Y_ALGUNO_LENTO"
  # limiteSql <- "3000"
  # tipoReduccion <- "PCA"
  # path_modelo_pca_prefijo <- "/home/carloslinux/Desktop/DATOS_LIMPIO/galgos/pca_modelo_"

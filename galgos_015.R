@@ -187,6 +187,20 @@ analizarColumnasTransformarYCbind <- function(a, prefijo){
   return(a)
 }
 
+#' SKEWNESS: correccion explicada en http://rstudio-pubs-static.s3.amazonaws.com/1563_1ae2544c0e324b9bb7f6e63cf8f9e098.html
+#'
+#' @param c 
+#' @param x 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+skew.score <- function(c, x){
+  return( (e1071::skewness(log(x + c)))^2 )
+}
+
+
 #' Ejecuta TRANSFORMACIONES y evalua cual de ellas es la que mejor se ha aproximado a una GAUSSIANA. Coge la ganadora.
 #'
 #' @param col_in 
@@ -232,7 +246,9 @@ transformarColumnaYEvaluarNormalidad <- function(col_in, nombre_tabla, nombre_co
     }
     
     #print('Transformacion 1: CUADRADO')
-    trans1 <- col_in_shifted_normalizada ^ 2
+    trans1_aux <- col_in_shifted_normalizada ^ 2
+    best.c <- optimise(skew.score, c(0, 20), x = trans1_aux)$minimum
+    trans1 <- log(trans1_aux + best.c)
     recortada <- na.omit( head(trans1, MAX_ELEMENTOS_SHAPIRO_WILK) ) #quito todos los valores NA, que no aportan nada estadistico. Pero solo aqui, para mantenerlos en el dataframe de salida
     p1 <- NA #default
     if (length(recortada) >= 3) {
@@ -241,7 +257,9 @@ transformarColumnaYEvaluarNormalidad <- function(col_in, nombre_tabla, nombre_co
     }
     
     #print('Transformacion 2: SQRT')
-    trans2 <- sqrt(col_in_shifted_normalizada)
+    trans2_aux <- sqrt(col_in_shifted_normalizada)
+    best.c <- optimise(skew.score, c(0, 20), x = trans2_aux)$minimum
+    trans2 <- log(trans2_aux + best.c)
     recortada <- na.omit( head(trans2, MAX_ELEMENTOS_SHAPIRO_WILK) ) #quito todos los valores NA, que no aportan nada estadistico.Pero solo aqui, para mantenerlos en el dataframe de salida
     p2 <- NA #default
     if (length(recortada) >= 3) {
@@ -250,7 +268,9 @@ transformarColumnaYEvaluarNormalidad <- function(col_in, nombre_tabla, nombre_co
     }
     
     #print('Transformacion 3: EXPONENCIAL')
-    trans3 <- exp(col_in_shifted_normalizada)
+    trans3_aux <- exp(col_in_shifted_normalizada)
+    best.c <- optimise(skew.score, c(0, 20), x = trans3_aux)$minimum
+    trans3 <- log(trans3_aux + best.c)
     recortada <- na.omit( head(trans3, MAX_ELEMENTOS_SHAPIRO_WILK) ) #quito todos los valores NA, que no aportan nada estadistico. Pero solo aqui, para mantenerlos en el dataframe de salida
     p3 <- NA #default
     if (length(recortada) >= 3) {
@@ -260,7 +280,11 @@ transformarColumnaYEvaluarNormalidad <- function(col_in, nombre_tabla, nombre_co
     
     #print('Transformacion 4: LOG_e(A+x)')
     SUMANDO_LOG <- 0.1
-    trans4 <- log(SUMANDO_LOG + col_in_shifted_normalizada)
+    trans4_aux <- log(SUMANDO_LOG + col_in_shifted_normalizada)
+    #print(paste("T4 - Skewness antes: ", skewness(trans4_aux)))
+    best.c <- optimise(skew.score, c(0, 20), x = trans4_aux)$minimum
+    trans4 <- log(trans4_aux + best.c)
+    #print(paste("T4 - Skewness despues: ", skewness(trans4)))
     recortada <- na.omit( head(trans4, MAX_ELEMENTOS_SHAPIRO_WILK) ) #quito todos los valores NA, que no aportan nada estadistico. Pero solo aqui, para mantenerlos en el dataframe de salida
     p4 <- NA #default
     if (length(recortada) >= 3) {
@@ -270,7 +294,9 @@ transformarColumnaYEvaluarNormalidad <- function(col_in, nombre_tabla, nombre_co
     
     #print('Transformacion 5: POWER')
     FACTOR <- 0.45
-    trans5 <- sign(col_in_shifted_normalizada) * abs(col_in_shifted_normalizada)^FACTOR
+    trans5_aux <- sign(col_in_shifted_normalizada) * abs(col_in_shifted_normalizada)^FACTOR
+    best.c <- optimise(skew.score, c(0, 20), x = trans5_aux)$minimum
+    trans5 <- log(trans5_aux + best.c)
     recortada <- na.omit( head(trans5, MAX_ELEMENTOS_SHAPIRO_WILK) ) #quito todos los valores NA, que no aportan nada estadistico. Pero solo aqui, para mantenerlos en el dataframe de salida
     p5 <- NA #default
     if (length(recortada) >= 3) {
@@ -279,7 +305,9 @@ transformarColumnaYEvaluarNormalidad <- function(col_in, nombre_tabla, nombre_co
     }
     
     #print('Transformacion 6: x*log(1+x)')
-    trans6 <- col_in_shifted_normalizada * log(1+col_in_shifted_normalizada)
+    trans6_aux <- col_in_shifted_normalizada * log(1 + col_in_shifted_normalizada)
+    best.c <- optimise(skew.score, c(0, 20), x = trans6_aux)$minimum
+    trans6 <- log(trans6_aux + best.c)
     recortada <- na.omit( head(trans6, MAX_ELEMENTOS_SHAPIRO_WILK) ) #quito todos los valores NA, que no aportan nada estadistico. Pero solo aqui, para mantenerlos en el dataframe de salida
     p6 <- NA #default
     if (length(recortada) >= 3) {
@@ -289,7 +317,9 @@ transformarColumnaYEvaluarNormalidad <- function(col_in, nombre_tabla, nombre_co
     
     #print('Transformacion 7: LOG_e(1+x)')
     SUMANDO_LOG <- 1
-    trans7 <- log(SUMANDO_LOG + col_in_shifted_normalizada)
+    trans7_aux <- log(SUMANDO_LOG + col_in_shifted_normalizada)
+    best.c <- optimise(skew.score, c(0, 20), x = trans7_aux)$minimum
+    trans7 <- log(trans7_aux + best.c)
     recortada <- na.omit( head(trans7, MAX_ELEMENTOS_SHAPIRO_WILK) ) #quito todos los valores NA, que no aportan nada estadistico. Pero solo aqui, para mantenerlos en el dataframe de salida
     p7 <- NA #default
     if (length(recortada) >= 3) {
@@ -298,7 +328,9 @@ transformarColumnaYEvaluarNormalidad <- function(col_in, nombre_tabla, nombre_co
     }
     
     #print('Transformacion 1: CUBO')
-    trans8 <- col_in_shifted_normalizada ^ 3
+    trans8_aux <- col_in_shifted_normalizada ^ 3
+    best.c <- optimise(skew.score, c(0, 20), x = trans8_aux)$minimum
+    trans8 <- log(trans8_aux + best.c)
     recortada <- na.omit( head(trans8, MAX_ELEMENTOS_SHAPIRO_WILK) ) #quito todos los valores NA, que no aportan nada estadistico. Pero solo aqui, para mantenerlos en el dataframe de salida
     p8 <- NA #default
     if (length(recortada) >= 3) {
@@ -307,7 +339,9 @@ transformarColumnaYEvaluarNormalidad <- function(col_in, nombre_tabla, nombre_co
     }
     
     #print('Transformacion 1: POT_CUATRO')
-    trans9 <- col_in_shifted_normalizada ^ 4
+    trans9_aux <- col_in_shifted_normalizada ^ 4
+    best.c <- optimise(skew.score, c(0, 20), x = trans9_aux)$minimum
+    trans9 <- log(trans9_aux + best.c)
     recortada <- na.omit( head(trans9, MAX_ELEMENTOS_SHAPIRO_WILK) ) #quito todos los valores NA, que no aportan nada estadistico. Pero solo aqui, para mantenerlos en el dataframe de salida
     p9 <- NA #default
     if (length(recortada) >= 3) {
@@ -328,10 +362,15 @@ transformarColumnaYEvaluarNormalidad <- function(col_in, nombre_tabla, nombre_co
     graphics::par(mfrow = c(11,2))  # GRID para pintar plots
     algun_plot = F
     
+    
+    
+    
     #SELECCION DE tranformacion ganadora: la de mayor p-value.
     if (!is.na(p1) && !is.na(p2) && !is.na(p3) && !is.na(p4) && !is.na(p5) && !is.na(p6) && !is.na(p7) && !is.na(p8) && !is.na(p9)) {
       
       p_mayor = max(p0, p1,p2,p3,p4,p5,p6,p7,p8,p9, na.rm = T)
+      
+      print(paste(R_OUT, nombre_tabla, '.', nombre_columna, ' --> ', p_mayor, sep = ''))
       
       if (!is.nan(p0)) {
         algun_plot=T

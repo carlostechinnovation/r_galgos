@@ -33,4 +33,4 @@ install.packages("BBmisc")
 install.packages("glmnet")
 install.packages("polspline")
 install.packages("mice")
-
+install.packages("conflicted")
